@@ -64,7 +64,7 @@ html, body { height: 100%; font-family: -apple-system, 'Helvetica Neue', sans-se
 .topbar-date { font-size: 12px; color: var(--text3); }
 .tabs { display: flex; gap: 0; }
 .tab {
-  flex: 1; text-align: center; padding: 10px 4px 11px; font-size: 13px; font-weight: 500;
+  flex: 1; text-align: center; padding: 10px 2px 11px; font-size: 11px; font-weight: 500;
   color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent;
   transition: color 0.15s, border-color 0.15s; user-select: none;
 }
@@ -270,6 +270,11 @@ html, body { height: 100%; font-family: -apple-system, 'Helvetica Neue', sans-se
       <div class="tab active" onclick="switchTab('home')">Riepilogo</div>
       <div class="tab" onclick="switchTab('invitati')">Invitati</div>
       <div class="tab" onclick="switchTab('spese')">Spese</div>
+      <div class="tab" onclick="switchTab('hotel')">Hotel</div>
+      <div class="tab" onclick="switchTab('tavoli')">Tavoli</div>
+      <div class="tab" onclick="switchTab('checklist')">Checklist</div>
+      <div class="tab" onclick="switchTab('playlist')">Musica</div>
+      <div class="tab" onclick="switchTab('scaletta')">Scaletta</div>
     </div>
   </div>
 
@@ -298,6 +303,54 @@ html, body { height: 100%; font-family: -apple-system, 'Helvetica Neue', sans-se
       <p class="sec" style="margin-top:16px">Tocca una voce per modificarla</p>
       <div class="expense-list" id="elist"></div>
     </div>
+    <!-- PLAYLIST -->
+    <div class="page" id="page-playlist">
+      <div style="margin:16px 0 12px">
+        <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px" id="pl-moment-filters"></div>
+      </div>
+      <div style="position:relative;margin-bottom:12px">
+        <input class="search-input" id="pl-search" placeholder="Cerca su Spotify..." style="padding-right:48px" oninput="spotifySearch()">
+        <div id="pl-search-spinner" style="display:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px">⏳</div>
+      </div>
+      <div id="pl-search-results"></div>
+      <div id="pl-list"></div>
+    </div>
+
+    <!-- SCALETTA -->
+    <div class="page" id="page-scaletta">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 12px">
+        <span class="sec" style="margin:0">Programma del giorno</span>
+        <button onclick="addScaletta()" style="font-size:13px;font-weight:600;color:var(--gold);background:none;border:none;cursor:pointer;padding:4px">+ Momento</button>
+      </div>
+      <div id="scaletta-list"></div>
+    </div>
+
+    <!-- HOTEL -->
+    <div class="page" id="page-hotel">
+      <p class="sec" style="margin-top:16px">Invitati con pernottamento</p>
+      <div id="hotel-stats" style="margin-bottom:12px"></div>
+      <div id="hotel-list"></div>
+    </div>
+
+    <!-- TAVOLI -->
+    <div class="page" id="page-tavoli">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px">
+        <span class="sec" style="margin:0">Gestione tavoli</span>
+        <button onclick="addTavolo()" style="font-size:13px;font-weight:600;color:var(--gold);background:none;border:none;cursor:pointer;padding:4px 0">+ Nuovo tavolo</button>
+      </div>
+      <div id="tavoli-stats" style="margin-bottom:12px"></div>
+      <div id="tavoli-list"></div>
+    </div>
+
+    <!-- CHECKLIST -->
+    <div class="page" id="page-checklist">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px">
+        <span class="sec" style="margin:0">Cose da fare</span>
+        <button onclick="addChecklist()" style="font-size:13px;font-weight:600;color:var(--gold);background:none;border:none;cursor:pointer;padding:4px 0">+ Aggiungi</button>
+      </div>
+      <div id="checklist-progress" style="margin-bottom:12px"></div>
+      <div id="checklist-list"></div>
+    </div>
   </div>
 </div>
 
@@ -314,6 +367,21 @@ html, body { height: 100%; font-family: -apple-system, 'Helvetica Neue', sans-se
   </div>
   <div class="tabbar-btn" id="tb-spese" onclick="switchTab('spese')">
     <div class="tabbar-icon">💰</div><div class="tabbar-label">Spese</div>
+  </div>
+  <div class="tabbar-btn" id="tb-hotel" onclick="switchTab('hotel')">
+    <div class="tabbar-icon">🏨</div><div class="tabbar-label">Hotel</div>
+  </div>
+  <div class="tabbar-btn" id="tb-tavoli" onclick="switchTab('tavoli')">
+    <div class="tabbar-icon">🪑</div><div class="tabbar-label">Tavoli</div>
+  </div>
+  <div class="tabbar-btn" id="tb-checklist" onclick="switchTab('checklist')">
+    <div class="tabbar-icon">✓</div><div class="tabbar-label">Lista</div>
+  </div>
+  <div class="tabbar-btn" id="tb-playlist" onclick="switchTab('playlist')">
+    <div class="tabbar-icon">♫</div><div class="tabbar-label">Musica</div>
+  </div>
+  <div class="tabbar-btn" id="tb-scaletta" onclick="switchTab('scaletta')">
+    <div class="tabbar-icon">📅</div><div class="tabbar-label">Scaletta</div>
   </div>
 </div>
 
@@ -376,7 +444,7 @@ html, body { height: 100%; font-family: -apple-system, 'Helvetica Neue', sans-se
 
 <script>
 // ── DATA ─────────────────────────────────────────────────────────────────────
-const STORAGE_KEY = 'matrimonio_v1';
+const STORAGE_KEY = 'matrimonio_v2';
 
 const CAT_COLORS = {
   "Amici": {bg:"#E9F7EF",fg:"#1E8449"}, "Lavoro": {bg:"#E8F4FD",fg:"#1A5276"},
@@ -507,7 +575,7 @@ function load() {
 }
 function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
 
-let state = load();
+let state = load(); // state now includes tavoli and checklist
 let activeTab = 'home';
 let filterConf = 'tutti';
 
@@ -608,7 +676,8 @@ function renderExpenses() {
     const saldo = Math.max(0,(e.importo||0)-(e.acconto||0));
     const pct = e.importo>0 ? Math.min(100,Math.round((e.acconto/e.importo)*100)) : 0;
     const tbd = !e.importo;
-    return `<div class="exp-card" onclick="openExpenseEdit(${e.id})">
+    const isLocation = e.nome==='Location';
+    return `<div class="exp-card" onclick="${isLocation?'openLocationModal()':'openExpenseEdit('+e.id+')'}"> 
       <div class="exp-header">
         <div><div class="exp-name">${e.nome}</div>${e.note?`<div class="exp-sub">${e.note}</div>`:''}</div>
         <div class="exp-amount ${tbd?'tbd':''}">${tbd?'Da definire':fmt(e.importo)}</div>
@@ -617,7 +686,7 @@ function renderExpenses() {
       <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
       <div class="exp-row"><span class="lbl">Acconto pagato</span><span class="val green">${fmt(e.acconto)}</span></div>
       <div class="exp-row"><span class="lbl">Saldo restante</span><span class="val ${saldo>0?'orange':''}">${saldo>0?fmt(saldo):'Saldato ✓'}</span></div>
-      `:`<div class="exp-row"><span class="lbl" style="font-style:italic">Tocca per aggiungere l'importo</span></div>`}
+      `:isLocation ? `<div class="exp-row"><span class="lbl" style="font-style:italic;color:var(--gold)">Tocca per impostare il prezzo per persona</span></div>` : `<div class="exp-row"><span class="lbl" style="font-style:italic">Tocca per aggiungere l'importo</span></div>`}
     </div>`;
   }).join('');
 }
@@ -771,22 +840,921 @@ document.querySelectorAll('.overlay').forEach(el=>{
 // ── TAB ───────────────────────────────────────────────────────────────────────
 function switchTab(tab) {
   activeTab=tab;
-  ['home','invitati','spese'].forEach(t=>{
+  ['home','invitati','spese','hotel','tavoli','checklist','playlist','scaletta'].forEach(t=>{
     document.getElementById('page-'+t).classList.toggle('active', t===tab);
     document.getElementById('tb-'+t).classList.toggle('active', t===tab);
   });
   document.querySelectorAll('.tab').forEach((el,i)=>{
-    el.classList.toggle('active', ['home','invitati','spese'][i]===tab);
+    el.classList.toggle('active', ['home','invitati','spese','hotel','tavoli','checklist','playlist','scaletta'][i]===tab);
   });
   renderAll();
 }
 
-function renderAll() { renderHome(); renderGuests(); renderExpenses(); }
+function renderAll() { renderHome(); renderGuests(); renderExpenses(); renderHotel(); renderTavoli(); renderChecklist(); renderPlaylist(); renderScaletta(); }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 const today = new Date();
 document.getElementById('topbar-date').textContent = today.toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'});
 renderAll();
+</script>
+<!-- HOTEL EDIT MODAL -->
+<div class="overlay" id="modal-hotel">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title" id="hotel-modal-title">Modifica hotel</div>
+    <div class="form-group"><label class="form-label">Nome / Gruppo</label><input class="form-input" id="h-guest" readonly style="opacity:0.6"></div>
+    <div class="form-group"><label class="form-label">Nome Hotel</label><input class="form-input" id="h-hotel" placeholder="Es. Grand Hotel Roma"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Check-in</label><input class="form-input" id="h-checkin" type="date"></div>
+      <div class="form-group"><label class="form-label">Check-out</label><input class="form-input" id="h-checkout" type="date"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Notti</label><input class="form-input" id="h-notti" type="number" min="0" inputmode="numeric"></div>
+      <div class="form-group"><label class="form-label">Camere</label><input class="form-input" id="h-camere" type="number" min="1" value="1" inputmode="numeric"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Stato prenotazione</label>
+      <select class="form-select" id="h-stato">
+        <option value="da_prenotare">Da prenotare</option>
+        <option value="prenotato">Prenotato</option>
+        <option value="confermato">Confermato</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="h-note" placeholder="Numero camera, contatto..."></div>
+    <input type="hidden" id="h-guestid">
+    <button class="btn-primary" onclick="saveHotelEdit()">Salva</button>
+    <button class="btn-ghost" onclick="closeModal('modal-hotel')">Annulla</button>
+  </div>
+</div>
+
+<!-- TAVOLO MODAL -->
+<div class="overlay" id="modal-tavolo">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title" id="tavolo-modal-title">Tavolo</div>
+    <div class="form-group"><label class="form-label">Nome del tavolo</label><input class="form-input" id="t-nome" placeholder="Es. Tavolo degli sposi, Tavolo 1..."></div>
+    <div class="form-group"><label class="form-label">Capienza massima</label><input class="form-input" id="t-max" type="number" min="1" value="10" inputmode="numeric"></div>
+    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="t-note" placeholder="Vicino alla pista, tavolo d'onore..."></div>
+    <input type="hidden" id="t-id">
+    <button class="btn-primary" onclick="saveTavolo()">Salva</button>
+    <button class="btn-ghost btn-danger" id="t-delete-btn" onclick="deleteTavolo()" style="display:none">Elimina tavolo</button>
+    <button class="btn-ghost" onclick="closeModal('modal-tavolo')">Annulla</button>
+  </div>
+</div>
+
+<!-- ASSEGNA POSTO MODAL -->
+<div class="overlay" id="modal-assegna">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title" id="assegna-title">Aggiungi al tavolo</div>
+    <div class="form-group"><label class="form-label">Cerca invitato</label><input class="form-input" id="assegna-search" placeholder="Scrivi il nome..." oninput="renderAssegnaList()"></div>
+    <div id="assegna-list" style="max-height:300px;overflow-y:auto;margin-top:8px"></div>
+    <button class="btn-ghost" onclick="closeModal('modal-assegna')" style="margin-top:12px">Chiudi</button>
+  </div>
+</div>
+
+<!-- CHECKLIST MODAL -->
+<div class="overlay" id="modal-checklist">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title" id="checklist-modal-title">Aggiungi attività</div>
+    <div class="form-group"><label class="form-label">Attività</label><input class="form-input" id="ck-testo" placeholder="Es. Confermare il fotografo"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Categoria</label>
+        <select class="form-select" id="ck-cat">
+          <option value="venue">Venue</option><option value="fornitori">Fornitori</option>
+          <option value="abiti">Abiti</option><option value="documenti">Documenti</option>
+          <option value="invitati">Invitati</option><option value="altro">Altro</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Scadenza</label><input class="form-input" id="ck-data" type="date"></div>
+    </div>
+    <input type="hidden" id="ck-id">
+    <button class="btn-primary" onclick="saveChecklist()">Salva</button>
+    <button class="btn-ghost btn-danger" id="ck-delete-btn" onclick="deleteChecklist()" style="display:none">Elimina</button>
+    <button class="btn-ghost" onclick="closeModal('modal-checklist')">Annulla</button>
+  </div>
+</div>
+
+<script>
+
+// ── DEFAULT DATA EXTENSIONS ────────────────────────────────────────────────
+const DEFAULT_TAVOLI = [
+  {id:1, nome:"Tavolo degli Sposi", max:12, note:"Tavolo d'onore", ospiti:[]},
+  {id:2, nome:"Famiglia Martina", max:10, note:"", ospiti:[]},
+  {id:3, nome:"Famiglia Albania", max:10, note:"", ospiti:[]},
+  {id:4, nome:"Amici", max:10, note:"", ospiti:[]},
+  {id:5, nome:"Lavoro", max:10, note:"", ospiti:[]},
+];
+
+const DEFAULT_CHECKLIST = [
+  {id:1,testo:"Confermare la location",cat:"venue",data:"",done:false},
+  {id:2,testo:"Firmare contratto fotografo",cat:"fornitori",data:"",done:false},
+  {id:3,testo:"Ordine abito sposa",cat:"abiti",data:"",done:false},
+  {id:4,testo:"Ordine abito sposo",cat:"abiti",data:"",done:false},
+  {id:5,testo:"Inviare partecipazioni",cat:"invitati",data:"",done:true},
+  {id:6,testo:"Pubblicazioni in comune",cat:"documenti",data:"",done:false},
+  {id:7,testo:"Prenotare auto sposi",cat:"fornitori",data:"",done:false},
+  {id:8,testo:"Confermare menù con caterer",cat:"venue",data:"",done:false},
+  {id:9,testo:"Scegliere lista brani DJ",cat:"fornitori",data:"",done:false},
+  {id:10,testo:"Prenotare hotels invitati",cat:"invitati",data:"",done:false},
+  {id:11,testo:"Preparare segnaposto tavoli",cat:"venue",data:"",done:false},
+  {id:12,testo:"Acquistare fedi",cat:"documenti",data:"",done:false},
+  {id:13,testo:"Bomboniere pronte",cat:"altro",data:"",done:false},
+  {id:14,testo:"Confermare con parrucchiera",cat:"abiti",data:"",done:false},
+  {id:15,testo:"Lista canzoni cerimonia",cat:"fornitori",data:"",done:false},
+];
+
+// Patch load() to include new data
+const _origLoad = load;
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (s && s.guests && s.expenses) {
+      if(!s.tavoli) s.tavoli = DEFAULT_TAVOLI.map(t=>({...t,ospiti:[...t.ospiti]}));
+      if(!s.checklist) s.checklist = DEFAULT_CHECKLIST.map(c=>({...c}));
+      if(!s.nextTid) s.nextTid = 100;
+      if(!s.nextCid) s.nextCid = 200;
+      return s;
+    }
+  } catch(e) {}
+  return {
+    guests: DEFAULT_GUESTS.map(g=>({...g})),
+    expenses: DEFAULT_EXPENSES.map(e=>({...e})),
+    tavoli: DEFAULT_TAVOLI.map(t=>({...t,ospiti:[...t.ospiti]})),
+    checklist: DEFAULT_CHECKLIST.map(c=>({...c})),
+    nextGid: 200, nextEid: 100, nextTid: 100, nextCid: 200
+  };
+}
+
+// ── HOTEL SECTION ───────────────────────────────────────────────────────────
+const HOTEL_STATUS = {
+  da_prenotare: {label:'Da prenotare', bg:'var(--orange-bg)', fg:'var(--orange-fg)'},
+  prenotato:    {label:'Prenotato',    bg:'var(--blue-bg)',   fg:'var(--blue-fg)'},
+  confermato:   {label:'Confermato',   bg:'var(--green-bg)',  fg:'var(--green-fg)'},
+};
+
+function renderHotel() {
+  const withHotel = state.guests.filter(g => g.hotel && g.conf !== 'No');
+  const noHotel   = state.guests.filter(g => g.conf === 'Si' && !g.hotel);
+  
+  const tot = withHotel.length;
+  const conf = withHotel.filter(g => (g.hotelStato||'da_prenotare') === 'confermato').length;
+  const pren = withHotel.filter(g => (g.hotelStato||'da_prenotare') === 'prenotato').length;
+  const daPren = withHotel.filter(g => (g.hotelStato||'da_prenotare') === 'da_prenotare').length;
+  const totNotti = withHotel.reduce((a,g)=>a+(g.notti||0),0);
+
+  document.getElementById('hotel-stats').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+      <div class="metric-card"><div class="metric-label">Gruppi</div><div class="metric-value" style="font-size:22px">${tot}</div></div>
+      <div class="metric-card orange"><div class="metric-label">Da prenotare</div><div class="metric-value" style="font-size:22px">${daPren}</div></div>
+      <div class="metric-card green"><div class="metric-label">Confermati</div><div class="metric-value" style="font-size:22px">${conf}</div></div>
+    </div>
+    <div class="budget-box" style="margin-bottom:0">
+      <div class="budget-row"><span class="budget-label">Notti totali da gestire</span><span class="budget-val">${totNotti} notti</span></div>
+      <div class="budget-row"><span class="budget-label">Prenotati</span><span class="budget-val blue">${pren} gruppi</span></div>
+    </div>
+  `;
+
+  let html = '';
+  if(withHotel.length) {
+    html += withHotel.map(g => {
+      const st = HOTEL_STATUS[g.hotelStato||'da_prenotare'];
+      const camere = g.hotelCamere || 1;
+      return `<div class="exp-card" onclick="openHotelEdit(${g.id})" style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text)">${g.nome}</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">${g.hotel}</div>
+          </div>
+          <span style="font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px;background:${st.bg};color:${st.fg};flex-shrink:0">${st.label}</span>
+        </div>
+        <div style="display:flex;gap:16px;font-size:12px;color:var(--text2)">
+          <span>${g.notti||0} notti</span>
+          <span>${camere} camera${camere>1?'e':''}</span>
+          ${g.hotelCheckin?`<span>Check-in: ${g.hotelCheckin}</span>`:''}
+        </div>
+        ${g.hotelNote?`<div style="font-size:12px;color:var(--text3);margin-top:6px;font-style:italic">${g.hotelNote}</div>`:''}
+      </div>`;
+    }).join('');
+  }
+  
+  if(noHotel.length) {
+    html += `<p class="sec" style="margin-top:16px">Confermati senza hotel (${noHotel.length})</p>`;
+    html += noHotel.map(g=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border)">
+        <div style="font-size:13px;color:var(--text2)">${g.nome}</div>
+      </div>`).join('');
+  }
+  
+  document.getElementById('hotel-list').innerHTML = html || '<div class="empty">Nessun invitato con hotel</div>';
+}
+
+function openHotelEdit(guestId) {
+  const g = state.guests.find(x=>x.id===guestId); if(!g) return;
+  document.getElementById('h-guest').value = g.nome;
+  document.getElementById('h-hotel').value = g.hotel||'';
+  document.getElementById('h-checkin').value = g.hotelCheckin||'';
+  document.getElementById('h-checkout').value = g.hotelCheckout||'';
+  document.getElementById('h-notti').value = g.notti||0;
+  document.getElementById('h-camere').value = g.hotelCamere||1;
+  document.getElementById('h-stato').value = g.hotelStato||'da_prenotare';
+  document.getElementById('h-note').value = g.hotelNote||'';
+  document.getElementById('h-guestid').value = guestId;
+  openModal('modal-hotel');
+}
+
+function saveHotelEdit() {
+  const gid = parseInt(document.getElementById('h-guestid').value);
+  const g = state.guests.find(x=>x.id===gid); if(!g) return;
+  g.hotel = document.getElementById('h-hotel').value.trim();
+  g.hotelCheckin = document.getElementById('h-checkin').value;
+  g.hotelCheckout = document.getElementById('h-checkout').value;
+  g.notti = parseInt(document.getElementById('h-notti').value)||0;
+  g.hotelCamere = parseInt(document.getElementById('h-camere').value)||1;
+  g.hotelStato = document.getElementById('h-stato').value;
+  g.hotelNote = document.getElementById('h-note').value.trim();
+  save(); closeModal('modal-hotel'); renderAll();
+}
+
+// ── TAVOLI SECTION ──────────────────────────────────────────────────────────
+let currentTavoloId = null;
+
+function renderTavoli() {
+  const allAssigned = new Set(state.tavoli.flatMap(t=>t.ospiti));
+  const confGuests = state.guests.filter(g=>g.conf==='Si');
+  const totSeats = state.tavoli.reduce((a,t)=>a+t.max,0);
+  const usedSeats = state.tavoli.reduce((a,t)=>{
+    return a + t.ospiti.reduce((b,gid)=>{
+      const g = state.guests.find(x=>x.id===gid);
+      return b + (g ? g.adulti+g.bambini : 0);
+    },0);
+  },0);
+  const unassigned = confGuests.filter(g=>!allAssigned.has(g.id));
+  
+  document.getElementById('tavoli-stats').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div class="metric-card"><div class="metric-label">Tavoli</div><div class="metric-value" style="font-size:22px">${state.tavoli.length}</div></div>
+      <div class="metric-card green"><div class="metric-label">Posti usati</div><div class="metric-value" style="font-size:22px">${usedSeats}</div></div>
+      <div class="metric-card ${unassigned.length>0?'orange':''}" ><div class="metric-label">Da assegnare</div><div class="metric-value" style="font-size:22px">${unassigned.length}</div></div>
+    </div>
+  `;
+
+  document.getElementById('tavoli-list').innerHTML = state.tavoli.map(t => {
+    const guestCount = t.ospiti.reduce((a,gid)=>{
+      const g = state.guests.find(x=>x.id===gid); return a+(g?g.adulti+g.bambini:0);
+    },0);
+    const pct = t.max>0?Math.min(100,Math.round((guestCount/t.max)*100)):0;
+    const fillColor = pct>90?'var(--red-fg)':pct>70?'var(--orange-fg)':'var(--green-fg)';
+    const ospiti = t.ospiti.map(gid=>{
+      const g = state.guests.find(x=>x.id===gid); return g?g:null;
+    }).filter(Boolean);
+    
+    return `<div class="exp-card" style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div>
+          <div style="font-size:15px;font-weight:600;color:var(--text)">${t.nome}</div>
+          ${t.note?`<div style="font-size:12px;color:var(--text2);margin-top:2px">${t.note}</div>`:''}
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:13px;color:var(--text2)">${guestCount}/${t.max}</span>
+          <button onclick="editTavolo(${t.id})" style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:4px">✏️</button>
+        </div>
+      </div>
+      <div class="progress-track" style="margin-bottom:10px"><div class="progress-fill" style="width:${pct}%;background:${fillColor}"></div></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+        ${ospiti.map(g=>`<span style="font-size:11px;padding:3px 8px;background:var(--bg2);border-radius:20px;color:var(--text2);display:flex;align-items:center;gap:4px">
+          ${g.nome.split(/\s+/)[0]}
+          <button onclick="removeFromTavolo(${t.id},${g.id})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:11px;padding:0;line-height:1">×</button>
+        </span>`).join('')}
+        ${ospiti.length===0?`<span style="font-size:12px;color:var(--text3);font-style:italic">Nessun ospite assegnato</span>`:''}
+      </div>
+      <button onclick="openAssegna(${t.id})" style="font-size:13px;font-weight:600;color:var(--gold);background:none;border:0.5px solid var(--gold);border-radius:10px;padding:7px 14px;cursor:pointer;width:100%">+ Aggiungi ospiti</button>
+    </div>`;
+  }).join('');
+}
+
+function addTavolo() {
+  document.getElementById('tavolo-modal-title').textContent='Nuovo tavolo';
+  document.getElementById('t-nome').value='';
+  document.getElementById('t-max').value=10;
+  document.getElementById('t-note').value='';
+  document.getElementById('t-id').value='';
+  document.getElementById('t-delete-btn').style.display='none';
+  openModal('modal-tavolo');
+}
+function editTavolo(id) {
+  const t = state.tavoli.find(x=>x.id===id); if(!t) return;
+  document.getElementById('tavolo-modal-title').textContent='Modifica tavolo';
+  document.getElementById('t-nome').value=t.nome;
+  document.getElementById('t-max').value=t.max;
+  document.getElementById('t-note').value=t.note||'';
+  document.getElementById('t-id').value=id;
+  document.getElementById('t-delete-btn').style.display='block';
+  openModal('modal-tavolo');
+}
+function saveTavolo() {
+  const nome = document.getElementById('t-nome').value.trim();
+  if(!nome) { alert('Inserisci un nome'); return; }
+  const data = { nome, max: parseInt(document.getElementById('t-max').value)||10, note: document.getElementById('t-note').value.trim() };
+  const tid = document.getElementById('t-id').value;
+  if(tid) {
+    const idx = state.tavoli.findIndex(x=>x.id===parseInt(tid));
+    if(idx>=0) state.tavoli[idx]={...state.tavoli[idx],...data};
+  } else {
+    state.tavoli.push({id:state.nextTid++,...data,ospiti:[]});
+  }
+  save(); closeModal('modal-tavolo'); renderTavoli();
+}
+function deleteTavolo() {
+  const tid = document.getElementById('t-id').value;
+  if(!tid||!confirm('Eliminare questo tavolo?')) return;
+  state.tavoli = state.tavoli.filter(x=>x.id!==parseInt(tid));
+  save(); closeModal('modal-tavolo'); renderTavoli();
+}
+function openAssegna(tavoloId) {
+  currentTavoloId = tavoloId;
+  const t = state.tavoli.find(x=>x.id===tavoloId);
+  document.getElementById('assegna-title').textContent = 'Aggiungi a: ' + (t?t.nome:'');
+  document.getElementById('assegna-search').value='';
+  renderAssegnaList();
+  openModal('modal-assegna');
+}
+function renderAssegnaList() {
+  const q = (document.getElementById('assegna-search').value||'').toLowerCase();
+  const t = state.tavoli.find(x=>x.id===currentTavoloId); if(!t) return;
+  const allAssigned = new Set(state.tavoli.flatMap(x=>x.ospiti));
+  const avail = state.guests.filter(g => g.conf==='Si' && !allAssigned.has(g.id) && (!q||g.nome.toLowerCase().includes(q)));
+  const inTable = t.ospiti.map(gid=>state.guests.find(x=>x.id===gid)).filter(Boolean);
+  let html = '';
+  if(inTable.length) {
+    html += `<p style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px">Al tavolo</p>`;
+    html += inTable.map(g=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--border)">
+      <span style="font-size:14px;font-weight:500">${g.nome} <span style="color:var(--text3);font-size:12px">(${g.adulti+g.bambini}p)</span></span>
+      <button onclick="removeFromTavolo(${currentTavoloId},${g.id});renderAssegnaList()" style="font-size:12px;color:var(--red-fg);background:none;border:none;cursor:pointer">Rimuovi</button>
+    </div>`).join('');
+  }
+  if(avail.length) {
+    html += `<p style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:${inTable.length?'16px':0} 0 8px">Disponibili</p>`;
+    html += avail.map(g=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--border)">
+      <span style="font-size:14px;font-weight:500">${g.nome} <span style="color:var(--text3);font-size:12px">(${g.adulti+g.bambini}p)</span></span>
+      <button onclick="assignToTavolo(${currentTavoloId},${g.id})" style="font-size:12px;color:var(--green-fg);background:none;border:0.5px solid var(--green-fg);border-radius:8px;padding:5px 10px;cursor:pointer">Aggiungi</button>
+    </div>`).join('');
+  }
+  if(!inTable.length && !avail.length) html='<div class="empty">Tutti gli invitati confermati sono già assegnati</div>';
+  document.getElementById('assegna-list').innerHTML = html;
+}
+function assignToTavolo(tavoloId, guestId) {
+  state.tavoli.forEach(t=>{ t.ospiti=t.ospiti.filter(x=>x!==guestId); });
+  const t = state.tavoli.find(x=>x.id===tavoloId); if(t) t.ospiti.push(guestId);
+  save(); renderAssegnaList(); renderTavoli();
+}
+function removeFromTavolo(tavoloId, guestId) {
+  const t = state.tavoli.find(x=>x.id===tavoloId); if(!t) return;
+  t.ospiti = t.ospiti.filter(x=>x!==guestId);
+  save(); renderTavoli();
+}
+
+// ── CHECKLIST SECTION ───────────────────────────────────────────────────────
+const CK_CATS = {
+  venue:'Venue', fornitori:'Fornitori', abiti:'Abiti',
+  documenti:'Documenti', invitati:'Invitati', altro:'Altro'
+};
+const CK_COLORS = {
+  venue:{bg:'var(--blue-bg)',fg:'var(--blue-fg)'},
+  fornitori:{bg:'var(--orange-bg)',fg:'var(--orange-fg)'},
+  abiti:{bg:'#FFF0F6',fg:'#9B2458'},
+  documenti:{bg:'var(--green-bg)',fg:'var(--green-fg)'},
+  invitati:{bg:'#F0F4FF',fg:'#2B4CB8'},
+  altro:{bg:'var(--bg2)',fg:'var(--text2)'},
+};
+
+function renderChecklist() {
+  const done = state.checklist.filter(c=>c.done).length;
+  const tot = state.checklist.length;
+  const pct = tot>0?Math.round((done/tot)*100):0;
+  const fillColor = pct===100?'var(--green-fg)':pct>50?'var(--gold)':'var(--orange-fg)';
+  
+  document.getElementById('checklist-progress').innerHTML = `
+    <div class="budget-box" style="margin-bottom:0">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+        <span style="font-size:15px;font-weight:700;color:var(--text)">${done}/${tot} completate</span>
+        <span style="font-size:20px;font-weight:700;color:${fillColor}">${pct}%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:${fillColor}"></div></div>
+    </div>
+  `;
+
+  const grouped = {};
+  state.checklist.forEach(c=>{ if(!grouped[c.cat]) grouped[c.cat]=[]; grouped[c.cat].push(c); });
+  
+  let html = '';
+  Object.entries(grouped).forEach(([cat, items])=>{
+    const cc = CK_COLORS[cat]||CK_COLORS.altro;
+    const catDone = items.filter(i=>i.done).length;
+    html += `<div style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:${cc.bg};color:${cc.fg}">${CK_CATS[cat]||cat}</span>
+        <span style="font-size:11px;color:var(--text3)">${catDone}/${items.length}</span>
+      </div>`;
+    items.forEach(c=>{
+      const today = new Date().toISOString().slice(0,10);
+      const overdue = c.data && c.data<today && !c.done;
+      html += `<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:6px;cursor:pointer;${c.done?'opacity:0.5':''}" onclick="toggleChecklist(${c.id})">
+        <div style="width:22px;height:22px;border-radius:50%;border:1.5px solid ${c.done?'var(--green-fg)':'var(--border2)'};background:${c.done?'var(--green-fg)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-size:13px">${c.done?'✓':''}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:500;color:var(--text);${c.done?'text-decoration:line-through':''}">${c.testo}</div>
+          ${c.data?`<div style="font-size:11px;color:${overdue?'var(--red-fg)':'var(--text3)'};margin-top:2px">${overdue?'⚠ Scaduta: ':'Entro: '}${c.data}</div>`:''}
+        </div>
+        <button onclick="event.stopPropagation();editChecklist(${c.id})" style="font-size:14px;color:var(--text3);background:none;border:none;cursor:pointer;padding:4px">✏️</button>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  
+  document.getElementById('checklist-list').innerHTML = html || '<div class="empty">Nessuna attività</div>';
+}
+
+function toggleChecklist(id) {
+  const c = state.checklist.find(x=>x.id===id); if(!c) return;
+  c.done=!c.done; save(); renderChecklist();
+}
+function addChecklist() {
+  document.getElementById('checklist-modal-title').textContent='Aggiungi attività';
+  document.getElementById('ck-testo').value='';
+  document.getElementById('ck-cat').value='altro';
+  document.getElementById('ck-data').value='';
+  document.getElementById('ck-id').value='';
+  document.getElementById('ck-delete-btn').style.display='none';
+  openModal('modal-checklist');
+}
+function editChecklist(id) {
+  const c = state.checklist.find(x=>x.id===id); if(!c) return;
+  document.getElementById('checklist-modal-title').textContent='Modifica attività';
+  document.getElementById('ck-testo').value=c.testo;
+  document.getElementById('ck-cat').value=c.cat;
+  document.getElementById('ck-data').value=c.data||'';
+  document.getElementById('ck-id').value=id;
+  document.getElementById('ck-delete-btn').style.display='block';
+  openModal('modal-checklist');
+}
+function saveChecklist() {
+  const testo = document.getElementById('ck-testo').value.trim();
+  if(!testo) { alert('Inserisci il testo'); return; }
+  const data = { testo, cat: document.getElementById('ck-cat').value, data: document.getElementById('ck-data').value };
+  const cid = document.getElementById('ck-id').value;
+  if(cid) {
+    const idx = state.checklist.findIndex(x=>x.id===parseInt(cid));
+    if(idx>=0) state.checklist[idx]={...state.checklist[idx],...data};
+  } else {
+    state.checklist.push({id:state.nextCid++,...data,done:false});
+  }
+  save(); closeModal('modal-checklist'); renderChecklist();
+}
+function deleteChecklist() {
+  const cid = document.getElementById('ck-id').value;
+  if(!cid||!confirm('Eliminare?')) return;
+  state.checklist = state.checklist.filter(x=>x.id!==parseInt(cid));
+  save(); closeModal('modal-checklist'); renderChecklist();
+}
+
+// ── PATCH FAB ────────────────────────────────────────────────────────────────
+const _origFabClick = fabClick;
+function fabClick() {
+  if(activeTab==='tavoli') { addTavolo(); return; }
+  if(activeTab==='checklist') { addChecklist(); return; }
+  if(activeTab==='hotel') return;
+  if(activeTab==='playlist') { addPlaylistMoment(); return; }
+  if(activeTab==='scaletta') { addScaletta(); return; }
+  _origFabClick();
+}
+
+</script>
+
+<!-- PLAYLIST MOMENT MODAL -->
+<div class="overlay" id="modal-pl-moment">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title">Nuovo momento musicale</div>
+    <div class="form-group"><label class="form-label">Nome momento</label><input class="form-input" id="plm-nome" placeholder="Es. Cerimonia, Cocktail..."></div>
+    <div class="form-group"><label class="form-label">Emoji</label><input class="form-input" id="plm-emoji" placeholder="💍" maxlength="2"></div>
+    <input type="hidden" id="plm-id">
+    <button class="btn-primary" onclick="savePlMoment()">Salva</button>
+    <button class="btn-ghost btn-danger" id="plm-delete" onclick="deletePlMoment()" style="display:none">Elimina momento</button>
+    <button class="btn-ghost" onclick="closeModal('modal-pl-moment')">Annulla</button>
+  </div>
+</div>
+
+<!-- SONG DETAIL MODAL -->
+<div class="overlay" id="modal-song">
+  <div class="sheet" id="modal-song-content"></div>
+</div>
+
+<!-- SCALETTA MODAL -->
+<div class="overlay" id="modal-scaletta">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title" id="sc-modal-title">Aggiungi momento</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Orario</label><input class="form-input" id="sc-ora" type="time"></div>
+      <div class="form-group"><label class="form-label">Durata (min)</label><input class="form-input" id="sc-durata" type="number" min="0" value="30" inputmode="numeric"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Momento</label><input class="form-input" id="sc-nome" placeholder="Es. Cerimonia civile"></div>
+    <div class="form-group"><label class="form-label">Luogo</label><input class="form-input" id="sc-luogo" placeholder="Es. Sala del comune"></div>
+    <div class="form-group"><label class="form-label">Responsabile</label><input class="form-input" id="sc-resp" placeholder="Es. Fotografo, DJ, Catering..."></div>
+    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="sc-note" placeholder="Dettagli importanti..."></div>
+    <div class="form-group"><label class="form-label">Tipo</label>
+      <select class="form-select" id="sc-tipo">
+        <option value="cerimonia">💍 Cerimonia</option>
+        <option value="cocktail">🥂 Cocktail</option>
+        <option value="cena">🍽 Cena</option>
+        <option value="festa">🎉 Festa</option>
+        <option value="foto">📸 Foto</option>
+        <option value="altro">📌 Altro</option>
+      </select>
+    </div>
+    <input type="hidden" id="sc-id">
+    <button class="btn-primary" onclick="saveScaletta()">Salva</button>
+    <button class="btn-ghost btn-danger" id="sc-delete" onclick="deleteScaletta()" style="display:none">Elimina</button>
+    <button class="btn-ghost" onclick="closeModal('modal-scaletta')">Annulla</button>
+  </div>
+</div>
+<script>
+
+// ── DEFAULT PLAYLIST & SCALETTA ──────────────────────────────────────────────
+const DEFAULT_PL_MOMENTS = [
+  {id:1, nome:'Cerimonia', emoji:'💍', songs:[]},
+  {id:2, nome:'Cocktail',  emoji:'🥂', songs:[]},
+  {id:3, nome:'Cena',      emoji:'🍽', songs:[]},
+  {id:4, nome:'Festa',     emoji:'🎉', songs:[]},
+];
+const DEFAULT_SCALETTA = [
+  {id:1,ora:'14:00',durata:60,nome:'Cerimonia civile',luogo:'Comune',resp:'Officiante',note:'',tipo:'cerimonia'},
+  {id:2,ora:'15:30',durata:30,nome:'Sessione foto',luogo:'Parco',resp:'Fotografo',note:'',tipo:'foto'},
+  {id:3,ora:'16:00',durata:90,nome:'Cocktail',luogo:'Giardino location',resp:'Catering',note:'',tipo:'cocktail'},
+  {id:4,ora:'17:30',durata:180,nome:'Cena',luogo:'Sala banchetti',resp:'Catering + DJ',note:'Taglio torta previsto alle 20:00',tipo:'cena'},
+  {id:5,ora:'20:30',durata:180,nome:'Festa & balli',luogo:'Pista da ballo',resp:'DJ',note:'',tipo:'festa'},
+];
+
+// Patch load to add new data
+const _prevLoad = load;
+function load() {
+  const s = _prevLoad();
+  if(!s.plMoments) s.plMoments = DEFAULT_PL_MOMENTS.map(m=>({...m,songs:[...m.songs]}));
+  if(!s.scaletta)  s.scaletta  = DEFAULT_SCALETTA.map(x=>({...x}));
+  if(!s.nextPlMid) s.nextPlMid = 100;
+  if(!s.nextScId)  s.nextScId  = 100;
+  return s;
+}
+
+// Re-init state with patched load
+state = load();
+
+// ── SPOTIFY SEARCH ───────────────────────────────────────────────────────────
+let plFilterMoment = null;
+let searchTimer = null;
+
+async function spotifySearch() {
+  const q = document.getElementById('pl-search').value.trim();
+  clearTimeout(searchTimer);
+  if(q.length < 2) { document.getElementById('pl-search-results').innerHTML=''; return; }
+  searchTimer = setTimeout(async () => {
+    document.getElementById('pl-search-spinner').style.display='block';
+    try {
+      // Use iTunes Search API (free, no auth needed, returns music data)
+      const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&limit=10&country=it`);
+      const data = await res.json();
+      renderSearchResults(data.results||[]);
+    } catch(e) {
+      document.getElementById('pl-search-results').innerHTML = '<div style="font-size:13px;color:var(--text3);padding:12px 0">Errore di rete. Riprova.</div>';
+    }
+    document.getElementById('pl-search-spinner').style.display='none';
+  }, 400);
+}
+
+function renderSearchResults(results) {
+  if(!results.length) { document.getElementById('pl-search-results').innerHTML='<div style="font-size:13px;color:var(--text3);padding:12px 0">Nessun risultato</div>'; return; }
+  document.getElementById('pl-search-results').innerHTML = `
+    <p class="sec" style="margin-top:4px">Risultati ricerca</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+    ${results.map(r => {
+      const song = {
+        trackId: r.trackId,
+        title: r.trackName||'',
+        artist: r.artistName||'',
+        album: r.collectionName||'',
+        artwork: r.artworkUrl60||'',
+        preview: r.previewUrl||'',
+        spotifySearch: encodeURIComponent((r.trackName||'')+ ' ' +(r.artistName||'')),
+      };
+      const sJson = JSON.stringify(song).replace(/'/g,'&#39;');
+      return `<div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);cursor:pointer" onclick="openSongModal('${btoa(unescape(encodeURIComponent(JSON.stringify(song))))}')">
+        ${song.artwork?`<img src="${song.artwork}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">`:'<div style="width:44px;height:44px;border-radius:8px;background:var(--bg2);flex-shrink:0"></div>'}
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${song.title}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${song.artist}</div>
+        </div>
+        <div style="font-size:20px;color:var(--gold);flex-shrink:0">+</div>
+      </div>`;
+    }).join('')}
+    </div>`;
+}
+
+function openSongModal(b64) {
+  let song;
+  try { song = JSON.parse(decodeURIComponent(escape(atob(b64)))); } catch(e) { return; }
+  const moments = state.plMoments;
+  const alreadyIn = moments.filter(m=>m.songs.some(s=>s.trackId===song.trackId)).map(m=>m.nome);
+  document.getElementById('modal-song-content').innerHTML = `
+    <div class="handle"></div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      ${song.artwork?`<img src="${song.artwork}" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0">`:''}
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--text)">${song.title}</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px">${song.artist}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:1px">${song.album}</div>
+      </div>
+    </div>
+    ${song.preview?`<audio controls style="width:100%;margin-bottom:14px;height:36px"><source src="${song.preview}" type="audio/mp4"></audio>`:''}
+    <a href="https://open.spotify.com/search/${song.spotifySearch}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#1DB954;color:white;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;margin-bottom:10px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+      Apri su Spotify
+    </a>
+    <p style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Aggiungi alla playlist</p>
+    <div style="display:flex;flex-direction:column;gap:8px">
+    ${moments.map(m=>{
+      const inM = m.songs.some(s=>s.trackId===song.trackId);
+      return `<button onclick="toggleSongInMoment(${m.id},'${b64}')" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg2);border:${inM?'1.5px solid var(--gold)':'0.5px solid var(--border2)'};border-radius:12px;cursor:pointer;color:var(--text);font-size:14px;font-weight:${inM?'600':'400'}">
+        <span>${m.emoji} ${m.nome}</span>
+        <span style="color:${inM?'var(--gold)':'var(--text3)'};">${inM?'✓ Aggiunto':'+'}</span>
+      </button>`;
+    }).join('')}
+    </div>
+    <button class="btn-ghost" onclick="closeModal('modal-song');document.getElementById('pl-search').value='';document.getElementById('pl-search-results').innerHTML=''" style="margin-top:12px">Fatto</button>
+  `;
+  openModal('modal-song');
+}
+
+function toggleSongInMoment(momentId, b64) {
+  let song;
+  try { song = JSON.parse(decodeURIComponent(escape(atob(b64)))); } catch(e) { return; }
+  const m = state.plMoments.find(x=>x.id===momentId); if(!m) return;
+  const idx = m.songs.findIndex(s=>s.trackId===song.trackId);
+  if(idx>=0) m.songs.splice(idx,1); else m.songs.push(song);
+  save();
+  openSongModal(b64);
+  renderPlaylist();
+}
+
+// ── RENDER PLAYLIST ───────────────────────────────────────────────────────────
+function renderPlaylist() {
+  const moments = state.plMoments;
+  const active = plFilterMoment || (moments[0]?.id);
+  
+  document.getElementById('pl-moment-filters').innerHTML = [
+    ...moments.map(m=>`<button class="filter-btn ${active===m.id?'active':''}" onclick="plFilterMoment=${m.id};renderPlaylist()">${m.emoji} ${m.nome} (${m.songs.length})</button>`),
+    `<button class="filter-btn" onclick="addPlaylistMoment()">+ Momento</button>`
+  ].join('');
+
+  const m = moments.find(x=>x.id===active);
+  if(!m) { document.getElementById('pl-list').innerHTML=''; return; }
+
+  const totMin = m.songs.length * 3.5;
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div>
+      <div style="font-size:16px;font-weight:700;color:var(--text)">${m.emoji} ${m.nome}</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:2px">${m.songs.length} brani · circa ${Math.round(totMin)} min</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      ${m.songs.length?`<a href="https://open.spotify.com/search/${encodeURIComponent(m.nome+' matrimonio')}" target="_blank" style="font-size:12px;font-weight:600;color:#1DB954;text-decoration:none;border:1px solid #1DB954;padding:6px 10px;border-radius:10px">Spotify ↗</a>`:''}
+      <button onclick="editPlMoment(${m.id})" style="font-size:12px;color:var(--text3);background:none;border:0.5px solid var(--border2);padding:6px 10px;border-radius:10px;cursor:pointer">✏️</button>
+    </div>
+  </div>`;
+
+  if(!m.songs.length) {
+    html += `<div style="text-align:center;padding:40px 16px;color:var(--text3)">
+      <div style="font-size:40px;margin-bottom:12px">${m.emoji}</div>
+      <div style="font-size:14px">Cerca un brano sopra e aggiungilo qui</div>
+    </div>`;
+  } else {
+    html += m.songs.map((s,i)=>`
+      <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:6px">
+        <div style="font-size:13px;font-weight:600;color:var(--text3);width:20px;text-align:center;flex-shrink:0">${i+1}</div>
+        ${s.artwork?`<img src="${s.artwork}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0">`:'<div style="width:40px;height:40px;border-radius:6px;background:var(--bg2);flex-shrink:0"></div>'}
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.title}</div>
+          <div style="font-size:11px;color:var(--text2)">${s.artist}</div>
+        </div>
+        <a href="https://open.spotify.com/search/${s.spotifySearch}" target="_blank" style="color:#1DB954;font-size:18px;text-decoration:none;flex-shrink:0">▶</a>
+        <button onclick="removeSongFromMoment(${m.id},${s.trackId})" style="font-size:16px;color:var(--text3);background:none;border:none;cursor:pointer;padding:4px;flex-shrink:0">×</button>
+      </div>`).join('');
+  }
+
+  document.getElementById('pl-list').innerHTML = html;
+}
+
+function removeSongFromMoment(momentId, trackId) {
+  const m = state.plMoments.find(x=>x.id===momentId); if(!m) return;
+  m.songs = m.songs.filter(s=>s.trackId!==trackId);
+  save(); renderPlaylist();
+}
+
+function addPlaylistMoment() {
+  document.getElementById('plm-nome').value='';
+  document.getElementById('plm-emoji').value='🎵';
+  document.getElementById('plm-id').value='';
+  document.getElementById('plm-delete').style.display='none';
+  openModal('modal-pl-moment');
+}
+function editPlMoment(id) {
+  const m = state.plMoments.find(x=>x.id===id); if(!m) return;
+  document.getElementById('plm-nome').value=m.nome;
+  document.getElementById('plm-emoji').value=m.emoji;
+  document.getElementById('plm-id').value=id;
+  document.getElementById('plm-delete').style.display='block';
+  openModal('modal-pl-moment');
+}
+function savePlMoment() {
+  const nome = document.getElementById('plm-nome').value.trim();
+  if(!nome) { alert('Inserisci un nome'); return; }
+  const data = { nome, emoji: document.getElementById('plm-emoji').value.trim()||'🎵' };
+  const mid = document.getElementById('plm-id').value;
+  if(mid) {
+    const idx = state.plMoments.findIndex(x=>x.id===parseInt(mid));
+    if(idx>=0) state.plMoments[idx]={...state.plMoments[idx],...data};
+  } else {
+    state.plMoments.push({id:state.nextPlMid++,...data,songs:[]});
+    plFilterMoment = state.nextPlMid-1;
+  }
+  save(); closeModal('modal-pl-moment'); renderPlaylist();
+}
+function deletePlMoment() {
+  const mid = document.getElementById('plm-id').value;
+  if(!mid||!confirm('Eliminare questo momento musicale?')) return;
+  state.plMoments = state.plMoments.filter(x=>x.id!==parseInt(mid));
+  plFilterMoment = null; save(); closeModal('modal-pl-moment'); renderPlaylist();
+}
+
+// ── SCALETTA ─────────────────────────────────────────────────────────────────
+const SC_TIPOS = {
+  cerimonia:{emoji:'💍',color:'var(--blue-fg)',bg:'var(--blue-bg)'},
+  cocktail: {emoji:'🥂',color:'#C8873A',bg:'#FFF4E6'},
+  cena:     {emoji:'🍽',color:'var(--text2)',bg:'var(--bg2)'},
+  festa:    {emoji:'🎉',color:'var(--gold)',bg:'var(--gold-light,#FFF8EC)'},
+  foto:     {emoji:'📸',color:'#7B3FC4',bg:'#F5EDFF'},
+  altro:    {emoji:'📌',color:'var(--text3)',bg:'var(--bg2)'},
+};
+
+function renderScaletta() {
+  const items = [...state.scaletta].sort((a,b)=>a.ora.localeCompare(b.ora));
+  if(!items.length) { document.getElementById('scaletta-list').innerHTML='<div class="empty">Nessun momento aggiunto</div>'; return; }
+  
+  let html = '';
+  items.forEach((sc,i) => {
+    const tipo = SC_TIPOS[sc.tipo]||SC_TIPOS.altro;
+    const endH = calcEndTime(sc.ora, sc.durata);
+    html += `
+    <div style="display:flex;gap:14px;margin-bottom:4px">
+      <div style="display:flex;flex-direction:column;align-items:center;width:40px;flex-shrink:0">
+        <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap">${sc.ora}</div>
+        <div style="flex:1;width:2px;background:${tipo.color};opacity:0.3;margin:4px 0;min-height:20px"></div>
+      </div>
+      <div style="flex:1;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;cursor:pointer" onclick="editScaletta(${sc.id})">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:18px">${tipo.emoji}</span>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--text)">${sc.nome}</div>
+              ${sc.luogo?`<div style="font-size:12px;color:var(--text2);margin-top:2px">📍 ${sc.luogo}</div>`:''}
+            </div>
+          </div>
+          <span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;background:${tipo.bg};color:${tipo.color};flex-shrink:0;margin-left:8px">${sc.durata}min</span>
+        </div>
+        ${sc.resp?`<div style="font-size:12px;color:var(--text3);margin-top:8px">👤 ${sc.resp}</div>`:''}
+        ${sc.note?`<div style="font-size:12px;color:var(--text2);margin-top:6px;padding:8px;background:var(--bg2);border-radius:8px;border-left:2px solid ${tipo.color}">${sc.note}</div>`:''}
+        <div style="font-size:11px;color:var(--text3);margin-top:8px">Termina alle ${endH}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('scaletta-list').innerHTML = html;
+}
+
+function calcEndTime(ora, durata) {
+  const [h,m] = ora.split(':').map(Number);
+  const tot = h*60+m+(durata||0);
+  return String(Math.floor(tot/60)%24).padStart(2,'0')+':'+String(tot%60).padStart(2,'0');
+}
+
+function addScaletta() {
+  document.getElementById('sc-modal-title').textContent='Aggiungi momento';
+  document.getElementById('sc-ora').value='';
+  document.getElementById('sc-durata').value=30;
+  document.getElementById('sc-nome').value='';
+  document.getElementById('sc-luogo').value='';
+  document.getElementById('sc-resp').value='';
+  document.getElementById('sc-note').value='';
+  document.getElementById('sc-tipo').value='altro';
+  document.getElementById('sc-id').value='';
+  document.getElementById('sc-delete').style.display='none';
+  openModal('modal-scaletta');
+}
+function editScaletta(id) {
+  const sc = state.scaletta.find(x=>x.id===id); if(!sc) return;
+  document.getElementById('sc-modal-title').textContent='Modifica momento';
+  document.getElementById('sc-ora').value=sc.ora;
+  document.getElementById('sc-durata').value=sc.durata;
+  document.getElementById('sc-nome').value=sc.nome;
+  document.getElementById('sc-luogo').value=sc.luogo||'';
+  document.getElementById('sc-resp').value=sc.resp||'';
+  document.getElementById('sc-note').value=sc.note||'';
+  document.getElementById('sc-tipo').value=sc.tipo||'altro';
+  document.getElementById('sc-id').value=id;
+  document.getElementById('sc-delete').style.display='block';
+  openModal('modal-scaletta');
+}
+function saveScaletta() {
+  const nome = document.getElementById('sc-nome').value.trim();
+  const ora  = document.getElementById('sc-ora').value;
+  if(!nome||!ora) { alert('Inserisci almeno orario e nome'); return; }
+  const data = { ora, durata:parseInt(document.getElementById('sc-durata').value)||30, nome, luogo:document.getElementById('sc-luogo').value.trim(), resp:document.getElementById('sc-resp').value.trim(), note:document.getElementById('sc-note').value.trim(), tipo:document.getElementById('sc-tipo').value };
+  const sid = document.getElementById('sc-id').value;
+  if(sid) {
+    const idx = state.scaletta.findIndex(x=>x.id===parseInt(sid));
+    if(idx>=0) state.scaletta[idx]={...state.scaletta[idx],...data};
+  } else {
+    state.scaletta.push({id:state.nextScId++,...data});
+  }
+  save(); closeModal('modal-scaletta'); renderScaletta();
+}
+function deleteScaletta() {
+  const sid = document.getElementById('sc-id').value;
+  if(!sid||!confirm('Eliminare?')) return;
+  state.scaletta = state.scaletta.filter(x=>x.id!==parseInt(sid));
+  save(); closeModal('modal-scaletta'); renderScaletta();
+}
+
+</script>
+
+<!-- LOCATION PRICE MODAL -->
+<div class="overlay" id="modal-location">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title">📍 Prezzo Location</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Il totale si calcola automaticamente in base ai confermati.</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Prezzo adulto (€)</label>
+        <input class="form-input" id="loc-adulto" type="number" min="0" step="1" inputmode="decimal" placeholder="0" oninput="updateLocPreview()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prezzo bambino (€)</label>
+        <input class="form-input" id="loc-bambino" type="number" min="0" step="1" inputmode="decimal" placeholder="0" oninput="updateLocPreview()">
+      </div>
+    </div>
+    <div id="loc-preview" style="background:var(--bg2);border-radius:var(--radius);padding:14px;margin-top:4px;margin-bottom:14px"></div>
+    <button class="btn-primary" onclick="saveLocationPrice()">Salva e aggiorna totale</button>
+    <button class="btn-ghost" onclick="closeModal('modal-location')">Annulla</button>
+  </div>
+</div>
+
+<script>
+// ── LOCATION DINAMICA ──────────────────────────────────────────────────────
+function openLocationModal() {
+  document.getElementById('loc-adulto').value = state.locPrezzoAdulto || '';
+  document.getElementById('loc-bambino').value = state.locPrezzoBambino || '';
+  updateLocPreview();
+  openModal('modal-location');
+}
+
+function updateLocPreview() {
+  const pa = parseFloat(document.getElementById('loc-adulto').value) || 0;
+  const pb = parseFloat(document.getElementById('loc-bambino').value) || 0;
+  const s = stats();
+  const tot = s.siA * pa + s.siB * pb;
+  document.getElementById('loc-preview').innerHTML = `
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);padding:4px 0">
+      <span>Adulti confermati (${s.siA})</span><span style="font-weight:600">${s.siA} × €${pa} = <span style="color:var(--blue-fg)">€${(s.siA*pa).toLocaleString('it-IT')}</span></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);padding:4px 0;border-bottom:0.5px solid var(--border);margin-bottom:8px">
+      <span>Bambini confermati (${s.siB})</span><span style="font-weight:600">${s.siB} × €${pb} = <span style="color:var(--blue-fg)">€${(s.siB*pb).toLocaleString('it-IT')}</span></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:var(--text)">
+      <span>Totale location</span><span style="color:var(--gold)">€${tot.toLocaleString('it-IT')}</span>
+    </div>
+  `;
+}
+
+function saveLocationPrice() {
+  const pa = parseFloat(document.getElementById('loc-adulto').value) || 0;
+  const pb = parseFloat(document.getElementById('loc-bambino').value) || 0;
+  state.locPrezzoAdulto = pa;
+  state.locPrezzoBambino = pb;
+  // update location expense
+  const s = stats();
+  const tot = s.siA * pa + s.siB * pb;
+  const loc = state.expenses.find(e => e.nome === 'Location');
+  if(loc) { loc.importo = tot; loc.note = `€${pa}/adulto · €${pb}/bambino · ${s.siA} adulti + ${s.siB} bambini`; }
+  save(); closeModal('modal-location'); renderAll();
+}
 </script>
 </body>
 </html>
