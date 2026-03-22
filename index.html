@@ -1,415 +1,792 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Olgert & Martina - Il nostro matrimonio</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Matrimonio">
+<meta name="theme-color" content="#ffffff">
+<title>Matrimonio</title>
+<style>
+:root {
+  --gold: #B8924A;
+  --gold-light: #F7F0E4;
+  --gold-dark: #7A5C28;
+  --bg: #ffffff;
+  --bg2: #F8F7F5;
+  --bg3: #F0EDE8;
+  --text: #1A1814;
+  --text2: #6B6560;
+  --text3: #A09890;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.14);
+  --green-bg: #EDFAF3; --green-fg: #1A6B42;
+  --orange-bg: #FFF7E6; --orange-fg: #9C6A00;
+  --red-bg: #FFF0F0; --red-fg: #C0392B;
+  --blue-bg: #EEF4FF; --blue-fg: #1A3B8C;
+  --radius: 14px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121110; --bg2: #1C1B19; --bg3: #252320;
+    --text: #F5F2ED; --text2: #9A948C; --text3: #5A5550;
+    --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14);
+    --gold-light: #2A2218;
+    --green-bg: #0D2B1E; --green-fg: #4ABA80;
+    --orange-bg: #2B1E08; --orange-fg: #FFBA45;
+    --red-bg: #2B0E0E; --red-fg: #FF7070;
+    --blue-bg: #0E1A2B; --blue-fg: #7BA8FF;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; font-family: -apple-system, 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--text); overscroll-behavior: none; }
 
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+/* LAYOUT */
+.app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; max-width: 500px; margin: 0 auto; position: relative; }
+.content { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+.page { display: none; padding: 0 16px 100px; }
+.page.active { display: block; }
 
-  <style>
-    * { box-sizing: border-box; }
+/* TOPBAR */
+.topbar {
+  background: var(--bg);
+  border-bottom: 0.5px solid var(--border);
+  padding: 14px 16px 0;
+  padding-top: calc(14px + env(safe-area-inset-top, 0px));
+  position: sticky; top: 0; z-index: 20;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  background: rgba(var(--bg-rgb, 255,255,255), 0.92);
+}
+.topbar-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.topbar-title { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); }
+.topbar-date { font-size: 12px; color: var(--text3); }
+.tabs { display: flex; gap: 0; }
+.tab {
+  flex: 1; text-align: center; padding: 10px 4px 11px; font-size: 13px; font-weight: 500;
+  color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s; user-select: none;
+}
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #ffffff;
-      color: #c9a24d;
-      font-family: 'Montserrat', sans-serif;
-    }
+/* SECTION TITLE */
+.sec { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin: 20px 0 10px; }
 
-    header {
-      padding: 80px 20px 40px;
-      text-align: center;
-    }
+/* METRIC CARDS */
+.metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
+.metric-card { background: var(--bg2); border-radius: var(--radius); padding: 14px; }
+.metric-label { font-size: 11px; color: var(--text3); margin-bottom: 5px; font-weight: 500; }
+.metric-value { font-size: 26px; font-weight: 700; letter-spacing: -1px; color: var(--text); line-height: 1; }
+.metric-card.green .metric-value { color: var(--green-fg); }
+.metric-card.orange .metric-value { color: var(--orange-fg); }
+.metric-card.red .metric-value { color: var(--red-fg); }
+.metric-card.gold .metric-value { color: var(--gold); }
 
-    header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 3.5rem;
-      margin: 0;
-    }
+/* BUDGET SUMMARY */
+.budget-box { background: var(--bg2); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+.budget-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; }
+.budget-row + .budget-row { border-top: 0.5px solid var(--border); }
+.budget-label { font-size: 13px; color: var(--text2); }
+.budget-val { font-size: 15px; font-weight: 600; }
+.budget-val.green { color: var(--green-fg); }
+.budget-val.orange { color: var(--orange-fg); }
+.budget-val.blue { color: var(--blue-fg); }
+.budget-val.total { font-size: 19px; letter-spacing: -0.5px; color: var(--text); }
 
-    .lang {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 10;
-    }
+/* ALLERGIE */
+.allergia-card { display: flex; align-items: center; gap: 12px; background: var(--red-bg); border-radius: var(--radius); padding: 12px; margin-bottom: 8px; cursor: pointer; }
+.allergia-name { font-size: 14px; font-weight: 600; color: var(--red-fg); }
+.allergia-note { font-size: 12px; color: var(--red-fg); opacity: 0.8; margin-top: 2px; }
 
-    .lang button {
-      margin-left: 5px;
-      padding: 6px 12px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #c9a24d;
-      color: white;
-      font-weight: 500;
-    }
+/* SEARCH & FILTERS */
+.search-wrap { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 12px 0 0; }
+.search-input {
+  width: 100%; padding: 11px 14px; font-size: 16px;
+  border: 0.5px solid var(--border2); border-radius: var(--radius);
+  background: var(--bg2); color: var(--text); outline: none;
+  -webkit-appearance: none; appearance: none;
+}
+.search-input:focus { border-color: var(--gold); }
+.filter-row { display: flex; gap: 6px; padding: 10px 0 4px; overflow-x: auto; scrollbar-width: none; }
+.filter-row::-webkit-scrollbar { display: none; }
+.filter-btn {
+  flex-shrink: 0; font-size: 12px; font-weight: 500; padding: 6px 14px;
+  border-radius: 20px; border: 0.5px solid var(--border2);
+  background: var(--bg); color: var(--text2); cursor: pointer; white-space: nowrap;
+  transition: all 0.12s; -webkit-appearance: none;
+}
+.filter-btn.active { background: var(--gold); color: white; border-color: var(--gold); }
 
-    /* 🎵 PULSANTE MUSICA */
-    .music-btn {
-      position: fixed;
-      top: 70px;
-      right: 20px;
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: #c9a24d;
-      color: white;
-      font-size: 24px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      z-index: 10;
-    }
+/* GUEST LIST */
+.guest-list { display: flex; flex-direction: column; gap: 8px; padding-bottom: 8px; }
+.guest-card {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg); border: 0.5px solid var(--border);
+  border-radius: var(--radius); padding: 13px; cursor: pointer;
+  transition: background 0.1s;
+  -webkit-user-select: none; user-select: none;
+}
+.guest-card:active { background: var(--bg2); }
+.avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0; letter-spacing: -0.5px;
+}
+.guest-info { flex: 1; min-width: 0; }
+.guest-name { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.guest-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.badge { font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 20px; flex-shrink: 0; }
+.badge.si { background: var(--green-bg); color: var(--green-fg); }
+.badge.attesa { background: var(--orange-bg); color: var(--orange-fg); }
+.badge.no { background: var(--red-bg); color: var(--red-fg); }
 
-    .music-btn.paused {
-      background: #bbb;
-    }
+/* EXPENSE LIST */
+.expense-list { display: flex; flex-direction: column; gap: 10px; }
+.exp-card {
+  background: var(--bg); border: 0.5px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px; cursor: pointer;
+  transition: background 0.1s;
+}
+.exp-card:active { background: var(--bg2); }
+.exp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.exp-name { font-size: 15px; font-weight: 600; color: var(--text); }
+.exp-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.exp-amount { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; text-align: right; }
+.exp-amount.tbd { font-size: 13px; font-weight: 500; color: var(--text3); }
+.progress-track { height: 4px; background: var(--bg3); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+.progress-fill { height: 100%; border-radius: 4px; background: var(--green-fg); transition: width 0.4s ease; }
+.exp-row { display: flex; justify-content: space-between; font-size: 12px; padding: 2px 0; }
+.exp-row .lbl { color: var(--text2); }
+.exp-row .val { font-weight: 600; }
+.exp-row .val.green { color: var(--green-fg); }
+.exp-row .val.orange { color: var(--orange-fg); }
 
-    section { padding: 70px 20px; }
-    .container { max-width: 1000px; margin: auto; }
+/* FAB */
+.fab {
+  position: fixed; bottom: calc(80px + var(--safe-bottom)); right: 20px;
+  width: 56px; height: 56px; border-radius: 28px;
+  background: var(--gold); color: white;
+  border: none; font-size: 28px; line-height: 56px; text-align: center;
+  cursor: pointer; box-shadow: 0 4px 20px rgba(184,146,74,0.4);
+  z-index: 15; transition: transform 0.15s, box-shadow 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.fab:active { transform: scale(0.93); box-shadow: 0 2px 10px rgba(184,146,74,0.3); }
 
-    .section-title h2 {
-      text-align: center;
-      font-family: 'Playfair Display', serif;
-      font-size: 2.4rem;
-      margin-bottom: 25px;
-    }
+/* TAB BAR */
+.tabbar {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 500px;
+  background: var(--bg); border-top: 0.5px solid var(--border);
+  display: flex; padding-bottom: var(--safe-bottom);
+  z-index: 20; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.tabbar-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0 8px; cursor: pointer; gap: 3px; }
+.tabbar-icon { font-size: 20px; line-height: 1; }
+.tabbar-label { font-size: 10px; font-weight: 500; color: var(--text3); }
+.tabbar-btn.active .tabbar-label { color: var(--gold); }
 
-    .intro-text {
-      text-align: center;
-      font-style: italic;
-      max-width: 750px;
-      margin: 0 auto 30px;
-      line-height: 1.6;
-    }
+/* MODAL */
+.overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 50;
+  align-items: flex-end; justify-content: center;
+  -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+}
+.overlay.open { display: flex; }
+.sheet {
+  background: var(--bg); border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 500px;
+  max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 8px 20px calc(20px + var(--safe-bottom));
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.handle { width: 36px; height: 4px; background: var(--bg3); border-radius: 2px; margin: 8px auto 16px; }
+.sheet-title { font-size: 18px; font-weight: 700; margin-bottom: 18px; letter-spacing: -0.3px; }
 
-    .gold-line {
-      width: 70px;
-      height: 2px;
-      background: #c9a24d;
-      margin: 0 auto 35px;
-    }
+/* FORM */
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.06em; }
+.form-input, .form-select {
+  width: 100%; padding: 13px 14px; font-size: 16px;
+  border: 0.5px solid var(--border2); border-radius: 12px;
+  background: var(--bg2); color: var(--text); outline: none;
+  -webkit-appearance: none; appearance: none;
+  transition: border-color 0.15s;
+}
+.form-input:focus, .form-select:focus { border-color: var(--gold); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.btn-primary {
+  width: 100%; padding: 15px; font-size: 16px; font-weight: 700;
+  background: var(--gold); color: white; border: none;
+  border-radius: 14px; cursor: pointer; margin-top: 8px;
+  transition: opacity 0.15s; letter-spacing: -0.2px;
+}
+.btn-primary:active { opacity: 0.85; }
+.btn-ghost {
+  width: 100%; padding: 13px; font-size: 15px; font-weight: 500;
+  background: transparent; color: var(--text2);
+  border: 0.5px solid var(--border2); border-radius: 14px;
+  cursor: pointer; margin-top: 8px; transition: background 0.12s;
+}
+.btn-ghost:active { background: var(--bg2); }
+.btn-danger { color: var(--red-fg) !important; border-color: var(--red-fg) !important; }
 
-    .story img,
-    .hotel img {
-      width: 100%;
-      max-width: 420px;
-      max-height: 520px;
-      object-fit: cover;
-      margin: auto;
-      display: block;
-      border-radius: 14px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    }
+/* DETAIL */
+.detail-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.detail-avatar { width: 52px; height: 52px; border-radius: 26px; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.detail-name { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+.detail-cat { font-size: 13px; color: var(--text2); margin-top: 2px; }
+.detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 0.5px solid var(--border); font-size: 14px; }
+.detail-row:last-of-type { border-bottom: none; }
+.detail-key { color: var(--text2); }
+.detail-val { font-weight: 600; }
+.conf-buttons { display: flex; gap: 8px; margin: 16px 0 4px; }
+.conf-btn {
+  flex: 1; padding: 11px 6px; border-radius: 12px;
+  border: 0.5px solid var(--border2); background: var(--bg2);
+  color: var(--text2); font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all 0.12s; text-align: center;
+}
+.conf-btn.sel-si { background: var(--green-bg); color: var(--green-fg); border-color: var(--green-fg); }
+.conf-btn.sel-attesa { background: var(--orange-bg); color: var(--orange-fg); border-color: var(--orange-fg); }
+.conf-btn.sel-no { background: var(--red-bg); color: var(--red-fg); border-color: var(--red-fg); }
+.note-tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 4px 10px; background: var(--red-bg); color: var(--red-fg); border-radius: 20px; margin-top: 4px; }
 
-    .hotels {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 40px;
-      margin-top: 40px;
-    }
-
-    .card {
-      background: #ffffff;
-      padding: 35px;
-      border-radius: 18px;
-      text-align: center;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    }
-
-    .big-date { font-size: 2.2rem; font-weight: 600; }
-    .big-time { font-size: 1.6rem; margin-top: 8px; }
-    .presso { margin: 10px 0; font-style: italic; }
-
-    .countdown { font-size: 1.8rem; margin-top: 20px; }
-
-    .whatsapp a,
-    .maps-btn {
-      display: inline-block;
-      margin-top: 25px;
-      padding: 14px 32px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-size: 1.05rem;
-      color: white;
-    }
-
-    .whatsapp a { background: #25D366; }
-    .maps-btn { background: #c9a24d; }
-
-    iframe {
-      width: 100%;
-      height: 420px;
-      border: 0;
-      border-radius: 18px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    }
-
-    footer {
-      text-align: center;
-      padding: 50px 20px;
-      border-top: 1px solid #eee;
-    }
-  </style>
+.empty { text-align: center; padding: 60px 20px; color: var(--text3); font-size: 14px; }
+</style>
 </head>
-
 <body>
 
-<!-- AUDIO -->
-<audio id="bg-music" autoplay loop muted>
-  <source src="musica1.mp3" type="audio/mpeg">
-</audio>
+<div class="app">
+  <div class="topbar">
+    <div class="topbar-head">
+      <div class="topbar-title">💒 Matrimonio</div>
+      <div class="topbar-date" id="topbar-date"></div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('home')">Riepilogo</div>
+      <div class="tab" onclick="switchTab('invitati')">Invitati</div>
+      <div class="tab" onclick="switchTab('spese')">Spese</div>
+    </div>
+  </div>
 
-<!-- 🎵 PULSANTE MUSICA -->
-<button id="musicBtn" class="music-btn paused" aria-label="Musica">🎵</button>
+  <div class="content">
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <p class="sec" style="margin-top:16px">Invitati</p>
+      <div class="metric-grid" id="home-inv"></div>
+      <p class="sec">Budget</p>
+      <div class="budget-box" id="home-budget"></div>
+      <div class="metric-grid" id="home-extra"></div>
+      <div id="home-allergie"></div>
+    </div>
 
-<script>
-  const music = document.getElementById("bg-music");
-  const musicBtn = document.getElementById("musicBtn");
+    <!-- INVITATI -->
+    <div class="page" id="page-invitati">
+      <div class="search-wrap">
+        <input class="search-input" type="search" placeholder="Cerca nome o categoria..." id="search" oninput="renderGuests()">
+        <div class="filter-row" id="filters"></div>
+      </div>
+      <div class="guest-list" id="glist"></div>
+    </div>
 
-  music.volume = 0.25;
-
-  musicBtn.addEventListener("click", () => {
-    if (music.muted || music.paused) {
-      music.muted = false;
-      music.play();
-      musicBtn.classList.remove("paused");
-    } else {
-      music.pause();
-      musicBtn.classList.add("paused");
-    }
-  });
-</script>
-
-<div class="lang">
-  <button onclick="setLang('it')">IT</button>
-  <button onclick="setLang('sq')">AL</button>
+    <!-- SPESE -->
+    <div class="page" id="page-spese">
+      <p class="sec" style="margin-top:16px">Tocca una voce per modificarla</p>
+      <div class="expense-list" id="elist"></div>
+    </div>
+  </div>
 </div>
 
-<header>
-  <h1>Olgert & Martina</h1>
-</header>
+<!-- FAB -->
+<button class="fab" id="fab" onclick="fabClick()">+</button>
 
-<section>
-  <div class="container">
-    <p id="intro" class="intro-text"></p>
-    <div class="gold-line"></div>
-    <div class="story">
-      <img src="foto1.jpg">
-    </div>
+<!-- TAB BAR -->
+<div class="tabbar">
+  <div class="tabbar-btn active" id="tb-home" onclick="switchTab('home')">
+    <div class="tabbar-icon">📊</div><div class="tabbar-label">Riepilogo</div>
   </div>
-</section>
-
-<section>
-  <div class="container">
-    <div class="section-title">
-      <h2 id="ceremonyTitle"></h2>
-    </div>
-
-    <div class="hotels">
-      <div class="card">
-        <h3 id="ceremonyLabel"></h3>
-        <div id="ceremonyDate" class="big-date"></div>
-        <div id="ceremonyTime" class="big-time"></div>
-        <div id="pressoText" class="presso"></div>
-        <div class="big-date">KATALEA PALACE</div>
-
-        <!-- ✅ AGGIUNTA CALENDARIO -->
-        <a id="calendarBtn" class="maps-btn" download="Matrimonio_Olgert_Martina.ics"></a>
-      </div>
-
-      <div class="card hotel">
-        <img src="foto5.jpg">
-      </div>
-    </div>
+  <div class="tabbar-btn" id="tb-invitati" onclick="switchTab('invitati')">
+    <div class="tabbar-icon">👥</div><div class="tabbar-label">Invitati</div>
   </div>
-</section>
-
-<section>
-  <div class="container">
-    <div class="section-title">
-      <h2 id="hotelTitle"></h2>
-    </div>
-
-    <p id="hotelText" class="intro-text"></p>
-
-    <div class="hotels">
-      <div class="card hotel">
-        <h3>Kodra e Gjelbër</h3>
-        <img src="foto3.jpg">
-
-        <a id="maps-kodra" class="maps-btn" target="_blank"
-           href="https://www.google.com/maps/search/?api=1&query=40.69649249157289,19.53384840975468"></a>
-
-        <div class="whatsapp">
-          <a id="wa-kodra" target="_blank"></a>
-        </div>
-      </div>
-
-      <div class="card hotel">
-        <h3>Yjet Resort</h3>
-        <img src="foto4.jpg">
-
-        <a id="maps-yjet" class="maps-btn" target="_blank"
-           href="https://www.google.com/maps/search/?api=1&query=40.695331115336494,19.529534626706052"></a>
-
-        <div class="whatsapp">
-          <a id="wa-yjet" target="_blank"></a>
-        </div>
-      </div>
-    </div>
+  <div class="tabbar-btn" id="tb-spese" onclick="switchTab('spese')">
+    <div class="tabbar-icon">💰</div><div class="tabbar-label">Spese</div>
   </div>
-</section>
+</div>
 
-<section>
-  <div class="container">
-    <div class="section-title">
-      <h2 id="arrivalTitle"></h2>
+<!-- ADD GUEST MODAL -->
+<div class="overlay" id="modal-guest">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title" id="guest-modal-title">Aggiungi invitato</div>
+    <div class="form-group"><label class="form-label">Nome / Gruppo</label><input class="form-input" id="f-nome" placeholder="Es. Marco e Giulia"></div>
+    <div class="form-group"><label class="form-label">Categoria</label>
+      <select class="form-select" id="f-cat">
+        <option>Amici</option><option>Lavoro</option><option>FISI BABIT</option>
+        <option>FISI MAMIT</option><option>Vicini</option><option>Famiglia</option><option>FAMIGLIA MARTINA</option>
+      </select>
     </div>
-
-    <p id="arrivalText" class="intro-text"></p>
-
-    <iframe src="https://www.google.com/maps?q=40.696138065699465,19.532816837859283&output=embed"></iframe>
-
-    <div style="text-align:center;">
-      <a id="maps-palace" class="maps-btn" target="_blank"
-         href="https://www.google.com/maps/search/?api=1&query=40.696138065699465,19.532816837859283"></a>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Adulti</label><input class="form-input" id="f-adulti" type="number" min="0" value="2" inputmode="numeric"></div>
+      <div class="form-group"><label class="form-label">Bambini</label><input class="form-input" id="f-bambini" type="number" min="0" value="0" inputmode="numeric"></div>
     </div>
+    <div class="form-group"><label class="form-label">Conferma</label>
+      <select class="form-select" id="f-conf">
+        <option value="In attesa">⏳ In attesa</option>
+        <option value="Si">✅ Sì</option>
+        <option value="No">❌ No</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Hotel (opzionale)</label><input class="form-input" id="f-hotel" placeholder="Nome hotel"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Notti</label><input class="form-input" id="f-notti" type="number" min="0" value="0" inputmode="numeric"></div>
+      <div class="form-group"><label class="form-label">Note / Allergie</label><input class="form-input" id="f-note" placeholder="Vegano..."></div>
+    </div>
+    <input type="hidden" id="f-id">
+    <button class="btn-primary" onclick="saveGuest()">Salva</button>
+    <button class="btn-ghost" onclick="closeModal('modal-guest')">Annulla</button>
   </div>
-</section>
+</div>
 
-<section>
-  <div class="container" style="text-align:center;">
-    <div class="section-title">
-      <h2 id="rsvpTitle"></h2>
+<!-- EXPENSE MODAL -->
+<div class="overlay" id="modal-expense">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title" id="exp-modal-title">Aggiungi spesa</div>
+    <div class="form-group"><label class="form-label">Voce</label><input class="form-input" id="e-nome" placeholder="Es. Fotografo"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Importo totale (€)</label><input class="form-input" id="e-importo" type="number" min="0" step="0.01" inputmode="decimal"></div>
+      <div class="form-group"><label class="form-label">Acconto pagato (€)</label><input class="form-input" id="e-acconto" type="number" min="0" step="0.01" value="0" inputmode="decimal"></div>
     </div>
-
-    <div class="whatsapp">
-      <a id="main-wa" href="https://wa.me/393297544593" target="_blank"></a>
-    </div>
-
-    <div id="countdown" class="countdown"></div>
+    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="e-note" placeholder="Dettagli..."></div>
+    <input type="hidden" id="e-id">
+    <button class="btn-primary" onclick="saveExpense()">Salva</button>
+    <button class="btn-ghost btn-danger" id="e-delete-btn" onclick="deleteExpense()" style="display:none">Elimina spesa</button>
+    <button class="btn-ghost" onclick="closeModal('modal-expense')">Annulla</button>
   </div>
-</section>
+</div>
 
-<footer>
-  <p id="footerText"></p>
-</footer>
+<!-- GUEST DETAIL MODAL -->
+<div class="overlay" id="modal-detail">
+  <div class="sheet" id="detail-content"></div>
+</div>
 
 <script>
-  const weddingDate = new Date("2026-04-25T11:00:00");
+// ── DATA ─────────────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'matrimonio_v1';
 
-  function updateCountdown(lang) {
-    const days = Math.ceil((weddingDate - new Date()) / (1000 * 60 * 60 * 24));
-    document.getElementById("countdown").innerHTML =
-      lang === 'sq'
-        ? "<strong>" + days + "</strong><br>ditë deri në po-në tonë"
-        : "<strong>" + days + "</strong><br>giorni al nostro sì";
+const CAT_COLORS = {
+  "Amici": {bg:"#E9F7EF",fg:"#1E8449"}, "Lavoro": {bg:"#E8F4FD",fg:"#1A5276"},
+  "FISI BABIT": {bg:"#FDF2E9",fg:"#935116"}, "FISI MAMIT": {bg:"#F9EBEA",fg:"#922B21"},
+  "Vicini": {bg:"#F4ECF7",fg:"#76448A"}, "Famiglia": {bg:"#EBF5FB",fg:"#1B4F72"},
+  "FAMIGLIA MARTINA": {bg:"#F5EEF8",fg:"#6C3483"}
+};
+
+const DEFAULT_GUESTS = [
+  {id:1,nome:"Marco Sonni e Giuditta Braccia",cat:"Lavoro",adulti:2,bambini:0,conf:"Si",hotel:"Kodra e Gjelber",notti:2,note:""},
+  {id:2,nome:"Gianfranco Zizzo e Valeria Marci",cat:"Lavoro",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:3,nome:"Giovanni Basile e Silvia Rinaldi",cat:"Lavoro",adulti:2,bambini:0,conf:"Si",hotel:"Yjet Resort",notti:2,note:""},
+  {id:4,nome:"Tiko e Kristina",cat:"Amici",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:5,nome:"Pedro e Roy",cat:"Amici",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:6,nome:"Lefterie dhe Altin",cat:"FISI BABIT",adulti:3,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:7,nome:"Elona dhe Xhaferr",cat:"FISI MAMIT",adulti:3,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:8,nome:"Leandro dhe Alex",cat:"Amici",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:9,nome:"Keni dhe Brikena",cat:"Amici",adulti:2,bambini:2,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:10,nome:"Antonio dhe Nusja",cat:"Amici",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:11,nome:"Ledi",cat:"Amici",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:12,nome:"Gezim Balla",cat:"FISI MAMIT",adulti:4,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:13,nome:"Geni Balla",cat:"FISI MAMIT",adulti:3,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:14,nome:"Rina dhe Madrit",cat:"FISI MAMIT",adulti:4,bambini:2,conf:"Si",hotel:"",notti:0,note:""},
+  {id:15,nome:"Francesco Lacava",cat:"Lavoro",adulti:1,bambini:0,conf:"No",hotel:"",notti:0,note:""},
+  {id:16,nome:"Armando e Claudia",cat:"Lavoro",adulti:2,bambini:0,conf:"No",hotel:"",notti:0,note:""},
+  {id:17,nome:"Antonio",cat:"Lavoro",adulti:1,bambini:0,conf:"No",hotel:"",notti:0,note:"Allergico a fave e piselli"},
+  {id:18,nome:"Vincenzo e Giada",cat:"Amici",adulti:2,bambini:1,conf:"No",hotel:"",notti:0,note:""},
+  {id:19,nome:"Mazia",cat:"Lavoro",adulti:1,bambini:0,conf:"No",hotel:"",notti:0,note:""},
+  {id:20,nome:"Giulia",cat:"Lavoro",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:21,nome:"Arditi dhe Griselda",cat:"FISI BABIT",adulti:2,bambini:1,conf:"Si",hotel:"",notti:0,note:""},
+  {id:22,nome:"Fabi/Xhevahir",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:23,nome:"Brikel",cat:"Amici",adulti:1,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:24,nome:"Frisi/Halla",cat:"FISI BABIT",adulti:4,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:25,nome:"Gianni",cat:"Lavoro",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:26,nome:"Emiljani",cat:"FISI BABIT",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:27,nome:"Sandri",cat:"Amici",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:28,nome:"Feti",cat:"Amici",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:29,nome:"Gili",cat:"Amici",adulti:1,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:30,nome:"Duri",cat:"Amici",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:31,nome:"Engli/Kristina",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:32,nome:"Alma",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:33,nome:"Ada/Redi",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:34,nome:"Behar",cat:"FISI BABIT",adulti:2,bambini:1,conf:"Si",hotel:"",notti:0,note:""},
+  {id:35,nome:"Naci",cat:"FISI BABIT",adulti:4,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:36,nome:"Altin/Tezja",cat:"FISI MAMIT",adulti:3,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:37,nome:"Nardi",cat:"FISI BABIT",adulti:3,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:38,nome:"Marsela",cat:"FISI BABIT",adulti:4,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:39,nome:"Shyqa",cat:"FISI BABIT",adulti:4,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:40,nome:"Bardhul",cat:"FISI MAMIT",adulti:4,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:41,nome:"Mersin",cat:"FISI MAMIT",adulti:3,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:42,nome:"Tezja Lahe",cat:"FISI MAMIT",adulti:2,bambini:1,conf:"Si",hotel:"",notti:0,note:""},
+  {id:43,nome:"Lona",cat:"FISI BABIT",adulti:2,bambini:1,conf:"No",hotel:"",notti:0,note:""},
+  {id:44,nome:"Olta",cat:"FISI BABIT",adulti:2,bambini:0,conf:"No",hotel:"",notti:0,note:""},
+  {id:45,nome:"Deti",cat:"FISI BABIT",adulti:4,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:46,nome:"Astrit Ferhati",cat:"FISI BABIT",adulti:2,bambini:1,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:47,nome:"Era/Reni",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:48,nome:"Rita",cat:"FISI MAMIT",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:49,nome:"Petrit",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:50,nome:"Naim",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:51,nome:"Sabri",cat:"FISI BABIT",adulti:4,bambini:2,conf:"Si",hotel:"",notti:0,note:""},
+  {id:52,nome:"Avni",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:53,nome:"Ziku",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:54,nome:"Naim 2",cat:"FISI BABIT",adulti:4,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:55,nome:"Safet",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:56,nome:"Qemal",cat:"FISI BABIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:57,nome:"Maliq",cat:"FISI BABIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:58,nome:"Xhafa",cat:"FISI BABIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:59,nome:"Qamil",cat:"FISI BABIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:60,nome:"Niku",cat:"FISI BABIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:61,nome:"Zyber",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:62,nome:"Pellumb",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:63,nome:"Ruzhdi",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:64,nome:"Bujar",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:65,nome:"Met Balla",cat:"FISI MAMIT",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:66,nome:"Dik",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:67,nome:"Ramiz",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:68,nome:"Hajdar",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:69,nome:"Tomorr",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:70,nome:"Besnik",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:71,nome:"Zenel",cat:"FISI BABIT",adulti:3,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:72,nome:"Dervish",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:73,nome:"Gezim Dervishi",cat:"FISI BABIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:74,nome:"Bahush",cat:"Vicini",adulti:3,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:75,nome:"Ismet",cat:"Vicini",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:76,nome:"Rronja",cat:"Vicini",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:77,nome:"Fadil",cat:"Vicini",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:78,nome:"Lushi",cat:"Vicini",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:79,nome:"Tili",cat:"Vicini",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:80,nome:"Zabit",cat:"Vicini",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:81,nome:"Tefta",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:82,nome:"Besa",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:83,nome:"Irma",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:84,nome:"Keta",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:85,nome:"Martina",cat:"Famiglia",adulti:5,bambini:2,conf:"Si",hotel:"",notti:0,note:""},
+  {id:86,nome:"Zia Martina",cat:"Famiglia",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:87,nome:"Mauro/Giulia",cat:"Lavoro",adulti:2,bambini:2,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:88,nome:"Fabrizio/Jessica",cat:"Lavoro",adulti:2,bambini:1,conf:"Si",hotel:"",notti:0,note:""},
+  {id:89,nome:"Andrea",cat:"Lavoro",adulti:1,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:90,nome:"Gianluca",cat:"Lavoro",adulti:1,bambini:0,conf:"Si",hotel:"",notti:0,note:"Vegano"},
+  {id:91,nome:"Patrizio",cat:"Lavoro",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:92,nome:"Arianna",cat:"Lavoro",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:93,nome:"Giorgia",cat:"FAMIGLIA MARTINA",adulti:1,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
+  {id:94,nome:"Loli",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+  {id:95,nome:"Zoni",cat:"FISI MAMIT",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
+];
+
+const DEFAULT_EXPENSES = [
+  {id:1,nome:"Location",importo:8500,acconto:0,note:"Saldo da pagare · 190 persone"},
+  {id:2,nome:"Decorazioni",importo:2500,acconto:0,note:""},
+  {id:3,nome:"Fotografo",importo:1000,acconto:200,note:"Il cugino"},
+  {id:4,nome:"Abito Sposo",importo:1000,acconto:0,note:""},
+  {id:5,nome:"Fiori",importo:0,acconto:0,note:"Da definire"},
+  {id:6,nome:"Musica / DJ",importo:650,acconto:150,note:"Pagato da noi"},
+  {id:7,nome:"Partecipazioni",importo:96,acconto:0,note:""},
+  {id:8,nome:"Bomboniere",importo:438,acconto:138,note:"Pagato da noi"},
+  {id:9,nome:"Trucco e Parrucco",importo:200,acconto:50,note:""},
+  {id:10,nome:"Auto Sposi",importo:0,acconto:0,note:"Da definire"},
+  {id:11,nome:"Torta",importo:550,acconto:0,note:""},
+];
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (s && s.guests && s.expenses) return s;
+  } catch(e) {}
+  return { guests: DEFAULT_GUESTS.map(g=>({...g})), expenses: DEFAULT_EXPENSES.map(e=>({...e})), nextGid: 200, nextEid: 100 };
+}
+function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
+
+let state = load();
+let activeTab = 'home';
+let filterConf = 'tutti';
+
+// ── UTILS ────────────────────────────────────────────────────────────────────
+function initials(name) {
+  return name.split(/[\s\/eedhe&]+/i).filter(Boolean).slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '?';
+}
+function fmt(n) {
+  return '€' + Math.round(n||0).toLocaleString('it-IT');
+}
+function fmtDec(n) {
+  return '€' + (n||0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+function stats() {
+  const g = state.guests;
+  const si = g.filter(x=>x.conf==='Si'), att = g.filter(x=>x.conf==='In attesa'), no = g.filter(x=>x.conf==='No');
+  return {
+    siA: si.reduce((a,x)=>a+x.adulti,0), siB: si.reduce((a,x)=>a+x.bambini,0), siG: si.length,
+    attA: att.reduce((a,x)=>a+x.adulti,0), attB: att.reduce((a,x)=>a+x.bambini,0), attG: att.length,
+    noG: no.length, noA: no.reduce((a,x)=>a+x.adulti,0),
+  };
+}
+function budget() {
+  const e = state.expenses;
+  const tot = e.reduce((a,x)=>a+(x.importo||0),0);
+  const pag = e.reduce((a,x)=>a+(x.acconto||0),0);
+  return { tot, pag, saldo: tot-pag };
+}
+
+// ── RENDER HOME ───────────────────────────────────────────────────────────────
+function renderHome() {
+  const s = stats(), b = budget();
+  const confTot = s.siA + s.siB;
+  const cpp = confTot > 0 ? Math.round(b.tot / confTot) : 0;
+
+  document.getElementById('home-inv').innerHTML = `
+    <div class="metric-card green"><div class="metric-label">Confermati</div><div class="metric-value">${s.siA+s.siB}</div></div>
+    <div class="metric-card orange"><div class="metric-label">In attesa</div><div class="metric-value">${s.attA+s.attB}</div></div>
+    <div class="metric-card"><div class="metric-label">Adulti conf.</div><div class="metric-value">${s.siA}</div></div>
+    <div class="metric-card"><div class="metric-label">Bambini conf.</div><div class="metric-value">${s.siB}</div></div>
+  `;
+  document.getElementById('home-budget').innerHTML = `
+    <div class="budget-row"><span class="budget-label">Budget totale</span><span class="budget-val blue">${fmt(b.tot)}</span></div>
+    <div class="budget-row"><span class="budget-label">Acconti pagati</span><span class="budget-val green">${fmt(b.pag)}</span></div>
+    <div class="budget-row"><span class="budget-label">Saldo restante</span><span class="budget-val orange total">${fmt(b.saldo)}</span></div>
+  `;
+  document.getElementById('home-extra').innerHTML = `
+    <div class="metric-card gold"><div class="metric-label">Costo/persona</div><div class="metric-value" style="font-size:20px">${fmt(cpp)}</div></div>
+    <div class="metric-card red"><div class="metric-label">Non vengono</div><div class="metric-value">${s.noG} gr.</div></div>
+  `;
+  const all = state.guests.filter(g=>g.note && g.conf!=='No');
+  document.getElementById('home-allergie').innerHTML = all.length
+    ? `<p class="sec">Allergie & note</p>` + all.map(g=>`
+      <div class="allergia-card" onclick="openDetail(${g.id})">
+        <div class="avatar" style="background:${(CAT_COLORS[g.cat]||{bg:'#eee'}).bg};color:${(CAT_COLORS[g.cat]||{fg:'#666'}).fg};width:36px;height:36px;font-size:12px">${initials(g.nome)}</div>
+        <div><div class="allergia-name">${g.nome}</div><div class="allergia-note">${g.note}</div></div>
+      </div>`).join('') : '';
+}
+
+// ── RENDER GUESTS ─────────────────────────────────────────────────────────────
+function renderGuests() {
+  const q = (document.getElementById('search').value||'').toLowerCase();
+  const filters = ['tutti','✅ Sì','⏳ Attesa','❌ No'];
+  document.getElementById('filters').innerHTML = filters.map(f=>`
+    <button class="filter-btn ${filterConf===f?'active':''}" onclick="setFilter('${f}')">${f}</button>`).join('');
+
+  const filtered = state.guests.filter(g=>{
+    const ms = !q || g.nome.toLowerCase().includes(q) || g.cat.toLowerCase().includes(q);
+    const ml = filterConf==='tutti' ||
+      (filterConf==='✅ Sì' && g.conf==='Si') ||
+      (filterConf==='⏳ Attesa' && g.conf==='In attesa') ||
+      (filterConf==='❌ No' && g.conf==='No');
+    return ms && ml;
+  });
+
+  if(!filtered.length) { document.getElementById('glist').innerHTML='<div class="empty">Nessun invitato trovato</div>'; return; }
+  const cc = CAT_COLORS;
+  document.getElementById('glist').innerHTML = filtered.map(g=>{
+    const c = cc[g.cat]||{bg:'#eee',fg:'#666'};
+    const bc = g.conf==='Si'?'si':g.conf==='In attesa'?'attesa':'no';
+    const bl = g.conf==='Si'?'✅':g.conf==='In attesa'?'⏳':'❌';
+    const tot = g.adulti+g.bambini;
+    return `<div class="guest-card" onclick="openDetail(${g.id})">
+      <div class="avatar" style="background:${c.bg};color:${c.fg}">${initials(g.nome)}</div>
+      <div class="guest-info">
+        <div class="guest-name">${g.nome}</div>
+        <div class="guest-sub">${g.cat} · ${tot} pers.</div>
+      </div>
+      <div class="badge ${bc}">${bl}</div>
+    </div>`;
+  }).join('');
+}
+function setFilter(f) { filterConf=f; renderGuests(); }
+
+// ── RENDER EXPENSES ────────────────────────────────────────────────────────────
+function renderExpenses() {
+  document.getElementById('elist').innerHTML = state.expenses.map(e=>{
+    const saldo = Math.max(0,(e.importo||0)-(e.acconto||0));
+    const pct = e.importo>0 ? Math.min(100,Math.round((e.acconto/e.importo)*100)) : 0;
+    const tbd = !e.importo;
+    return `<div class="exp-card" onclick="openExpenseEdit(${e.id})">
+      <div class="exp-header">
+        <div><div class="exp-name">${e.nome}</div>${e.note?`<div class="exp-sub">${e.note}</div>`:''}</div>
+        <div class="exp-amount ${tbd?'tbd':''}">${tbd?'Da definire':fmt(e.importo)}</div>
+      </div>
+      ${!tbd?`
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="exp-row"><span class="lbl">Acconto pagato</span><span class="val green">${fmt(e.acconto)}</span></div>
+      <div class="exp-row"><span class="lbl">Saldo restante</span><span class="val ${saldo>0?'orange':''}">${saldo>0?fmt(saldo):'Saldato ✓'}</span></div>
+      `:`<div class="exp-row"><span class="lbl" style="font-style:italic">Tocca per aggiungere l'importo</span></div>`}
+    </div>`;
+  }).join('');
+}
+
+// ── GUEST DETAIL ──────────────────────────────────────────────────────────────
+function openDetail(id) {
+  const g = state.guests.find(x=>x.id===id); if(!g) return;
+  const c = CAT_COLORS[g.cat]||{bg:'#eee',fg:'#666'};
+  const csel = {Si:'sel-si','In attesa':'sel-attesa',No:'sel-no'};
+  document.getElementById('detail-content').innerHTML = `
+    <div class="handle"></div>
+    <div class="detail-header">
+      <div class="detail-avatar" style="background:${c.bg};color:${c.fg}">${initials(g.nome)}</div>
+      <div><div class="detail-name">${g.nome}</div><div class="detail-cat">${g.cat}</div></div>
+    </div>
+    <div class="detail-row"><span class="detail-key">Adulti</span><span class="detail-val">${g.adulti}</span></div>
+    <div class="detail-row"><span class="detail-key">Bambini</span><span class="detail-val">${g.bambini||'—'}</span></div>
+    ${g.hotel?`<div class="detail-row"><span class="detail-key">Hotel</span><span class="detail-val">${g.hotel}</span></div>`:''}
+    ${g.notti?`<div class="detail-row"><span class="detail-key">Notti</span><span class="detail-val">${g.notti}</span></div>`:''}
+    ${g.note?`<div class="detail-row"><span class="detail-key">Note</span><span class="detail-val">${g.note}</span></div>`:''}
+    <p style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 8px">Aggiorna conferma</p>
+    <div class="conf-buttons">
+      <button class="conf-btn ${g.conf==='Si'?csel['Si']:''}" onclick="setConf(${id},'Si')">✅ Sì</button>
+      <button class="conf-btn ${g.conf==='In attesa'?csel['In attesa']:''}" onclick="setConf(${id},'In attesa')">⏳ Attesa</button>
+      <button class="conf-btn ${g.conf==='No'?csel['No']:''}" onclick="setConf(${id},'No')">❌ No</button>
+    </div>
+    <button class="btn-ghost" onclick="openGuestEdit(${id});closeModal('modal-detail')" style="margin-top:12px">Modifica dettagli</button>
+    <button class="btn-ghost btn-danger" onclick="deleteGuest(${id})">Elimina</button>
+    <button class="btn-ghost" onclick="closeModal('modal-detail')">Chiudi</button>
+  `;
+  openModal('modal-detail');
+}
+function setConf(id, conf) {
+  const g = state.guests.find(x=>x.id===id); if(!g) return;
+  g.conf=conf; save(); closeModal('modal-detail'); renderAll();
+}
+function deleteGuest(id) {
+  if(!confirm('Eliminare questo invitato?')) return;
+  state.guests = state.guests.filter(x=>x.id!==id);
+  save(); closeModal('modal-detail'); renderAll();
+}
+
+// ── GUEST FORM ────────────────────────────────────────────────────────────────
+function fabClick() {
+  if(activeTab==='spese') { openExpenseAdd(); return; }
+  openGuestAdd();
+}
+function openGuestAdd() {
+  document.getElementById('guest-modal-title').textContent='Aggiungi invitato';
+  document.getElementById('f-nome').value='';
+  document.getElementById('f-cat').value='Amici';
+  document.getElementById('f-adulti').value=2;
+  document.getElementById('f-bambini').value=0;
+  document.getElementById('f-conf').value='In attesa';
+  document.getElementById('f-hotel').value='';
+  document.getElementById('f-notti').value=0;
+  document.getElementById('f-note').value='';
+  document.getElementById('f-id').value='';
+  openModal('modal-guest');
+}
+function openGuestEdit(id) {
+  const g = state.guests.find(x=>x.id===id); if(!g) return;
+  document.getElementById('guest-modal-title').textContent='Modifica invitato';
+  document.getElementById('f-nome').value=g.nome;
+  document.getElementById('f-cat').value=g.cat;
+  document.getElementById('f-adulti').value=g.adulti;
+  document.getElementById('f-bambini').value=g.bambini;
+  document.getElementById('f-conf').value=g.conf;
+  document.getElementById('f-hotel').value=g.hotel||'';
+  document.getElementById('f-notti').value=g.notti||0;
+  document.getElementById('f-note').value=g.note||'';
+  document.getElementById('f-id').value=id;
+  openModal('modal-guest');
+}
+function saveGuest() {
+  const nome = document.getElementById('f-nome').value.trim();
+  if(!nome) { alert('Inserisci un nome'); return; }
+  const data = {
+    nome, cat: document.getElementById('f-cat').value,
+    adulti: parseInt(document.getElementById('f-adulti').value)||0,
+    bambini: parseInt(document.getElementById('f-bambini').value)||0,
+    conf: document.getElementById('f-conf').value,
+    hotel: document.getElementById('f-hotel').value.trim(),
+    notti: parseInt(document.getElementById('f-notti').value)||0,
+    note: document.getElementById('f-note').value.trim(),
+  };
+  const eid = document.getElementById('f-id').value;
+  if(eid) {
+    const idx = state.guests.findIndex(x=>x.id===parseInt(eid));
+    if(idx>=0) state.guests[idx]={...state.guests[idx],...data};
+  } else {
+    state.guests.push({id: state.nextGid++, ...data});
   }
+  save(); closeModal('modal-guest'); renderAll();
+}
 
-  /* ✅ AGGIUNTA CALENDARIO */
-  function generateICS(lang) {
-    const title =
-      lang === "sq"
-        ? "Dasma e Olgert & Martina"
-        : "Matrimonio Olgert & Martina";
-
-    const description =
-      lang === "sq"
-        ? "Ceremonia dhe dreka në Katalea Palace"
-        : "Cerimonia e ricevimento presso Katalea Palace";
-
-    const ics =
-`BEGIN:VCALENDAR
-VERSION:2.0
-BEGIN:VEVENT
-SUMMARY:${title}
-DESCRIPTION:${description}
-LOCATION:Katalea Palace, Albania
-DTSTART:20260425T090000Z
-DTEND:20260425T150000Z
-END:VEVENT
-END:VCALENDAR`;
-
-    document.getElementById("calendarBtn").href =
-      URL.createObjectURL(new Blob([ics], { type: "text/calendar;charset=utf-8" }));
+// ── EXPENSE FORM ──────────────────────────────────────────────────────────────
+function openExpenseAdd() {
+  document.getElementById('exp-modal-title').textContent='Aggiungi spesa';
+  document.getElementById('e-nome').value='';
+  document.getElementById('e-importo').value='';
+  document.getElementById('e-acconto').value='0';
+  document.getElementById('e-note').value='';
+  document.getElementById('e-id').value='';
+  document.getElementById('e-delete-btn').style.display='none';
+  openModal('modal-expense');
+}
+function openExpenseEdit(id) {
+  const e = state.expenses.find(x=>x.id===id); if(!e) return;
+  document.getElementById('exp-modal-title').textContent='Modifica spesa';
+  document.getElementById('e-nome').value=e.nome;
+  document.getElementById('e-importo').value=e.importo||'';
+  document.getElementById('e-acconto').value=e.acconto||0;
+  document.getElementById('e-note').value=e.note||'';
+  document.getElementById('e-id').value=id;
+  document.getElementById('e-delete-btn').style.display='block';
+  openModal('modal-expense');
+}
+function saveExpense() {
+  const nome = document.getElementById('e-nome').value.trim();
+  if(!nome) { alert('Inserisci un nome'); return; }
+  const data = {
+    nome,
+    importo: parseFloat(document.getElementById('e-importo').value)||0,
+    acconto: parseFloat(document.getElementById('e-acconto').value)||0,
+    note: document.getElementById('e-note').value.trim(),
+  };
+  const eid = document.getElementById('e-id').value;
+  if(eid) {
+    const idx = state.expenses.findIndex(x=>x.id===parseInt(eid));
+    if(idx>=0) state.expenses[idx]={...state.expenses[idx],...data};
+  } else {
+    state.expenses.push({id: state.nextEid++, ...data});
   }
+  save(); closeModal('modal-expense'); renderAll();
+}
+function deleteExpense() {
+  const eid = document.getElementById('e-id').value;
+  if(!eid || !confirm('Eliminare questa spesa?')) return;
+  state.expenses = state.expenses.filter(x=>x.id!==parseInt(eid));
+  save(); closeModal('modal-expense'); renderAll();
+}
 
-  function setLang(lang) {
-    updateCountdown(lang);
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(el=>{
+  el.addEventListener('click', e=>{ if(e.target===el) el.classList.remove('open'); });
+});
 
-    const msg =
-      lang === "sq"
-        ? "Përshëndetje, do të dëshironim informacion për rezervimin e dhomave për dasmën e Olgert & Martina."
-        : "Ciao, vorremmo informazioni per la prenotazione delle stanze in occasione del matrimonio di Olgert & Martina.";
+// ── TAB ───────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  activeTab=tab;
+  ['home','invitati','spese'].forEach(t=>{
+    document.getElementById('page-'+t).classList.toggle('active', t===tab);
+    document.getElementById('tb-'+t).classList.toggle('active', t===tab);
+  });
+  document.querySelectorAll('.tab').forEach((el,i)=>{
+    el.classList.toggle('active', ['home','invitati','spese'][i]===tab);
+  });
+  renderAll();
+}
 
-    document.getElementById("intro").innerText =
-      lang === "sq"
-        ? "Me shumë gëzim ju ftojmë të ndani me ne ditën më të rëndësishme të jetës sonë."
-        : "Con grande gioia vi invitiamo a condividere con noi il giorno più importante della nostra vita.";
+function renderAll() { renderHome(); renderGuests(); renderExpenses(); }
 
-    document.getElementById("ceremonyTitle").innerText =
-      lang === "sq" ? "Ceremonia & Dreka" : "Cerimonia & Ricevimento";
-    document.getElementById("ceremonyLabel").innerText =
-      lang === "sq" ? "Ceremonia do të zhvillohet" : "La cerimonia si terrà";
-    document.getElementById("ceremonyDate").innerText =
-      lang === "sq" ? "E shtunë, 25 Prill" : "Sabato 25 Aprile";
-    document.getElementById("ceremonyTime").innerText =
-      lang === "sq" ? "Ora 11:00" : "Ore 11:00";
-    document.getElementById("pressoText").innerText =
-      lang === "sq" ? "tek" : "presso";
-
-    document.getElementById("hotelTitle").innerText =
-      lang === "sq" ? "Struktura të rekomanduara për qëndrim" : "Strutture consigliate per alloggiare";
-
-    document.getElementById("hotelText").innerHTML =
-      lang === "sq"
-        ? "Hotelet e listuara ndodhen pranë Katalea Palace. Mund t’ju ndihmojmë për rezervimin e dhomave ose mund të kontaktoni direkt strukturat.<br><br><strong>Pagesa bëhet në check-in: 30 € për natë.</strong>"
-        : "Gli alberghi sotto elencati si trovano a pochi metri dal Katalea Palace. Ve li consigliamo per la comodità, ma soprattutto perché abbiamo contatti diretti con i proprietari e possiamo aiutarvi nella prenotazione delle stanze, se necessario. Qualora invece preferiste organizzarvi in autonomia, di seguito trovate i contatti di riferimento.<br><br><strong>Pagamento al check-in: 30 € a notte.</strong>";
-
-    document.getElementById("arrivalTitle").innerText =
-      lang === "sq" ? "Si të mbërrini" : "Come arrivare";
-
-    document.getElementById("arrivalText").innerText =
-      lang === "sq"
-        ? "Katalea Palace ndodhet rreth 1 orë e 30 minuta nga Aeroporti i Tiranës dhe arrihet lehtësisht me makinë. Për të lëvizur me komoditet të plotë, rekomandojmë të merrni me qira një makinë me marrje dhe dorëzim direkt në aeroport dhe ta rezervoni disa ditë më parë. Struktura disponon gjithashtu një parkim të madh."
-        : "Katalea Palace dista circa 1 ora e 30 minuti dall’Aeroporto di Tirana ed è facilmente raggiungibile in auto. Per muoversi in totale comodità, consigliamo di noleggiare un’auto con ritiro e riconsegna direttamente in aeroporto e di prenotare con qualche giorno di anticipo. La struttura dispone inoltre di un ampio parcheggio.";
-
-    document.getElementById("rsvpTitle").innerText =
-      lang === "sq" ? "Konfirmo pjesëmarrjen tende" : "Conferma la tua presenza";
-
-    document.getElementById("footerText").innerText =
-      lang === "sq" ? "Me dashuri, Olgert & Martina" : "Con amore, Olgert & Martina";
-
-    document.getElementById("maps-kodra").innerText =
-    document.getElementById("maps-yjet").innerText =
-    document.getElementById("maps-palace").innerText =
-      lang === "sq" ? "Hap në Google Maps" : "Apri su Google Maps";
-
-    document.getElementById("wa-kodra").innerText =
-    document.getElementById("wa-yjet").innerText =
-      lang === "sq" ? "Kontakto në WhatsApp" : "Contatta su WhatsApp";
-
-    document.getElementById("main-wa").innerText =
-      lang === "sq" ? "Na shkruani në WhatsApp" : "Scrivici su WhatsApp";
-
-    document.getElementById("wa-kodra").href =
-      "https://wa.me/355694650614?text=" + encodeURIComponent(msg);
-    document.getElementById("wa-yjet").href =
-      "https://wa.me/355696807777?text=" + encodeURIComponent(msg);
-
-    /* ✅ AGGIUNTA CALENDARIO */
-    document.getElementById("calendarBtn").innerText =
-      lang === "sq" ? "Shto në kalendar" : "Aggiungi al calendario";
-
-    generateICS(lang);
-  }
-
-  setLang("it");
+// ── INIT ──────────────────────────────────────────────────────────────────────
+const today = new Date();
+document.getElementById('topbar-date').textContent = today.toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'});
+renderAll();
 </script>
-
 </body>
 </html>
