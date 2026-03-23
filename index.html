@@ -309,7 +309,7 @@ html, body { height: 100%; font-family: -apple-system, 'Helvetica Neue', sans-se
         <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px" id="pl-moment-filters"></div>
       </div>
       <div style="position:relative;margin-bottom:12px">
-        <input class="search-input" id="pl-search" placeholder="Cerca su Spotify..." style="padding-right:48px" oninput="spotifySearch()">
+        <input class="search-input" id="pl-search" placeholder="Cerca artista o canzone..." style="padding-right:48px" oninput="spotifySearch()">
         <div id="pl-search-spinner" style="display:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px">⏳</div>
       </div>
       <div id="pl-search-results"></div>
@@ -1413,47 +1413,48 @@ state = load();
 let plFilterMoment = null;
 let searchTimer = null;
 
+// Ricerca MusicBrainz (aperta, no API key) + link Spotify diretto
 async function spotifySearch() {
   const q = document.getElementById('pl-search').value.trim();
   clearTimeout(searchTimer);
-  if(q.length < 2) { document.getElementById('pl-search-results').innerHTML=''; return; }
+  document.getElementById('pl-search-results').innerHTML = '';
+  if(q.length < 2) return;
   searchTimer = setTimeout(async () => {
-    document.getElementById('pl-search-spinner').style.display='block';
+    document.getElementById('pl-search-spinner').style.display = 'block';
     try {
-      // Use iTunes Search API (free, no auth needed, returns music data)
-      const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&limit=10&country=it`);
+      const url = `https://musicbrainz.org/ws/2/recording/?query=${encodeURIComponent(q)}&limit=12&fmt=json`;
+      const res = await fetch(url, {headers:{'User-Agent':'MatrimonioApp/1.0 (wedding-planner)'}});
       const data = await res.json();
-      renderSearchResults(data.results||[]);
+      const recordings = (data.recordings||[]).filter(r=>r.title && r['artist-credit']&&r['artist-credit'][0]);
+      renderSearchResults(recordings);
     } catch(e) {
-      document.getElementById('pl-search-results').innerHTML = '<div style="font-size:13px;color:var(--text3);padding:12px 0">Errore di rete. Riprova.</div>';
+      document.getElementById('pl-search-results').innerHTML = '<div style="font-size:13px;color:var(--text3);padding:12px 0;text-align:center">Errore di rete — controlla la connessione</div>';
     }
-    document.getElementById('pl-search-spinner').style.display='none';
-  }, 400);
+    document.getElementById('pl-search-spinner').style.display = 'none';
+  }, 500);
 }
 
 function renderSearchResults(results) {
-  if(!results.length) { document.getElementById('pl-search-results').innerHTML='<div style="font-size:13px;color:var(--text3);padding:12px 0">Nessun risultato</div>'; return; }
+  if(!results.length) {
+    document.getElementById('pl-search-results').innerHTML = '<div style="font-size:13px;color:var(--text3);padding:12px 0;text-align:center">Nessun risultato. Prova con un altro termine.</div>';
+    return;
+  }
   document.getElementById('pl-search-results').innerHTML = `
-    <p class="sec" style="margin-top:4px">Risultati ricerca</p>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+    <p class="sec" style="margin-top:4px">Risultati — tocca per aggiungere</p>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
     ${results.map(r => {
-      const song = {
-        trackId: r.trackId,
-        title: r.trackName||'',
-        artist: r.artistName||'',
-        album: r.collectionName||'',
-        artwork: r.artworkUrl60||'',
-        preview: r.previewUrl||'',
-        spotifySearch: encodeURIComponent((r.trackName||'')+ ' ' +(r.artistName||'')),
-      };
-      const sJson = JSON.stringify(song).replace(/'/g,'&#39;');
-      return `<div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);cursor:pointer" onclick="openSongModal('${btoa(unescape(encodeURIComponent(JSON.stringify(song))))}')">
-        ${song.artwork?`<img src="${song.artwork}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">`:'<div style="width:44px;height:44px;border-radius:8px;background:var(--bg2);flex-shrink:0"></div>'}
+      const artist = r['artist-credit'].map(a=>a.artist?.name||a.name||'').filter(Boolean).join(', ');
+      const release = (r.releases&&r.releases[0]?.title)||'';
+      const mbid = r.id||'';
+      const song = { trackId: mbid||('mb_'+Math.random().toString(36).slice(2)), title: r.title, artist, album: release, artwork:'', mbid };
+      const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(song))));
+      return `<div style="display:flex;align-items:center;gap:12px;padding:11px 12px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);cursor:pointer;active:background:var(--bg2)" onclick="openSongModal('${b64}')">
+        <div style="width:40px;height:40px;border-radius:8px;background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px">🎵</div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${song.title}</div>
-          <div style="font-size:12px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${song.artist}</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.title}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${artist}${release?' · '+release:''}</div>
         </div>
-        <div style="font-size:20px;color:var(--gold);flex-shrink:0">+</div>
+        <div style="font-size:22px;color:var(--gold);flex-shrink:0;line-height:1">+</div>
       </div>`;
     }).join('')}
     </div>`;
@@ -1463,27 +1464,32 @@ function openSongModal(b64) {
   let song;
   try { song = JSON.parse(decodeURIComponent(escape(atob(b64)))); } catch(e) { return; }
   const moments = state.plMoments;
-  const alreadyIn = moments.filter(m=>m.songs.some(s=>s.trackId===song.trackId)).map(m=>m.nome);
+  const spotifyQ = encodeURIComponent(song.title + ' ' + song.artist);
   document.getElementById('modal-song-content').innerHTML = `
     <div class="handle"></div>
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-      ${song.artwork?`<img src="${song.artwork}" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0">`:''}
-      <div>
-        <div style="font-size:16px;font-weight:700;color:var(--text)">${song.title}</div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+      <div style="width:56px;height:56px;border-radius:12px;background:var(--bg2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px">🎵</div>
+      <div style="min-width:0">
+        <div style="font-size:16px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${song.title}</div>
         <div style="font-size:13px;color:var(--text2);margin-top:3px">${song.artist}</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:1px">${song.album}</div>
+        ${song.album?`<div style="font-size:12px;color:var(--text3);margin-top:1px">${song.album}</div>`:''}
       </div>
     </div>
-    ${song.preview?`<audio controls style="width:100%;margin-bottom:14px;height:36px"><source src="${song.preview}" type="audio/mp4"></audio>`:''}
-    <a href="https://open.spotify.com/search/${song.spotifySearch}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#1DB954;color:white;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;margin-bottom:10px">
+    <a href="https://open.spotify.com/search/${spotifyQ}" target="_blank"
+       style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:#1DB954;color:white;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;margin-bottom:6px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-      Apri su Spotify
+      Cerca su Spotify
+    </a>
+    <a href="https://www.youtube.com/results?search_query=${spotifyQ}" target="_blank"
+       style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:#FF0000;color:white;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;margin-bottom:14px">
+      <svg width="20" height="14" viewBox="0 0 24 17" fill="white"><path d="M23.5 2.5S23.2.9 22.5.2C21.6-.7 20.6-.7 20.1-.7 16.8-.9 12-.9 12-.9s-4.8 0-8.1.2C3.4-.7 2.4-.7 1.5.2.8.9.5 2.5.5 2.5S.2 4.4.2 6.3v1.8c0 1.9.3 3.8.3 3.8s.3 1.6 1 2.3c.9.9 2.1.9 2.7 1C5.9 15.4 12 15.4 12 15.4s4.8 0 8.1-.2c.5-.1 1.5-.1 2.4-1 .7-.7 1-2.3 1-2.3s.3-1.9.3-3.8V6.3c0-1.9-.3-3.8-.3-3.8zM9.7 10.7V4.7l6.6 3-6.6 3z"/></svg>
+      Cerca su YouTube
     </a>
     <p style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Aggiungi alla playlist</p>
     <div style="display:flex;flex-direction:column;gap:8px">
     ${moments.map(m=>{
       const inM = m.songs.some(s=>s.trackId===song.trackId);
-      return `<button onclick="toggleSongInMoment(${m.id},'${b64}')" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg2);border:${inM?'1.5px solid var(--gold)':'0.5px solid var(--border2)'};border-radius:12px;cursor:pointer;color:var(--text);font-size:14px;font-weight:${inM?'600':'400'}">
+      return `<button onclick="toggleSongInMoment(${m.id},'${b64}')" style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;background:${inM?'var(--gold-light,#FFF8EC)':'var(--bg2)'};border:${inM?'1.5px solid var(--gold)':'0.5px solid var(--border2)'};border-radius:12px;cursor:pointer;color:var(--text);font-size:14px;font-weight:${inM?'600':'400'}">
         <span>${m.emoji} ${m.nome}</span>
         <span style="color:${inM?'var(--gold)':'var(--text3)'};">${inM?'✓ Aggiunto':'+'}</span>
       </button>`;
