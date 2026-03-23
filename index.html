@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Matrimonio">
+<meta name="apple-mobile-web-app-title" content="OLGERT &amp; MARTINA">
 <meta name="theme-color" content="#ffffff">
-<title>Matrimonio</title>
+<title>OLGERT &amp; MARTINA</title>
 <style>
 :root {
   --gold:#B8924A;--gold-l:#FFF8EC;--gold-d:#7A5C28;
@@ -36,7 +36,7 @@ html,body{height:100%;font-family:-apple-system,'Helvetica Neue',sans-serif;back
 .page.active{display:block;min-width:0;overflow-x:hidden}
 .topbar{background:var(--bg);border-bottom:0.5px solid var(--br);padding:14px 16px 0;padding-top:calc(14px + env(safe-area-inset-top,0px));position:sticky;top:0;z-index:20}
 .topbar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.topbar-title{font-size:20px;font-weight:700;letter-spacing:-.5px}
+.topbar-title{font-size:16px;font-weight:700;letter-spacing:-.3px}
 .topbar-date{font-size:12px;color:var(--tx3)}
 .tabs{display:flex;overflow-x:auto;scrollbar-width:none;gap:0}
 .tabs::-webkit-scrollbar{display:none}
@@ -123,7 +123,7 @@ html,body{height:100%;font-family:-apple-system,'Helvetica Neue',sans-serif;back
 <div class="app">
   <div class="topbar">
     <div class="topbar-head">
-      <div class="topbar-title">💒 Matrimonio</div>
+      <div class="topbar-title">💒 OLGERT &amp; MARTINA</div>
       <div class="topbar-date" id="topbar-date"></div>
     </div>
     <div class="tabs">
@@ -145,6 +145,7 @@ html,body{height:100%;font-family:-apple-system,'Helvetica Neue',sans-serif;back
       <p class="sec">Budget</p>
       <div class="bb" id="home-budget"></div>
       <div class="mg" id="home-extra"></div>
+      <div id="home-prov"></div>
       <div id="home-allergie"></div>
     </div>
 
@@ -229,6 +230,55 @@ html,body{height:100%;font-family:-apple-system,'Helvetica Neue',sans-serif;back
     <div class="fg"><label class="fl">Bambini</label><input class="fi" id="f-bambini" type="number" min="0" value="0" inputmode="numeric"></div>
   </div>
   <div class="fg"><label class="fl">Conferma</label><select class="fs" id="f-conf"><option value="In attesa">⏳ In attesa</option><option value="Si">✅ Sì</option><option value="No">❌ No</option></select></div>
+  <div class="fg"><label class="fl">Provenienza</label><select class="fs" id="f-prov"><option value="">— Non specificata —</option>
+<option value="Albania">🇦🇱 Albania</option>
+<option value="Andorra">🇦🇩 Andorra</option>
+<option value="Austria">🇦🇹 Austria</option>
+<option value="Belgio">🇧🇪 Belgio</option>
+<option value="Bielorussia">🇧🇾 Bielorussia</option>
+<option value="Bosnia">🇧🇦 Bosnia ed Erzegovina</option>
+<option value="Bulgaria">🇧🇬 Bulgaria</option>
+<option value="Cipro">🇨🇾 Cipro</option>
+<option value="Croazia">🇭🇷 Croazia</option>
+<option value="Danimarca">🇩🇰 Danimarca</option>
+<option value="Estonia">🇪🇪 Estonia</option>
+<option value="Finlandia">🇫🇮 Finlandia</option>
+<option value="Francia">🇫🇷 Francia</option>
+<option value="Germania">🇩🇪 Germania</option>
+<option value="Grecia">🇬🇷 Grecia</option>
+<option value="Irlanda">🇮🇪 Irlanda</option>
+<option value="Islanda">🇮🇸 Islanda</option>
+<option value="Italia">🇮🇹 Italia</option>
+<option value="Kosovo">🇽🇰 Kosovo</option>
+<option value="Lettonia">🇱🇻 Lettonia</option>
+<option value="Liechtenstein">🇱🇮 Liechtenstein</option>
+<option value="Lituania">🇱🇹 Lituania</option>
+<option value="Lussemburgo">🇱🇺 Lussemburgo</option>
+<option value="Macedonia del Nord">🇲🇰 Macedonia del Nord</option>
+<option value="Malta">🇲🇹 Malta</option>
+<option value="Moldova">🇲🇩 Moldova</option>
+<option value="Monaco">🇲🇨 Monaco</option>
+<option value="Montenegro">🇲🇪 Montenegro</option>
+<option value="Norvegia">🇳🇴 Norvegia</option>
+<option value="Paesi Bassi">🇳🇱 Paesi Bassi</option>
+<option value="Polonia">🇵🇱 Polonia</option>
+<option value="Portogallo">🇵🇹 Portogallo</option>
+<option value="Repubblica Ceca">🇨🇿 Repubblica Ceca</option>
+<option value="Romania">🇷🇴 Romania</option>
+<option value="San Marino">🇸🇲 San Marino</option>
+<option value="Serbia">🇷🇸 Serbia</option>
+<option value="Slovacchia">🇸🇰 Slovacchia</option>
+<option value="Slovenia">🇸🇮 Slovenia</option>
+<option value="Spagna">🇪🇸 Spagna</option>
+<option value="Svezia">🇸🇪 Svezia</option>
+<option value="Svizzera">🇨🇭 Svizzera</option>
+<option value="Turchia">🇹🇷 Turchia</option>
+<option value="Ucraina">🇺🇦 Ucraina</option>
+<option value="Ungheria">🇭🇺 Ungheria</option>
+<option value="Regno Unito">🇬🇧 Regno Unito</option>
+<option value="Russia">🇷🇺 Russia</option>
+<option value="Vatticano">🇻🇦 Vaticano</option>
+<option value="Altra">📍 Altra</option></select></div>
   <div class="fg"><label class="fl">Hotel</label><input class="fi" id="f-hotel" placeholder="Nome hotel"></div>
   <div class="frow">
     <div class="fg"><label class="fl">Notti</label><input class="fi" id="f-notti" type="number" min="0" value="0" inputmode="numeric"></div>
@@ -644,6 +694,44 @@ function renderHome() {
     <div class="mc gold"><div class="ml">Costo/persona</div><div class="mv" style="font-size:20px">${fmt(cpp)}</div></div>
     <div class="mc red"><div class="ml">Non vengono</div><div class="mv">${s.noG} gr.</div></div>`;
   const all=S.guests.filter(g=>g.note&&g.conf!=='No');
+  // Provenienza summary
+  const provGroups = {};
+  S.guests.filter(g=>g.conf==='Si'&&g.prov).forEach(g=>{
+    provGroups[g.prov]=(provGroups[g.prov]||0)+(g.adulti+g.bambini);
+  });
+  const provEntries = Object.entries(provGroups).sort((a,b)=>b[1]-a[1]);
+  const provFlags = {'Albania':'🇦🇱','Andorra':'🇦🇩','Austria':'🇦🇹','Belgio':'🇧🇪','Bielorussia':'🇧🇾','Bosnia':'🇧🇦','Bulgaria':'🇧🇬','Cipro':'🇨🇾','Croazia':'🇭🇷','Danimarca':'🇩🇰','Estonia':'🇪🇪','Finlandia':'🇫🇮','Francia':'🇫🇷','Germania':'🇩🇪','Grecia':'🇬🇷','Irlanda':'🇮🇪','Islanda':'🇮🇸','Italia':'🇮🇹','Kosovo':'🇽🇰','Lettonia':'🇱🇻','Liechtenstein':'🇱🇮','Lituania':'🇱🇹','Lussemburgo':'🇱🇺','Macedonia del Nord':'🇲🇰','Malta':'🇲🇹','Moldova':'🇲🇩','Monaco':'🇲🇨','Montenegro':'🇲🇪','Norvegia':'🇳🇴','Paesi Bassi':'🇳🇱','Polonia':'🇵🇱','Portogallo':'🇵🇹','Repubblica Ceca':'🇨🇿','Romania':'🇷🇴','San Marino':'🇸🇲','Serbia':'🇷🇸','Slovacchia':'🇸🇰','Slovenia':'🇸🇮','Spagna':'🇪🇸','Svezia':'🇸🇪','Svizzera':'🇨🇭','Turchia':'🇹🇷','Ucraina':'🇺🇦','Ungheria':'🇭🇺','Regno Unito':'🇬🇧','Russia':'🇷🇺','Vaticano':'🇻🇦','Altra':'📍'};
+  const provGroupCount = {};
+  S.guests.filter(g=>g.conf==='Si'&&g.prov).forEach(g=>{ provGroupCount[g.prov]=(provGroupCount[g.prov]||0)+1; });
+  const totalProvPersone = provEntries.reduce((a,[,n])=>a+n,0);
+  const noProvPersone = (s.siA + s.siB) - totalProvPersone;
+
+  const senzaNazione = S.guests.filter(g=>g.conf==='Si'&&!g.prov).length;
+
+  document.getElementById('home-prov').innerHTML = `
+    <p class="sec">Provenienza ospiti (confermati)</p>
+    <div style="background:var(--bg2);border-radius:var(--r);padding:14px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
+        <span style="font-size:13px;font-weight:600;color:var(--tx2)">${provEntries.length} nazioni · ${totalProvPersone} persone</span>
+        ${noProvPersone>0?`<span style="font-size:12px;color:var(--tx3)">${noProvPersone} senza nazione</span>`:''}
+      </div>
+      ${provEntries.map(([p,n],i)=>{
+        const pct = Math.round(n/totalProvPersone*100);
+        const grp = provGroupCount[p]||0;
+        return `<div style="margin-bottom:${i<provEntries.length-1?'12':'0'}px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span style="font-size:14px;font-weight:500">${provFlags[p]||'📍'} ${p}</span>
+            <span style="font-size:13px;font-weight:700;color:var(--gold)">${n} pers. <span style="font-size:11px;font-weight:400;color:var(--tx3)">(${grp} gruppi)</span></span>
+          </div>
+          <div style="height:6px;background:var(--bg3);border-radius:4px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:var(--gold);border-radius:4px;transition:width .4s"></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    ${senzaNazione>0?`<div style="font-size:12px;color:var(--tx3);text-align:center;padding:8px 0;margin-bottom:8px">⚠ ${senzaNazione} invitati confermati senza nazione — vai su Invitati per completare</div>`:''}
+  `;
+
   document.getElementById('home-allergie').innerHTML=all.length
     ?'<p class="sec">Allergie & note</p>'+all.map(g=>`<div class="card" onclick="openDetail(${g.id})" style="background:var(--rbg);border-color:var(--rfg);display:flex;align-items:center;gap:12px"><div class="av" style="background:${(CAT_C[g.cat]||{bg:'#eee'}).bg};color:${(CAT_C[g.cat]||{fg:'#666'}).fg};width:36px;height:36px;font-size:12px">${ini(g.nome)}</div><div><div style="font-size:14px;font-weight:600;color:var(--rfg)">${g.nome}</div><div style="font-size:12px;color:var(--rfg);opacity:.8">${g.note}</div></div></div>`).join(''):'';
 }
@@ -651,11 +739,13 @@ function renderHome() {
 // ── GUESTS ─────────────────────────────────────────────────────────────────
 function renderGuests() {
   const q=(document.getElementById('g-search').value||'').toLowerCase();
-  const fOpts=['tutti','✅ Sì','⏳ Attesa','❌ No'];
+  const provList=[...new Set(S.guests.filter(g=>g.prov).map(g=>g.prov))];
+  const fOpts=['tutti','✅ Sì','⏳ Attesa','❌ No',...provList.map(p=>'📍 '+p)];
   document.getElementById('g-filters').innerHTML=fOpts.map(f=>`<button type="button" class="fb ${gFilter===f?'active':''}" onclick="gFilter='${f}';renderGuests()">${f}</button>`).join('');
   const list=S.guests.filter(g=>{
-    const ms=!q||g.nome.toLowerCase().includes(q)||g.cat.toLowerCase().includes(q);
-    const ml=gFilter==='tutti'||(gFilter==='✅ Sì'&&g.conf==='Si')||(gFilter==='⏳ Attesa'&&g.conf==='In attesa')||(gFilter==='❌ No'&&g.conf==='No');
+    const ms=!q||g.nome.toLowerCase().includes(q)||g.cat.toLowerCase().includes(q)||(g.prov||'').toLowerCase().includes(q);
+    const isProv=gFilter.startsWith('📍 ');
+    const ml=gFilter==='tutti'||(gFilter==='✅ Sì'&&g.conf==='Si')||(gFilter==='⏳ Attesa'&&g.conf==='In attesa')||(gFilter==='❌ No'&&g.conf==='No')||(isProv&&g.prov&&'📍 '+g.prov===gFilter);
     return ms&&ml;
   });
   if(!list.length){document.getElementById('glist').innerHTML='<div class="empty">Nessun risultato</div>';return;}
@@ -669,7 +759,7 @@ function renderGuests() {
       <div class="av" style="background:${c.bg};color:${c.fg};flex-shrink:0">${ini(g.nome)}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:14px;font-weight:600;color:var(--tx)">${g.nome}</div>
-        <div style="font-size:12px;color:${confColor};margin-top:3px;font-weight:500">${confLabel} · ${g.adulti+g.bambini}p${g.note?' · <span style="color:var(--rfg)">⚠ '+g.note+'</span>':''}</div>
+        <div style="font-size:12px;color:${confColor};margin-top:3px;font-weight:500">${confLabel} · ${g.adulti+g.bambini}p${g.prov?' · <span style="color:var(--tx3)">📍'+g.prov+'</span>':''}${g.note?' · <span style="color:var(--rfg)">⚠ '+g.note+'</span>':''}</div>
       </div>
     </div>`;
   }).join('');
@@ -683,6 +773,7 @@ function openDetail(id) {
     <div class="handle"></div>
     <div class="dh"><div class="da" style="background:${c.bg};color:${c.fg}">${ini(g.nome)}</div>
     <div><div class="dn">${g.nome}</div><div class="dc">${g.cat}</div></div></div>
+    ${g.prov?`<div class="dr"><span class="dk">Provenienza</span><span class="dv">📍 ${g.prov}</span></div>`:''}
     <div class="dr"><span class="dk">Adulti</span><span class="dv">${g.adulti}</span></div>
     <div class="dr"><span class="dk">Bambini</span><span class="dv">${g.bambini||'—'}</span></div>
     ${g.hotel?`<div class="dr"><span class="dk">Hotel</span><span class="dv">${g.hotel}</span></div>`:''}
@@ -713,6 +804,7 @@ function openGuestModal(id) {
   document.getElementById('f-adulti').value=g?g.adulti:2;
   document.getElementById('f-bambini').value=g?g.bambini:0;
   document.getElementById('f-conf').value=g?g.conf:'In attesa';
+  document.getElementById('f-prov').value=g?g.prov||'':'';
   document.getElementById('f-hotel').value=g?g.hotel||'':'';
   document.getElementById('f-notti').value=g?g.notti||0:0;
   document.getElementById('f-note').value=g?g.note||'':'';
@@ -729,6 +821,7 @@ function saveGuest() {
     adulti:parseInt(document.getElementById('f-adulti').value)||0,
     bambini:parseInt(document.getElementById('f-bambini').value)||0,
     conf:document.getElementById('f-conf').value,
+    prov:document.getElementById('f-prov').value,
     hotel:document.getElementById('f-hotel').value.trim(),
     notti:parseInt(document.getElementById('f-notti').value)||0,
     note:document.getElementById('f-note').value.trim()
