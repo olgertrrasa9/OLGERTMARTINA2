@@ -1237,38 +1237,61 @@ const FB_URL  = FB_BASE + '/matrimonio.json';
 let fbPollTimer = null;
 let lastFbHash = null;
 
+// Firebase returns arrays as objects {0:{...},1:{...}} — normalize them
+function fbArr(val) {
+  if(!val) return null;
+  if(Array.isArray(val)) return val;
+  if(typeof val === 'object') return Object.values(val);
+  return null;
+}
+
 async function fbLoad() {
   try {
     showSyncBanner('Connessione in corso...', '#9C6A00');
     const res = await fetch(FB_URL);
     if(!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    if(data && data.guests && data.expenses) {
-      // Merge with defState to fill any missing fields (tavoli, checklist, etc.)
-      const def = defState();
+    const raw = await res.json();
+    const def = defState();
+    if(raw && raw.guests) {
+      // Normalize all arrays from Firebase object format
+      const guests    = fbArr(raw.guests)    || def.guests;
+      const expenses  = fbArr(raw.expenses)  || def.expenses;
+      const tavoli    = fbArr(raw.tavoli);
+      const checklist = fbArr(raw.checklist);
+      const plMoments = fbArr(raw.plMoments);
+      const scaletta  = fbArr(raw.scaletta);
+      // Normalize ospiti inside each tavolo
+      const tavoliNorm = (tavoli && tavoli.length ? tavoli : def.tavoli).map(t => ({
+        ...t, ospiti: fbArr(t.ospiti) || []
+      }));
+      // Normalize songs inside each plMoment
+      const plMomNorm = (plMoments && plMoments.length ? plMoments : def.plMoments).map(m => ({
+        ...m, songs: fbArr(m.songs) || []
+      }));
       S = {
         ...def,
-        ...data,
-        tavoli:    (data.tavoli    && data.tavoli.length)    ? data.tavoli    : def.tavoli,
-        checklist: (data.checklist && data.checklist.length) ? data.checklist : def.checklist,
-        plMoments: (data.plMoments && data.plMoments.length) ? data.plMoments : def.plMoments,
-        scaletta:  (data.scaletta  && data.scaletta.length)  ? data.scaletta  : def.scaletta,
-        nextTid:   data.nextTid   || def.nextTid,
-        nextCkid:  data.nextCkid  || def.nextCkid,
-        nextPlMid: data.nextPlMid || def.nextPlMid,
-        nextScid:  data.nextScid  || def.nextScid,
-        locA:      data.locA      || def.locA,
-        locB:      data.locB      || def.locB,
-        plFilter:  data.plFilter  || def.plFilter,
+        ...raw,
+        guests,
+        expenses,
+        tavoli:    tavoliNorm,
+        checklist: checklist && checklist.length ? checklist : def.checklist,
+        plMoments: plMomNorm,
+        scaletta:  scaletta  && scaletta.length  ? scaletta  : def.scaletta,
+        nextTid:   raw.nextTid   || def.nextTid,
+        nextCkid:  raw.nextCkid  || def.nextCkid,
+        nextPlMid: raw.nextPlMid || def.nextPlMid,
+        nextScid:  raw.nextScid  || def.nextScid,
+        locA:      raw.locA != null ? raw.locA : def.locA,
+        locB:      raw.locB != null ? raw.locB : def.locB,
+        plFilter:  raw.plFilter  || def.plFilter,
       };
-      try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
-      lastFbHash = JSON.stringify(S).length;
-      // Push merged state back to Firebase so next load has all fields
-      await fbSave();
     } else {
-      // First time — push full default state
-      await fbSave();
+      S = def;
     }
+    try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
+    lastFbHash = JSON.stringify(S).length;
+    // Always push complete normalized state back to Firebase
+    await fbSave();
     showSyncBanner('Sincronizzato ✓', '#1A6B42');
     renderAll();
   } catch(e) {
@@ -1282,18 +1305,22 @@ async function fbPoll() {
   try {
     const res = await fetch(FB_URL);
     if(!res.ok) return;
-    const data = await res.json();
-    if(data && data.guests) {
-      const h = JSON.stringify(data).length;
+    const raw = await res.json();
+    if(raw && raw.guests) {
+      const h = JSON.stringify(raw).length;
       if(h !== lastFbHash) {
         lastFbHash = h;
         const def = defState();
+        const tavoli = fbArr(raw.tavoli);
+        const plMoments = fbArr(raw.plMoments);
         S = {
-          ...def, ...data,
-          tavoli:    (data.tavoli    && data.tavoli.length)    ? data.tavoli    : def.tavoli,
-          checklist: (data.checklist && data.checklist.length) ? data.checklist : def.checklist,
-          plMoments: (data.plMoments && data.plMoments.length) ? data.plMoments : def.plMoments,
-          scaletta:  (data.scaletta  && data.scaletta.length)  ? data.scaletta  : def.scaletta,
+          ...def, ...raw,
+          guests:    fbArr(raw.guests)    || def.guests,
+          expenses:  fbArr(raw.expenses)  || def.expenses,
+          tavoli:    (tavoli && tavoli.length ? tavoli : def.tavoli).map(t=>({...t,ospiti:fbArr(t.ospiti)||[]})),
+          checklist: (fbArr(raw.checklist)||[]).length ? fbArr(raw.checklist) : def.checklist,
+          plMoments: (plMoments && plMoments.length ? plMoments : def.plMoments).map(m=>({...m,songs:fbArr(m.songs)||[]})),
+          scaletta:  (fbArr(raw.scaletta)||[]).length  ? fbArr(raw.scaletta)  : def.scaletta,
         };
         try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
         renderAll();
