@@ -530,7 +530,16 @@ function defState() {
 function loadState() {
   try {
     const s = JSON.parse(localStorage.getItem(SK));
-    if(s && s.guests && s.expenses) return s;
+    if(s && s.guests && s.expenses) {
+      const def = defState();
+      return {
+        ...def, ...s,
+        tavoli:    (s.tavoli    && s.tavoli.length)    ? s.tavoli    : def.tavoli,
+        checklist: (s.checklist && s.checklist.length) ? s.checklist : def.checklist,
+        plMoments: (s.plMoments && s.plMoments.length) ? s.plMoments : def.plMoments,
+        scaletta:  (s.scaletta  && s.scaletta.length)  ? s.scaletta  : def.scaletta,
+      };
+    }
   } catch(e) {}
   return defState();
 }
@@ -1235,11 +1244,29 @@ async function fbLoad() {
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if(data && data.guests && data.expenses) {
-      S = data;
+      // Merge with defState to fill any missing fields (tavoli, checklist, etc.)
+      const def = defState();
+      S = {
+        ...def,
+        ...data,
+        tavoli:    (data.tavoli    && data.tavoli.length)    ? data.tavoli    : def.tavoli,
+        checklist: (data.checklist && data.checklist.length) ? data.checklist : def.checklist,
+        plMoments: (data.plMoments && data.plMoments.length) ? data.plMoments : def.plMoments,
+        scaletta:  (data.scaletta  && data.scaletta.length)  ? data.scaletta  : def.scaletta,
+        nextTid:   data.nextTid   || def.nextTid,
+        nextCkid:  data.nextCkid  || def.nextCkid,
+        nextPlMid: data.nextPlMid || def.nextPlMid,
+        nextScid:  data.nextScid  || def.nextScid,
+        locA:      data.locA      || def.locA,
+        locB:      data.locB      || def.locB,
+        plFilter:  data.plFilter  || def.plFilter,
+      };
       try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
       lastFbHash = JSON.stringify(S).length;
+      // Push merged state back to Firebase so next load has all fields
+      await fbSave();
     } else {
-      // First time — push local state
+      // First time — push full default state
       await fbSave();
     }
     showSyncBanner('Sincronizzato ✓', '#1A6B42');
@@ -1260,7 +1287,14 @@ async function fbPoll() {
       const h = JSON.stringify(data).length;
       if(h !== lastFbHash) {
         lastFbHash = h;
-        S = data;
+        const def = defState();
+        S = {
+          ...def, ...data,
+          tavoli:    (data.tavoli    && data.tavoli.length)    ? data.tavoli    : def.tavoli,
+          checklist: (data.checklist && data.checklist.length) ? data.checklist : def.checklist,
+          plMoments: (data.plMoments && data.plMoments.length) ? data.plMoments : def.plMoments,
+          scaletta:  (data.scaletta  && data.scaletta.length)  ? data.scaletta  : def.scaletta,
+        };
         try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
         renderAll();
         showSyncBanner('Aggiornato ✓', '#1A6B42');
