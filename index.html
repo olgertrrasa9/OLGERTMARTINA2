@@ -347,8 +347,25 @@ html,body{height:100%;font-family:-apple-system,'Helvetica Neue',sans-serif;back
   <button type="button" class="bg" onclick="closeM('m-sc')">Annulla</button>
 </div></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script>
 const SK = 'mat_v3';
+
+function showSyncBanner(msg, color) {
+  let b = document.getElementById('sync-banner');
+  if(!b) {
+    b = document.createElement('div');
+    b.id = 'sync-banner';
+    b.style.cssText = 'position:fixed;top:0;left:50%;transform:translateX(-50%);max-width:500px;width:100%;z-index:200;text-align:center;font-size:12px;font-weight:600;padding:6px 16px;transition:opacity .5s;pointer-events:none';
+    document.body.appendChild(b);
+  }
+  b.textContent = msg;
+  b.style.background = color;
+  b.style.color = '#fff';
+  b.style.opacity = '1';
+  if(color === '#1A6B42') setTimeout(()=>{ b.style.opacity='0'; }, 2000);
+}
 const CAT_C = {
   'Amici':{bg:'#E9F7EF',fg:'#1E8449'},'Lavoro':{bg:'#E8F4FD',fg:'#1A5276'},
   'FISI BABIT':{bg:'#FDF2E9',fg:'#935116'},'FISI MAMIT':{bg:'#F9EBEA',fg:'#922B21'},
@@ -519,7 +536,15 @@ function loadState() {
   } catch(e) {}
   return defState();
 }
-function save() { try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {} }
+function save() {
+  try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
+  if(window.fbReady) {
+    showSyncBanner('Salvataggio...', '#9C6A00');
+    window.fbRef.set(S)
+      .then(()=>showSyncBanner('Sincronizzato ✓', '#1A6B42'))
+      .catch(e=>{console.warn('Firebase save error:',e);showSyncBanner('Errore sync', '#C0392B');});
+  }
+}
 
 let S = loadState();
 let activeTab = 'home';
@@ -1188,7 +1213,49 @@ function renderAll() {
 }
 
 document.getElementById('topbar-date').textContent=new Date().toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'});
-renderAll();
+
+// ── FIREBASE INIT ──────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyD9MAeLh9Lk_vQBoBGHz3Jkz_vUSfcz21c",
+  authDomain: "test-e28b1.firebaseapp.com",
+  databaseURL: "https://test-e28b1-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "test-e28b1",
+  storageBucket: "test-e28b1.firebasestorage.app",
+  messagingSenderId: "409782943272",
+  appId: "1:409782943272:web:e9a7b3dd44c56030e9bf1d"
+};
+
+try {
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  window.fbRef = db.ref('matrimonio');
+  window.fbReady = false;
+
+  showSyncBanner('Connessione in corso...', '#9C6A00');
+
+  // Listen for real-time changes
+  window.fbRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    if(data && data.guests && data.expenses) {
+      S = data;
+      try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
+    } else if(!window.fbReady) {
+      // First time — push local state to Firebase
+      window.fbRef.set(S);
+    }
+    window.fbReady = true;
+    renderAll();
+    showSyncBanner('Sincronizzato ✓', '#1A6B42');
+  }, (error) => {
+    console.warn('Firebase error:', error);
+    showSyncBanner('Offline — dati locali', '#C0392B');
+    renderAll();
+  });
+
+} catch(e) {
+  console.warn('Firebase init failed:', e);
+  renderAll();
+}
 </script>
 </body>
 </html>
