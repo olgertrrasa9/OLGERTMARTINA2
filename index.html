@@ -622,12 +622,12 @@ function renderGuests() {
     const bc=g.conf==='Si'?'si':g.conf==='In attesa'?'att':'no';
     const bl=g.conf==='Si'?'✅':g.conf==='In attesa'?'⏳':'❌';
     return `<div class="gc" onclick="openDetail(${g.id})" style="display:flex;align-items:center;gap:12px;overflow:hidden">
-      <div class="av" style="background:${c.bg};color:${c.fg};flex-shrink:0">${ini(g.nome)}</div>
-      <div style="flex:1;min-width:0;overflow:hidden">
-        <div style="font-size:14px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome}</div>
-        <div style="font-size:12px;color:var(--tx2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.cat} · ${g.adulti+g.bambini}p</div>
+      <div class="av" style="background:${c.bg};color:${c.fg};flex-shrink:0;align-self:flex-start;margin-top:2px">${ini(g.nome)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:600;color:var(--tx);line-height:1.35;word-break:break-word">${g.nome}</div>
+        <div style="font-size:12px;color:var(--tx2);margin-top:3px">${g.cat} · ${g.adulti+g.bambini}p${g.note?' · <span style="color:var(--rfg)">⚠ '+g.note+'</span>':''}</div>
       </div>
-      <div class="badge ${bc}" style="flex-shrink:0;margin-left:auto">${bl}</div>
+      <div class="badge ${bc}" style="flex-shrink:0;align-self:flex-start;margin-top:2px">${bl}</div>
     </div>`;
   }).join('');
 }
