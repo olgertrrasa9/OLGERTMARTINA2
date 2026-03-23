@@ -312,6 +312,7 @@ html,body{height:100%;font-family:-apple-system,'Helvetica Neue',sans-serif;back
     <div class="fg"><label class="fl">€ / Bambino</label><input class="fi" id="loc-b" type="number" min="0" step="1" inputmode="decimal" placeholder="0" oninput="updateLocPrev()"></div>
   </div>
   <div id="loc-prev" style="background:var(--bg2);border-radius:var(--r);padding:14px;margin-bottom:14px"></div>
+  <div class="fg"><label class="fl">Acconto già pagato (€)</label><input class="fi" id="loc-acconto" type="number" min="0" step="1" value="0" inputmode="decimal" placeholder="0"></div>
   <button type="button" class="bp" onclick="saveLocation()">Salva e aggiorna</button>
   <button type="button" class="bg" onclick="closeM('m-location')">Annulla</button>
 </div></div>
@@ -913,6 +914,8 @@ function deleteExpense() {
 function openLocModal() {
   document.getElementById('loc-a').value=S.locA||'';
   document.getElementById('loc-b').value=S.locB||'';
+  const loc=S.expenses.find(e=>e.nome==='Location');
+  document.getElementById('loc-acconto').value=loc?loc.acconto||0:0;
   updateLocPrev(); openM('m-location');
 }
 function updateLocPrev() {
@@ -928,11 +931,12 @@ function updateLocPrev() {
 function saveLocation() {
   const pa=parseFloat(document.getElementById('loc-a').value)||0;
   const pb=parseFloat(document.getElementById('loc-b').value)||0;
+  const acconto=parseFloat(document.getElementById('loc-acconto').value)||0;
   S.locA=pa; S.locB=pb;
   const s=statsGuests();
   const tot=s.siA*pa+s.siB*pb;
   const loc=S.expenses.find(e=>e.nome==='Location');
-  if(loc){loc.importo=tot;loc.note=`€${pa}/adulto · €${pb}/bambino · ${s.siA}A + ${s.siB}B confermati`;}
+  if(loc){loc.importo=tot;loc.acconto=acconto;loc.note=`€${pa}/adulto · €${pb}/bambino · ${s.siA}A + ${s.siB}B confermati`;}
   save(); closeM('m-location'); renderAll();
 }
 
