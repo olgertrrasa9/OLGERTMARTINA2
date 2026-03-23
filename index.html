@@ -10,256 +10,116 @@
 <title>Matrimonio</title>
 <style>
 :root {
-  --gold: #B8924A;
-  --gold-light: #F7F0E4;
-  --gold-dark: #7A5C28;
-  --bg: #ffffff;
-  --bg2: #F8F7F5;
-  --bg3: #F0EDE8;
-  --text: #1A1814;
-  --text2: #6B6560;
-  --text3: #A09890;
-  --border: rgba(0,0,0,0.08);
-  --border2: rgba(0,0,0,0.14);
-  --green-bg: #EDFAF3; --green-fg: #1A6B42;
-  --orange-bg: #FFF7E6; --orange-fg: #9C6A00;
-  --red-bg: #FFF0F0; --red-fg: #C0392B;
-  --blue-bg: #EEF4FF; --blue-fg: #1A3B8C;
-  --radius: 14px;
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --gold:#B8924A;--gold-l:#FFF8EC;--gold-d:#7A5C28;
+  --bg:#fff;--bg2:#F8F7F5;--bg3:#F0EDE8;
+  --tx:#1A1814;--tx2:#6B6560;--tx3:#A09890;
+  --br:rgba(0,0,0,0.08);--br2:rgba(0,0,0,0.14);
+  --gbg:#EDFAF3;--gfg:#1A6B42;
+  --obg:#FFF7E6;--ofg:#9C6A00;
+  --rbg:#FFF0F0;--rfg:#C0392B;
+  --bbg:#EEF4FF;--bfg:#1A3B8C;
+  --r:14px;--sb:env(safe-area-inset-bottom,0px);
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #121110; --bg2: #1C1B19; --bg3: #252320;
-    --text: #F5F2ED; --text2: #9A948C; --text3: #5A5550;
-    --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14);
-    --gold-light: #2A2218;
-    --green-bg: #0D2B1E; --green-fg: #4ABA80;
-    --orange-bg: #2B1E08; --orange-fg: #FFBA45;
-    --red-bg: #2B0E0E; --red-fg: #FF7070;
-    --blue-bg: #0E1A2B; --blue-fg: #7BA8FF;
-  }
-}
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; font-family: -apple-system, 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--text); overscroll-behavior: none; }
-
-/* LAYOUT */
-.app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; max-width: 500px; margin: 0 auto; position: relative; }
-.content { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
-.page { display: none; padding: 0 16px 100px; }
-.page.active { display: block; }
-
-/* TOPBAR */
-.topbar {
-  background: var(--bg);
-  border-bottom: 0.5px solid var(--border);
-  padding: 14px 16px 0;
-  padding-top: calc(14px + env(safe-area-inset-top, 0px));
-  position: sticky; top: 0; z-index: 20;
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  background: rgba(var(--bg-rgb, 255,255,255), 0.92);
-}
-.topbar-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.topbar-title { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); }
-.topbar-date { font-size: 12px; color: var(--text3); }
-.tabs { display: flex; gap: 0; }
-.tab {
-  flex: 1; text-align: center; padding: 10px 2px 11px; font-size: 11px; font-weight: 500;
-  color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent;
-  transition: color 0.15s, border-color 0.15s; user-select: none;
-}
-.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
-
-/* SECTION TITLE */
-.sec { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin: 20px 0 10px; }
-
-/* METRIC CARDS */
-.metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
-.metric-card { background: var(--bg2); border-radius: var(--radius); padding: 14px; }
-.metric-label { font-size: 11px; color: var(--text3); margin-bottom: 5px; font-weight: 500; }
-.metric-value { font-size: 26px; font-weight: 700; letter-spacing: -1px; color: var(--text); line-height: 1; }
-.metric-card.green .metric-value { color: var(--green-fg); }
-.metric-card.orange .metric-value { color: var(--orange-fg); }
-.metric-card.red .metric-value { color: var(--red-fg); }
-.metric-card.gold .metric-value { color: var(--gold); }
-
-/* BUDGET SUMMARY */
-.budget-box { background: var(--bg2); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
-.budget-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; }
-.budget-row + .budget-row { border-top: 0.5px solid var(--border); }
-.budget-label { font-size: 13px; color: var(--text2); }
-.budget-val { font-size: 15px; font-weight: 600; }
-.budget-val.green { color: var(--green-fg); }
-.budget-val.orange { color: var(--orange-fg); }
-.budget-val.blue { color: var(--blue-fg); }
-.budget-val.total { font-size: 19px; letter-spacing: -0.5px; color: var(--text); }
-
-/* ALLERGIE */
-.allergia-card { display: flex; align-items: center; gap: 12px; background: var(--red-bg); border-radius: var(--radius); padding: 12px; margin-bottom: 8px; cursor: pointer; }
-.allergia-name { font-size: 14px; font-weight: 600; color: var(--red-fg); }
-.allergia-note { font-size: 12px; color: var(--red-fg); opacity: 0.8; margin-top: 2px; }
-
-/* SEARCH & FILTERS */
-.search-wrap { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 12px 0 0; }
-.search-input {
-  width: 100%; padding: 11px 14px; font-size: 16px;
-  border: 0.5px solid var(--border2); border-radius: var(--radius);
-  background: var(--bg2); color: var(--text); outline: none;
-  -webkit-appearance: none; appearance: none;
-}
-.search-input:focus { border-color: var(--gold); }
-.filter-row { display: flex; gap: 6px; padding: 10px 0 4px; overflow-x: auto; scrollbar-width: none; }
-.filter-row::-webkit-scrollbar { display: none; }
-.filter-btn {
-  flex-shrink: 0; font-size: 12px; font-weight: 500; padding: 6px 14px;
-  border-radius: 20px; border: 0.5px solid var(--border2);
-  background: var(--bg); color: var(--text2); cursor: pointer; white-space: nowrap;
-  transition: all 0.12s; -webkit-appearance: none;
-}
-.filter-btn.active { background: var(--gold); color: white; border-color: var(--gold); }
-
-/* GUEST LIST */
-.guest-list { display: flex; flex-direction: column; gap: 8px; padding-bottom: 8px; }
-.guest-card {
-  display: flex; align-items: center; gap: 12px;
-  background: var(--bg); border: 0.5px solid var(--border);
-  border-radius: var(--radius); padding: 13px; cursor: pointer;
-  transition: background 0.1s;
-  -webkit-user-select: none; user-select: none;
-}
-.guest-card:active { background: var(--bg2); }
-.avatar {
-  width: 40px; height: 40px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 700; flex-shrink: 0; letter-spacing: -0.5px;
-}
-.guest-info { flex: 1; min-width: 0; }
-.guest-name { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.guest-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
-.badge { font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 20px; flex-shrink: 0; }
-.badge.si { background: var(--green-bg); color: var(--green-fg); }
-.badge.attesa { background: var(--orange-bg); color: var(--orange-fg); }
-.badge.no { background: var(--red-bg); color: var(--red-fg); }
-
-/* EXPENSE LIST */
-.expense-list { display: flex; flex-direction: column; gap: 10px; }
-.exp-card {
-  background: var(--bg); border: 0.5px solid var(--border);
-  border-radius: var(--radius); padding: 14px 16px; cursor: pointer;
-  transition: background 0.1s;
-}
-.exp-card:active { background: var(--bg2); }
-.exp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-.exp-name { font-size: 15px; font-weight: 600; color: var(--text); }
-.exp-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
-.exp-amount { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; text-align: right; }
-.exp-amount.tbd { font-size: 13px; font-weight: 500; color: var(--text3); }
-.progress-track { height: 4px; background: var(--bg3); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
-.progress-fill { height: 100%; border-radius: 4px; background: var(--green-fg); transition: width 0.4s ease; }
-.exp-row { display: flex; justify-content: space-between; font-size: 12px; padding: 2px 0; }
-.exp-row .lbl { color: var(--text2); }
-.exp-row .val { font-weight: 600; }
-.exp-row .val.green { color: var(--green-fg); }
-.exp-row .val.orange { color: var(--orange-fg); }
-
-/* FAB */
-.fab {
-  position: fixed; bottom: calc(80px + var(--safe-bottom)); right: 20px;
-  width: 56px; height: 56px; border-radius: 28px;
-  background: var(--gold); color: white;
-  border: none; font-size: 28px; line-height: 56px; text-align: center;
-  cursor: pointer; box-shadow: 0 4px 20px rgba(184,146,74,0.4);
-  z-index: 15; transition: transform 0.15s, box-shadow 0.15s;
-  display: flex; align-items: center; justify-content: center;
-}
-.fab:active { transform: scale(0.93); box-shadow: 0 2px 10px rgba(184,146,74,0.3); }
-
-/* TAB BAR */
-.tabbar {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 500px;
-  background: var(--bg); border-top: 0.5px solid var(--border);
-  display: flex; padding-bottom: var(--safe-bottom);
-  z-index: 20; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-}
-.tabbar-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0 8px; cursor: pointer; gap: 3px; }
-.tabbar-icon { font-size: 20px; line-height: 1; }
-.tabbar-label { font-size: 10px; font-weight: 500; color: var(--text3); }
-.tabbar-btn.active .tabbar-label { color: var(--gold); }
-
-/* MODAL */
-.overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.45); z-index: 50;
-  align-items: flex-end; justify-content: center;
-  -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
-}
-.overlay.open { display: flex; }
-.sheet {
-  background: var(--bg); border-radius: 20px 20px 0 0;
-  width: 100%; max-width: 500px;
-  max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
-  padding: 8px 20px calc(20px + var(--safe-bottom));
-  animation: slideUp 0.25s ease;
-}
-@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.handle { width: 36px; height: 4px; background: var(--bg3); border-radius: 2px; margin: 8px auto 16px; }
-.sheet-title { font-size: 18px; font-weight: 700; margin-bottom: 18px; letter-spacing: -0.3px; }
-
-/* FORM */
-.form-group { margin-bottom: 14px; }
-.form-label { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.06em; }
-.form-input, .form-select {
-  width: 100%; padding: 13px 14px; font-size: 16px;
-  border: 0.5px solid var(--border2); border-radius: 12px;
-  background: var(--bg2); color: var(--text); outline: none;
-  -webkit-appearance: none; appearance: none;
-  transition: border-color 0.15s;
-}
-.form-input:focus, .form-select:focus { border-color: var(--gold); }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.btn-primary {
-  width: 100%; padding: 15px; font-size: 16px; font-weight: 700;
-  background: var(--gold); color: white; border: none;
-  border-radius: 14px; cursor: pointer; margin-top: 8px;
-  transition: opacity 0.15s; letter-spacing: -0.2px;
-}
-.btn-primary:active { opacity: 0.85; }
-.btn-ghost {
-  width: 100%; padding: 13px; font-size: 15px; font-weight: 500;
-  background: transparent; color: var(--text2);
-  border: 0.5px solid var(--border2); border-radius: 14px;
-  cursor: pointer; margin-top: 8px; transition: background 0.12s;
-}
-.btn-ghost:active { background: var(--bg2); }
-.btn-danger { color: var(--red-fg) !important; border-color: var(--red-fg) !important; }
-
-/* DETAIL */
-.detail-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-.detail-avatar { width: 52px; height: 52px; border-radius: 26px; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-.detail-name { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
-.detail-cat { font-size: 13px; color: var(--text2); margin-top: 2px; }
-.detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 0.5px solid var(--border); font-size: 14px; }
-.detail-row:last-of-type { border-bottom: none; }
-.detail-key { color: var(--text2); }
-.detail-val { font-weight: 600; }
-.conf-buttons { display: flex; gap: 8px; margin: 16px 0 4px; }
-.conf-btn {
-  flex: 1; padding: 11px 6px; border-radius: 12px;
-  border: 0.5px solid var(--border2); background: var(--bg2);
-  color: var(--text2); font-size: 13px; font-weight: 600; cursor: pointer;
-  transition: all 0.12s; text-align: center;
-}
-.conf-btn.sel-si { background: var(--green-bg); color: var(--green-fg); border-color: var(--green-fg); }
-.conf-btn.sel-attesa { background: var(--orange-bg); color: var(--orange-fg); border-color: var(--orange-fg); }
-.conf-btn.sel-no { background: var(--red-bg); color: var(--red-fg); border-color: var(--red-fg); }
-.note-tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 4px 10px; background: var(--red-bg); color: var(--red-fg); border-radius: 20px; margin-top: 4px; }
-
-.empty { text-align: center; padding: 60px 20px; color: var(--text3); font-size: 14px; }
+@media(prefers-color-scheme:dark){:root{
+  --bg:#121110;--bg2:#1C1B19;--bg3:#252320;
+  --tx:#F5F2ED;--tx2:#9A948C;--tx3:#5A5550;
+  --br:rgba(255,255,255,0.08);--br2:rgba(255,255,255,0.14);
+  --gold-l:#2A2218;
+  --gbg:#0D2B1E;--gfg:#4ABA80;--obg:#2B1E08;--ofg:#FFBA45;
+  --rbg:#2B0E0E;--rfg:#FF7070;--bbg:#0E1A2B;--bfg:#7BA8FF;
+}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--tx);overscroll-behavior:none}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:500px;margin:0 auto}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.page{display:none;padding:0 16px 100px}
+.page.active{display:block}
+.topbar{background:var(--bg);border-bottom:0.5px solid var(--br);padding:14px 16px 0;padding-top:calc(14px + env(safe-area-inset-top,0px));position:sticky;top:0;z-index:20}
+.topbar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.topbar-title{font-size:20px;font-weight:700;letter-spacing:-.5px}
+.topbar-date{font-size:12px;color:var(--tx3)}
+.tabs{display:flex;overflow-x:auto;scrollbar-width:none;gap:0}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;text-align:center;padding:10px 10px 11px;font-size:12px;font-weight:500;color:var(--tx2);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.sec{font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin:20px 0 10px}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px}
+.mc{background:var(--bg2);border-radius:var(--r);padding:14px}
+.ml{font-size:11px;color:var(--tx3);margin-bottom:5px;font-weight:500}
+.mv{font-size:26px;font-weight:700;letter-spacing:-1px;line-height:1}
+.mc.green .mv{color:var(--gfg)}.mc.orange .mv{color:var(--ofg)}.mc.red .mv{color:var(--rfg)}.mc.gold .mv{color:var(--gold)}
+.bb{background:var(--bg2);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.br-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0}
+.br-row+.br-row{border-top:0.5px solid var(--br)}
+.bl{font-size:13px;color:var(--tx2)}.bv{font-size:15px;font-weight:600}
+.bv.green{color:var(--gfg)}.bv.orange{color:var(--ofg)}.bv.blue{color:var(--bfg)}.bv.total{font-size:19px;letter-spacing:-.5px}
+.sw{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 0 0}
+.si{width:100%;padding:11px 14px;font-size:16px;border:0.5px solid var(--br2);border-radius:var(--r);background:var(--bg2);color:var(--tx);outline:none;-webkit-appearance:none}
+.si:focus{border-color:var(--gold)}
+.fr{display:flex;gap:6px;padding:8px 0 4px;overflow-x:auto;scrollbar-width:none}
+.fr::-webkit-scrollbar{display:none}
+.fb{flex-shrink:0;font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px;border:0.5px solid var(--br2);background:var(--bg);color:var(--tx2);cursor:pointer;white-space:nowrap;-webkit-appearance:none}
+.fb.active{background:var(--gold);color:#fff;border-color:var(--gold)}
+.gl{display:flex;flex-direction:column;gap:8px;padding-bottom:8px}
+.gc{display:flex;align-items:center;gap:12px;background:var(--bg);border:0.5px solid var(--br);border-radius:var(--r);padding:13px;cursor:pointer}
+.gc:active{background:var(--bg2)}
+.av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.gi{flex:1;min-width:0}
+.gn{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gs{font-size:12px;color:var(--tx2);margin-top:2px}
+.badge{font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px;flex-shrink:0}
+.badge.si{background:var(--gbg);color:var(--gfg)}.badge.att{background:var(--obg);color:var(--ofg)}.badge.no{background:var(--rbg);color:var(--rfg)}
+.el{display:flex;flex-direction:column;gap:10px}
+.ec{background:var(--bg);border:0.5px solid var(--br);border-radius:var(--r);padding:14px 16px;cursor:pointer}
+.ec:active{background:var(--bg2)}
+.eh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.en{font-size:15px;font-weight:600}.es{font-size:12px;color:var(--tx2);margin-top:2px}
+.ea{font-size:17px;font-weight:700;letter-spacing:-.5px;text-align:right}
+.ea.tbd{font-size:13px;font-weight:500;color:var(--tx3)}
+.pt{height:4px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:10px}
+.pf{height:100%;border-radius:4px;background:var(--gfg);transition:width .4s}
+.er{display:flex;justify-content:space-between;font-size:12px;padding:2px 0}
+.er .l{color:var(--tx2)}.er .v{font-weight:600}.er .v.g{color:var(--gfg)}.er .v.o{color:var(--ofg)}
+.fab{position:fixed;bottom:calc(72px + var(--sb));right:20px;width:56px;height:56px;border-radius:28px;background:var(--gold);color:#fff;border:none;font-size:28px;cursor:pointer;box-shadow:0 4px 20px rgba(184,146,74,.4);z-index:15;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.fab:active{transform:scale(.93)}
+.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:500px;background:var(--bg);border-top:0.5px solid var(--br);display:flex;padding-bottom:var(--sb);z-index:20}
+.tb{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 0 6px;cursor:pointer;gap:3px}
+.tb-icon{font-size:19px;line-height:1}
+.tb-label{font-size:9px;font-weight:500;color:var(--tx3)}
+.tb.active .tb-label{color:var(--gold)}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;align-items:flex-end;justify-content:center}
+.ov.open{display:flex}
+.sheet{background:var(--bg);border-radius:20px 20px 0 0;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 20px calc(20px + var(--sb));animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.handle{width:36px;height:4px;background:var(--bg3);border-radius:2px;margin:8px auto 16px}
+.stitle{font-size:18px;font-weight:700;margin-bottom:18px;letter-spacing:-.3px}
+.fg{margin-bottom:14px}
+.fl{font-size:12px;font-weight:600;color:var(--tx2);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.06em}
+.fi,.fs{width:100%;padding:13px 14px;font-size:16px;border:0.5px solid var(--br2);border-radius:12px;background:var(--bg2);color:var(--tx);outline:none;-webkit-appearance:none;transition:border-color .15s}
+.fi:focus,.fs:focus{border-color:var(--gold)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bp{width:100%;padding:15px;font-size:16px;font-weight:700;background:var(--gold);color:#fff;border:none;border-radius:14px;cursor:pointer;margin-top:8px}
+.bp:active{opacity:.85}
+.bg{width:100%;padding:13px;font-size:15px;font-weight:500;background:transparent;color:var(--tx2);border:0.5px solid var(--br2);border-radius:14px;cursor:pointer;margin-top:8px}
+.bg:active{background:var(--bg2)}
+.bd{color:var(--rfg)!important;border-color:var(--rfg)!important}
+.dh{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.da{width:52px;height:52px;border-radius:26px;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.dn{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.dc{font-size:13px;color:var(--tx2);margin-top:2px}
+.dr{display:flex;justify-content:space-between;padding:12px 0;border-bottom:0.5px solid var(--br);font-size:14px}
+.dk{color:var(--tx2)}.dv{font-weight:600}
+.cbs{display:flex;gap:8px;margin:16px 0 4px}
+.cb{flex:1;padding:11px 6px;border-radius:12px;border:0.5px solid var(--br2);background:var(--bg2);color:var(--tx2);font-size:13px;font-weight:600;cursor:pointer;text-align:center}
+.cb.sel-si{background:var(--gbg);color:var(--gfg);border-color:var(--gfg)}
+.cb.sel-att{background:var(--obg);color:var(--ofg);border-color:var(--ofg)}
+.cb.sel-no{background:var(--rbg);color:var(--rfg);border-color:var(--rfg)}
+.empty{text-align:center;padding:60px 20px;color:var(--tx3);font-size:14px}
+.card{background:var(--bg);border:0.5px solid var(--br);border-radius:var(--r);padding:14px;margin-bottom:8px;cursor:pointer}
+.card:active{background:var(--bg2)}
 </style>
 </head>
 <body>
-
 <div class="app">
   <div class="topbar">
     <div class="topbar-head">
@@ -267,1500 +127,1064 @@ html, body { height: 100%; font-family: -apple-system, 'Helvetica Neue', sans-se
       <div class="topbar-date" id="topbar-date"></div>
     </div>
     <div class="tabs">
-      <div class="tab active" onclick="switchTab('home')">Riepilogo</div>
-      <div class="tab" onclick="switchTab('invitati')">Invitati</div>
-      <div class="tab" onclick="switchTab('spese')">Spese</div>
-      <div class="tab" onclick="switchTab('hotel')">Hotel</div>
-      <div class="tab" onclick="switchTab('tavoli')">Tavoli</div>
-      <div class="tab" onclick="switchTab('checklist')">Checklist</div>
-      <div class="tab" onclick="switchTab('playlist')">Musica</div>
-      <div class="tab" onclick="switchTab('scaletta')">Scaletta</div>
+      <div class="tab active" onclick="sw('home')">Riepilogo</div>
+      <div class="tab" onclick="sw('invitati')">Invitati</div>
+      <div class="tab" onclick="sw('spese')">Spese</div>
+      <div class="tab" onclick="sw('hotel')">Hotel</div>
+      <div class="tab" onclick="sw('tavoli')">Tavoli</div>
+      <div class="tab" onclick="sw('checklist')">Lista</div>
+      <div class="tab" onclick="sw('playlist')">Musica</div>
+      <div class="tab" onclick="sw('scaletta')">Scaletta</div>
     </div>
   </div>
 
   <div class="content">
-    <!-- HOME -->
     <div class="page active" id="page-home">
       <p class="sec" style="margin-top:16px">Invitati</p>
-      <div class="metric-grid" id="home-inv"></div>
+      <div class="mg" id="home-inv"></div>
       <p class="sec">Budget</p>
-      <div class="budget-box" id="home-budget"></div>
-      <div class="metric-grid" id="home-extra"></div>
+      <div class="bb" id="home-budget"></div>
+      <div class="mg" id="home-extra"></div>
       <div id="home-allergie"></div>
     </div>
 
-    <!-- INVITATI -->
     <div class="page" id="page-invitati">
-      <div class="search-wrap">
-        <input class="search-input" type="search" placeholder="Cerca nome o categoria..." id="search" oninput="renderGuests()">
-        <div class="filter-row" id="filters"></div>
+      <div class="sw">
+        <input class="si" type="search" placeholder="Cerca nome o categoria..." id="g-search" oninput="renderGuests()">
+        <div class="fr" id="g-filters"></div>
       </div>
-      <div class="guest-list" id="glist"></div>
+      <div class="gl" id="glist"></div>
     </div>
 
-    <!-- SPESE -->
     <div class="page" id="page-spese">
-      <p class="sec" style="margin-top:16px">Tocca una voce per modificarla</p>
-      <div class="expense-list" id="elist"></div>
-    </div>
-    <!-- PLAYLIST -->
-    <div class="page" id="page-playlist">
-      <div style="margin:16px 0 12px">
-        <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px" id="pl-moment-filters"></div>
-      </div>
-      <div style="position:relative;margin-bottom:12px">
-        <input class="search-input" id="pl-search" placeholder="Cerca artista o canzone..." style="padding-right:48px" oninput="spotifySearch()">
-        <div id="pl-search-spinner" style="display:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px">⏳</div>
-      </div>
-      <div id="pl-search-results"></div>
-      <div id="pl-list"></div>
+      <p class="sec" style="margin-top:16px">Tocca per modificare</p>
+      <div class="el" id="elist"></div>
     </div>
 
-    <!-- SCALETTA -->
-    <div class="page" id="page-scaletta">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 12px">
-        <span class="sec" style="margin:0">Programma del giorno</span>
-        <button onclick="addScaletta()" style="font-size:13px;font-weight:600;color:var(--gold);background:none;border:none;cursor:pointer;padding:4px">+ Momento</button>
-      </div>
-      <div id="scaletta-list"></div>
-    </div>
-
-    <!-- HOTEL -->
     <div class="page" id="page-hotel">
-      <p class="sec" style="margin-top:16px">Invitati con pernottamento</p>
-      <div id="hotel-stats" style="margin-bottom:12px"></div>
+      <p class="sec" style="margin-top:16px">Pernottamenti</p>
+      <div id="hotel-stats"></div>
       <div id="hotel-list"></div>
     </div>
 
-    <!-- TAVOLI -->
     <div class="page" id="page-tavoli">
       <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px">
-        <span class="sec" style="margin:0">Gestione tavoli</span>
-        <button onclick="addTavolo()" style="font-size:13px;font-weight:600;color:var(--gold);background:none;border:none;cursor:pointer;padding:4px 0">+ Nuovo tavolo</button>
+        <span class="sec" style="margin:0">Tavoli</span>
+        <button type="button" onclick="openTavoloModal()" style="font-size:13px;font-weight:600;color:var(--gold);background:none;border:none;cursor:pointer">+ Nuovo</button>
       </div>
-      <div id="tavoli-stats" style="margin-bottom:12px"></div>
+      <div id="tavoli-stats"></div>
       <div id="tavoli-list"></div>
     </div>
 
-    <!-- CHECKLIST -->
     <div class="page" id="page-checklist">
       <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px">
         <span class="sec" style="margin:0">Cose da fare</span>
-        <button onclick="addChecklist()" style="font-size:13px;font-weight:600;color:var(--gold);background:none;border:none;cursor:pointer;padding:4px 0">+ Aggiungi</button>
+        <button type="button" onclick="openCkModal()" style="font-size:13px;font-weight:600;color:var(--gold);background:none;border:none;cursor:pointer">+ Aggiungi</button>
       </div>
-      <div id="checklist-progress" style="margin-bottom:12px"></div>
-      <div id="checklist-list"></div>
+      <div id="ck-progress"></div>
+      <div id="ck-list"></div>
+    </div>
+
+    <div class="page" id="page-playlist">
+      <div class="fr" id="pl-filters" style="margin-top:12px"></div>
+      <div style="position:relative;margin:10px 0 6px">
+        <input class="si" id="pl-search" placeholder="Cerca artista o canzone..." oninput="plSearch()" style="padding-right:46px">
+        <div id="pl-spin" style="display:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px">⏳</div>
+      </div>
+      <div style="font-size:12px;color:var(--tx3);margin-bottom:10px;text-align:center">Cerca → tocca il brano → apri Spotify o YouTube</div>
+      <div id="pl-results"></div>
+      <div id="pl-list"></div>
+    </div>
+
+    <div class="page" id="page-scaletta">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 12px">
+        <span class="sec" style="margin:0">Programma del giorno</span>
+        <button type="button" onclick="openScModal()" style="font-size:13px;font-weight:600;color:var(--gold);background:none;border:none;cursor:pointer">+ Momento</button>
+      </div>
+      <div id="sc-list"></div>
     </div>
   </div>
 </div>
 
-<!-- FAB -->
-<button class="fab" id="fab" onclick="fabClick()">+</button>
+<button type="button" class="fab" onclick="fabClick()">+</button>
 
-<!-- TAB BAR -->
 <div class="tabbar">
-  <div class="tabbar-btn active" id="tb-home" onclick="switchTab('home')">
-    <div class="tabbar-icon">📊</div><div class="tabbar-label">Riepilogo</div>
-  </div>
-  <div class="tabbar-btn" id="tb-invitati" onclick="switchTab('invitati')">
-    <div class="tabbar-icon">👥</div><div class="tabbar-label">Invitati</div>
-  </div>
-  <div class="tabbar-btn" id="tb-spese" onclick="switchTab('spese')">
-    <div class="tabbar-icon">💰</div><div class="tabbar-label">Spese</div>
-  </div>
-  <div class="tabbar-btn" id="tb-hotel" onclick="switchTab('hotel')">
-    <div class="tabbar-icon">🏨</div><div class="tabbar-label">Hotel</div>
-  </div>
-  <div class="tabbar-btn" id="tb-tavoli" onclick="switchTab('tavoli')">
-    <div class="tabbar-icon">🪑</div><div class="tabbar-label">Tavoli</div>
-  </div>
-  <div class="tabbar-btn" id="tb-checklist" onclick="switchTab('checklist')">
-    <div class="tabbar-icon">✓</div><div class="tabbar-label">Lista</div>
-  </div>
-  <div class="tabbar-btn" id="tb-playlist" onclick="switchTab('playlist')">
-    <div class="tabbar-icon">♫</div><div class="tabbar-label">Musica</div>
-  </div>
-  <div class="tabbar-btn" id="tb-scaletta" onclick="switchTab('scaletta')">
-    <div class="tabbar-icon">📅</div><div class="tabbar-label">Scaletta</div>
-  </div>
+  <div class="tb active" id="tb-home" onclick="sw('home')"><div class="tb-icon">📊</div><div class="tb-label">Home</div></div>
+  <div class="tb" id="tb-invitati" onclick="sw('invitati')"><div class="tb-icon">👥</div><div class="tb-label">Invitati</div></div>
+  <div class="tb" id="tb-spese" onclick="sw('spese')"><div class="tb-icon">💰</div><div class="tb-label">Spese</div></div>
+  <div class="tb" id="tb-hotel" onclick="sw('hotel')"><div class="tb-icon">🏨</div><div class="tb-label">Hotel</div></div>
+  <div class="tb" id="tb-tavoli" onclick="sw('tavoli')"><div class="tb-icon">🪑</div><div class="tb-label">Tavoli</div></div>
+  <div class="tb" id="tb-checklist" onclick="sw('checklist')"><div class="tb-icon">✓</div><div class="tb-label">Lista</div></div>
+  <div class="tb" id="tb-playlist" onclick="sw('playlist')"><div class="tb-icon">♫</div><div class="tb-label">Musica</div></div>
+  <div class="tb" id="tb-scaletta" onclick="sw('scaletta')"><div class="tb-icon">📅</div><div class="tb-label">Scaletta</div></div>
 </div>
 
-<!-- ADD GUEST MODAL -->
-<div class="overlay" id="modal-guest">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="sheet-title" id="guest-modal-title">Aggiungi invitato</div>
-    <div class="form-group"><label class="form-label">Nome / Gruppo</label><input class="form-input" id="f-nome" placeholder="Es. Marco e Giulia"></div>
-    <div class="form-group"><label class="form-label">Categoria</label>
-      <select class="form-select" id="f-cat">
-        <option>Amici</option><option>Lavoro</option><option>FISI BABIT</option>
-        <option>FISI MAMIT</option><option>Vicini</option><option>Famiglia</option><option>FAMIGLIA MARTINA</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Adulti</label><input class="form-input" id="f-adulti" type="number" min="0" value="2" inputmode="numeric"></div>
-      <div class="form-group"><label class="form-label">Bambini</label><input class="form-input" id="f-bambini" type="number" min="0" value="0" inputmode="numeric"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Conferma</label>
-      <select class="form-select" id="f-conf">
-        <option value="In attesa">⏳ In attesa</option>
-        <option value="Si">✅ Sì</option>
-        <option value="No">❌ No</option>
-      </select>
-    </div>
-    <div class="form-group"><label class="form-label">Hotel (opzionale)</label><input class="form-input" id="f-hotel" placeholder="Nome hotel"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Notti</label><input class="form-input" id="f-notti" type="number" min="0" value="0" inputmode="numeric"></div>
-      <div class="form-group"><label class="form-label">Note / Allergie</label><input class="form-input" id="f-note" placeholder="Vegano..."></div>
-    </div>
-    <input type="hidden" id="f-id">
-    <button class="btn-primary" onclick="saveGuest()">Salva</button>
-    <button class="btn-ghost" onclick="closeModal('modal-guest')">Annulla</button>
+<!-- MODALS -->
+<div class="ov" id="m-guest"><div class="sheet">
+  <div class="handle"></div><div class="stitle" id="m-guest-title">Invitato</div>
+  <div class="fg"><label class="fl">Nome / Gruppo</label><input class="fi" id="f-nome" placeholder="Es. Marco e Giulia"></div>
+  <div class="fg"><label class="fl">Categoria</label><select class="fs" id="f-cat"><option>Amici</option><option>Lavoro</option><option>FISI BABIT</option><option>FISI MAMIT</option><option>Vicini</option><option>Famiglia</option><option>FAMIGLIA MARTINA</option></select></div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Adulti</label><input class="fi" id="f-adulti" type="number" min="0" value="2" inputmode="numeric"></div>
+    <div class="fg"><label class="fl">Bambini</label><input class="fi" id="f-bambini" type="number" min="0" value="0" inputmode="numeric"></div>
   </div>
-</div>
-
-<!-- EXPENSE MODAL -->
-<div class="overlay" id="modal-expense">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="sheet-title" id="exp-modal-title">Aggiungi spesa</div>
-    <div class="form-group"><label class="form-label">Voce</label><input class="form-input" id="e-nome" placeholder="Es. Fotografo"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Importo totale (€)</label><input class="form-input" id="e-importo" type="number" min="0" step="0.01" inputmode="decimal"></div>
-      <div class="form-group"><label class="form-label">Acconto pagato (€)</label><input class="form-input" id="e-acconto" type="number" min="0" step="0.01" value="0" inputmode="decimal"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="e-note" placeholder="Dettagli..."></div>
-    <input type="hidden" id="e-id">
-    <button class="btn-primary" onclick="saveExpense()">Salva</button>
-    <button class="btn-ghost btn-danger" id="e-delete-btn" onclick="deleteExpense()" style="display:none">Elimina spesa</button>
-    <button class="btn-ghost" onclick="closeModal('modal-expense')">Annulla</button>
+  <div class="fg"><label class="fl">Conferma</label><select class="fs" id="f-conf"><option value="In attesa">⏳ In attesa</option><option value="Si">✅ Sì</option><option value="No">❌ No</option></select></div>
+  <div class="fg"><label class="fl">Hotel</label><input class="fi" id="f-hotel" placeholder="Nome hotel"></div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Notti</label><input class="fi" id="f-notti" type="number" min="0" value="0" inputmode="numeric"></div>
+    <div class="fg"><label class="fl">Note / Allergie</label><input class="fi" id="f-note" placeholder="Vegano..."></div>
   </div>
-</div>
+  <input type="hidden" id="f-id">
+  <button type="button" class="bp" onclick="saveGuest()">Salva</button>
+  <button type="button" class="bg bd" id="f-del" onclick="deleteGuest()" style="display:none">Elimina invitato</button>
+  <button type="button" class="bg" onclick="closeM('m-guest')">Annulla</button>
+</div></div>
 
-<!-- GUEST DETAIL MODAL -->
-<div class="overlay" id="modal-detail">
-  <div class="sheet" id="detail-content"></div>
-</div>
+<div class="ov" id="m-expense"><div class="sheet">
+  <div class="handle"></div><div class="stitle" id="m-exp-title">Spesa</div>
+  <div class="fg"><label class="fl">Voce</label><input class="fi" id="e-nome" placeholder="Es. Fotografo"></div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Importo (€)</label><input class="fi" id="e-importo" type="number" min="0" step="1" inputmode="decimal"></div>
+    <div class="fg"><label class="fl">Acconto (€)</label><input class="fi" id="e-acconto" type="number" min="0" step="1" value="0" inputmode="decimal"></div>
+  </div>
+  <div class="fg"><label class="fl">Note</label><input class="fi" id="e-note" placeholder="Dettagli..."></div>
+  <input type="hidden" id="e-id">
+  <button type="button" class="bp" onclick="saveExpense()">Salva</button>
+  <button type="button" class="bg bd" id="e-del" onclick="deleteExpense()" style="display:none">Elimina spesa</button>
+  <button type="button" class="bg" onclick="closeM('m-expense')">Annulla</button>
+</div></div>
+
+<div class="ov" id="m-location"><div class="sheet">
+  <div class="handle"></div><div class="stitle">📍 Prezzo Location</div>
+  <p style="font-size:13px;color:var(--tx2);margin-bottom:16px">Il totale si calcola in base ai confermati.</p>
+  <div class="frow">
+    <div class="fg"><label class="fl">€ / Adulto</label><input class="fi" id="loc-a" type="number" min="0" step="1" inputmode="decimal" placeholder="0" oninput="updateLocPrev()"></div>
+    <div class="fg"><label class="fl">€ / Bambino</label><input class="fi" id="loc-b" type="number" min="0" step="1" inputmode="decimal" placeholder="0" oninput="updateLocPrev()"></div>
+  </div>
+  <div id="loc-prev" style="background:var(--bg2);border-radius:var(--r);padding:14px;margin-bottom:14px"></div>
+  <button type="button" class="bp" onclick="saveLocation()">Salva e aggiorna</button>
+  <button type="button" class="bg" onclick="closeM('m-location')">Annulla</button>
+</div></div>
+
+<div class="ov" id="m-detail"><div class="sheet" id="m-detail-body"></div></div>
+
+<div class="ov" id="m-hotel"><div class="sheet">
+  <div class="handle"></div><div class="stitle">🏨 Hotel</div>
+  <div class="fg"><label class="fl">Ospite</label><input class="fi" id="h-ospite" readonly style="opacity:.6"></div>
+  <div class="fg"><label class="fl">Nome Hotel</label><input class="fi" id="h-hotel" placeholder="Es. Grand Hotel"></div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Check-in</label><input class="fi" id="h-in" type="date"></div>
+    <div class="fg"><label class="fl">Check-out</label><input class="fi" id="h-out" type="date"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Notti</label><input class="fi" id="h-notti" type="number" min="0" inputmode="numeric"></div>
+    <div class="fg"><label class="fl">Camere</label><input class="fi" id="h-camere" type="number" min="1" value="1" inputmode="numeric"></div>
+  </div>
+  <div class="fg"><label class="fl">Stato</label><select class="fs" id="h-stato"><option value="da_prenotare">Da prenotare</option><option value="prenotato">Prenotato</option><option value="confermato">Confermato</option></select></div>
+  <div class="fg"><label class="fl">Note</label><input class="fi" id="h-note" placeholder="Numero camera..."></div>
+  <input type="hidden" id="h-id">
+  <button type="button" class="bp" onclick="saveHotel()">Salva</button>
+  <button type="button" class="bg" onclick="closeM('m-hotel')">Annulla</button>
+</div></div>
+
+<div class="ov" id="m-tavolo"><div class="sheet">
+  <div class="handle"></div><div class="stitle" id="m-tav-title">Tavolo</div>
+  <div class="fg"><label class="fl">Nome tavolo</label><input class="fi" id="t-nome" placeholder="Es. Tavolo degli Sposi"></div>
+  <div class="fg"><label class="fl">Posti massimi</label><input class="fi" id="t-max" type="number" min="1" value="10" inputmode="numeric"></div>
+  <div class="fg"><label class="fl">Note</label><input class="fi" id="t-note" placeholder="Vicino alla pista..."></div>
+  <input type="hidden" id="t-id">
+  <button type="button" class="bp" onclick="saveTavolo()">Salva</button>
+  <button type="button" class="bg bd" id="t-del" onclick="deleteTavolo()" style="display:none">Elimina tavolo</button>
+  <button type="button" class="bg" onclick="closeM('m-tavolo')">Annulla</button>
+</div></div>
+
+<div class="ov" id="m-assegna"><div class="sheet">
+  <div class="handle"></div><div class="stitle" id="m-ass-title">Aggiungi ospiti</div>
+  <input class="si" id="ass-search" placeholder="Cerca..." oninput="renderAssegna()" style="margin-bottom:10px">
+  <div id="ass-list" style="max-height:320px;overflow-y:auto"></div>
+  <button type="button" class="bg" onclick="closeM('m-assegna')" style="margin-top:12px">Chiudi</button>
+</div></div>
+
+<div class="ov" id="m-ck"><div class="sheet">
+  <div class="handle"></div><div class="stitle" id="m-ck-title">Attività</div>
+  <div class="fg"><label class="fl">Cosa fare</label><input class="fi" id="ck-testo" placeholder="Es. Confermare il fotografo"></div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Categoria</label><select class="fs" id="ck-cat"><option value="venue">Venue</option><option value="fornitori">Fornitori</option><option value="abiti">Abiti</option><option value="documenti">Documenti</option><option value="invitati">Invitati</option><option value="altro">Altro</option></select></div>
+    <div class="fg"><label class="fl">Scadenza</label><input class="fi" id="ck-data" type="date"></div>
+  </div>
+  <input type="hidden" id="ck-id">
+  <button type="button" class="bp" onclick="saveCk()">Salva</button>
+  <button type="button" class="bg bd" id="ck-del" onclick="deleteCk()" style="display:none">Elimina</button>
+  <button type="button" class="bg" onclick="closeM('m-ck')">Annulla</button>
+</div></div>
+
+<div class="ov" id="m-plmom"><div class="sheet">
+  <div class="handle"></div><div class="stitle">Momento musicale</div>
+  <div class="fg"><label class="fl">Nome</label><input class="fi" id="plm-nome" placeholder="Es. Cerimonia"></div>
+  <div class="fg"><label class="fl">Emoji</label><input class="fi" id="plm-emoji" placeholder="💍" maxlength="2"></div>
+  <input type="hidden" id="plm-id">
+  <button type="button" class="bp" onclick="savePlMom()">Salva</button>
+  <button type="button" class="bg bd" id="plm-del" onclick="deletePlMom()" style="display:none">Elimina</button>
+  <button type="button" class="bg" onclick="closeM('m-plmom')">Annulla</button>
+</div></div>
+
+<div class="ov" id="m-song"><div class="sheet" id="m-song-body"></div></div>
+
+<div class="ov" id="m-sc"><div class="sheet">
+  <div class="handle"></div><div class="stitle" id="m-sc-title">Momento</div>
+  <div class="frow">
+    <div class="fg"><label class="fl">Orario</label><input class="fi" id="sc-ora" type="time"></div>
+    <div class="fg"><label class="fl">Durata (min)</label><input class="fi" id="sc-dur" type="number" min="0" value="60" inputmode="numeric"></div>
+  </div>
+  <div class="fg"><label class="fl">Nome</label><input class="fi" id="sc-nome" placeholder="Es. Cerimonia civile"></div>
+  <div class="fg"><label class="fl">Luogo</label><input class="fi" id="sc-luogo" placeholder="Es. Sala del comune"></div>
+  <div class="fg"><label class="fl">Responsabile</label><input class="fi" id="sc-resp" placeholder="Es. Fotografo, DJ..."></div>
+  <div class="fg"><label class="fl">Tipo</label><select class="fs" id="sc-tipo"><option value="cerimonia">💍 Cerimonia</option><option value="cocktail">🥂 Cocktail</option><option value="cena">🍽 Cena</option><option value="festa">🎉 Festa</option><option value="foto">📸 Foto</option><option value="altro">📌 Altro</option></select></div>
+  <div class="fg"><label class="fl">Note</label><input class="fi" id="sc-note" placeholder="Dettagli..."></div>
+  <input type="hidden" id="sc-id">
+  <button type="button" class="bp" onclick="saveSc()">Salva</button>
+  <button type="button" class="bg bd" id="sc-del" onclick="deleteSc()" style="display:none">Elimina</button>
+  <button type="button" class="bg" onclick="closeM('m-sc')">Annulla</button>
+</div></div>
 
 <script>
-// ── DATA ─────────────────────────────────────────────────────────────────────
-const STORAGE_KEY = 'matrimonio_v2';
-
-const CAT_COLORS = {
-  "Amici": {bg:"#E9F7EF",fg:"#1E8449"}, "Lavoro": {bg:"#E8F4FD",fg:"#1A5276"},
-  "FISI BABIT": {bg:"#FDF2E9",fg:"#935116"}, "FISI MAMIT": {bg:"#F9EBEA",fg:"#922B21"},
-  "Vicini": {bg:"#F4ECF7",fg:"#76448A"}, "Famiglia": {bg:"#EBF5FB",fg:"#1B4F72"},
-  "FAMIGLIA MARTINA": {bg:"#F5EEF8",fg:"#6C3483"}
+const SK = 'mat_v3';
+const CAT_C = {
+  'Amici':{bg:'#E9F7EF',fg:'#1E8449'},'Lavoro':{bg:'#E8F4FD',fg:'#1A5276'},
+  'FISI BABIT':{bg:'#FDF2E9',fg:'#935116'},'FISI MAMIT':{bg:'#F9EBEA',fg:'#922B21'},
+  'Vicini':{bg:'#F4ECF7',fg:'#76448A'},'Famiglia':{bg:'#EBF5FB',fg:'#1B4F72'},
+  'FAMIGLIA MARTINA':{bg:'#F5EEF8',fg:'#6C3483'}
 };
+const TABS = ['home','invitati','spese','hotel','tavoli','checklist','playlist','scaletta'];
 
-const DEFAULT_GUESTS = [
-  {id:1,nome:"Marco Sonni e Giuditta Braccia",cat:"Lavoro",adulti:2,bambini:0,conf:"Si",hotel:"Kodra e Gjelber",notti:2,note:""},
-  {id:2,nome:"Gianfranco Zizzo e Valeria Marci",cat:"Lavoro",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:3,nome:"Giovanni Basile e Silvia Rinaldi",cat:"Lavoro",adulti:2,bambini:0,conf:"Si",hotel:"Yjet Resort",notti:2,note:""},
-  {id:4,nome:"Tiko e Kristina",cat:"Amici",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:5,nome:"Pedro e Roy",cat:"Amici",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:6,nome:"Lefterie dhe Altin",cat:"FISI BABIT",adulti:3,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:7,nome:"Elona dhe Xhaferr",cat:"FISI MAMIT",adulti:3,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:8,nome:"Leandro dhe Alex",cat:"Amici",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:9,nome:"Keni dhe Brikena",cat:"Amici",adulti:2,bambini:2,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:10,nome:"Antonio dhe Nusja",cat:"Amici",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:11,nome:"Ledi",cat:"Amici",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:12,nome:"Gezim Balla",cat:"FISI MAMIT",adulti:4,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:13,nome:"Geni Balla",cat:"FISI MAMIT",adulti:3,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:14,nome:"Rina dhe Madrit",cat:"FISI MAMIT",adulti:4,bambini:2,conf:"Si",hotel:"",notti:0,note:""},
-  {id:15,nome:"Francesco Lacava",cat:"Lavoro",adulti:1,bambini:0,conf:"No",hotel:"",notti:0,note:""},
-  {id:16,nome:"Armando e Claudia",cat:"Lavoro",adulti:2,bambini:0,conf:"No",hotel:"",notti:0,note:""},
-  {id:17,nome:"Antonio",cat:"Lavoro",adulti:1,bambini:0,conf:"No",hotel:"",notti:0,note:"Allergico a fave e piselli"},
-  {id:18,nome:"Vincenzo e Giada",cat:"Amici",adulti:2,bambini:1,conf:"No",hotel:"",notti:0,note:""},
-  {id:19,nome:"Mazia",cat:"Lavoro",adulti:1,bambini:0,conf:"No",hotel:"",notti:0,note:""},
-  {id:20,nome:"Giulia",cat:"Lavoro",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:21,nome:"Arditi dhe Griselda",cat:"FISI BABIT",adulti:2,bambini:1,conf:"Si",hotel:"",notti:0,note:""},
-  {id:22,nome:"Fabi/Xhevahir",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:23,nome:"Brikel",cat:"Amici",adulti:1,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:24,nome:"Frisi/Halla",cat:"FISI BABIT",adulti:4,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:25,nome:"Gianni",cat:"Lavoro",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:26,nome:"Emiljani",cat:"FISI BABIT",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:27,nome:"Sandri",cat:"Amici",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:28,nome:"Feti",cat:"Amici",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:29,nome:"Gili",cat:"Amici",adulti:1,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:30,nome:"Duri",cat:"Amici",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:31,nome:"Engli/Kristina",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:32,nome:"Alma",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:33,nome:"Ada/Redi",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:34,nome:"Behar",cat:"FISI BABIT",adulti:2,bambini:1,conf:"Si",hotel:"",notti:0,note:""},
-  {id:35,nome:"Naci",cat:"FISI BABIT",adulti:4,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:36,nome:"Altin/Tezja",cat:"FISI MAMIT",adulti:3,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:37,nome:"Nardi",cat:"FISI BABIT",adulti:3,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:38,nome:"Marsela",cat:"FISI BABIT",adulti:4,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:39,nome:"Shyqa",cat:"FISI BABIT",adulti:4,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:40,nome:"Bardhul",cat:"FISI MAMIT",adulti:4,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:41,nome:"Mersin",cat:"FISI MAMIT",adulti:3,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:42,nome:"Tezja Lahe",cat:"FISI MAMIT",adulti:2,bambini:1,conf:"Si",hotel:"",notti:0,note:""},
-  {id:43,nome:"Lona",cat:"FISI BABIT",adulti:2,bambini:1,conf:"No",hotel:"",notti:0,note:""},
-  {id:44,nome:"Olta",cat:"FISI BABIT",adulti:2,bambini:0,conf:"No",hotel:"",notti:0,note:""},
-  {id:45,nome:"Deti",cat:"FISI BABIT",adulti:4,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:46,nome:"Astrit Ferhati",cat:"FISI BABIT",adulti:2,bambini:1,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:47,nome:"Era/Reni",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:48,nome:"Rita",cat:"FISI MAMIT",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:49,nome:"Petrit",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:50,nome:"Naim",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:51,nome:"Sabri",cat:"FISI BABIT",adulti:4,bambini:2,conf:"Si",hotel:"",notti:0,note:""},
-  {id:52,nome:"Avni",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:53,nome:"Ziku",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:54,nome:"Naim 2",cat:"FISI BABIT",adulti:4,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:55,nome:"Safet",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:56,nome:"Qemal",cat:"FISI BABIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:57,nome:"Maliq",cat:"FISI BABIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:58,nome:"Xhafa",cat:"FISI BABIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:59,nome:"Qamil",cat:"FISI BABIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:60,nome:"Niku",cat:"FISI BABIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:61,nome:"Zyber",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:62,nome:"Pellumb",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:63,nome:"Ruzhdi",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:64,nome:"Bujar",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:65,nome:"Met Balla",cat:"FISI MAMIT",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:66,nome:"Dik",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:67,nome:"Ramiz",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:68,nome:"Hajdar",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:69,nome:"Tomorr",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:70,nome:"Besnik",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:71,nome:"Zenel",cat:"FISI BABIT",adulti:3,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:72,nome:"Dervish",cat:"FISI BABIT",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:73,nome:"Gezim Dervishi",cat:"FISI BABIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:74,nome:"Bahush",cat:"Vicini",adulti:3,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:75,nome:"Ismet",cat:"Vicini",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:76,nome:"Rronja",cat:"Vicini",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:77,nome:"Fadil",cat:"Vicini",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:78,nome:"Lushi",cat:"Vicini",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:79,nome:"Tili",cat:"Vicini",adulti:2,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:80,nome:"Zabit",cat:"Vicini",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:81,nome:"Tefta",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:82,nome:"Besa",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:83,nome:"Irma",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:84,nome:"Keta",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:85,nome:"Martina",cat:"Famiglia",adulti:5,bambini:2,conf:"Si",hotel:"",notti:0,note:""},
-  {id:86,nome:"Zia Martina",cat:"Famiglia",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:87,nome:"Mauro/Giulia",cat:"Lavoro",adulti:2,bambini:2,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:88,nome:"Fabrizio/Jessica",cat:"Lavoro",adulti:2,bambini:1,conf:"Si",hotel:"",notti:0,note:""},
-  {id:89,nome:"Andrea",cat:"Lavoro",adulti:1,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:90,nome:"Gianluca",cat:"Lavoro",adulti:1,bambini:0,conf:"Si",hotel:"",notti:0,note:"Vegano"},
-  {id:91,nome:"Patrizio",cat:"Lavoro",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:92,nome:"Arianna",cat:"Lavoro",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:93,nome:"Giorgia",cat:"FAMIGLIA MARTINA",adulti:1,bambini:0,conf:"Si",hotel:"",notti:0,note:""},
-  {id:94,nome:"Loli",cat:"FISI MAMIT",adulti:2,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-  {id:95,nome:"Zoni",cat:"FISI MAMIT",adulti:1,bambini:0,conf:"In attesa",hotel:"",notti:0,note:""},
-];
-
-const DEFAULT_EXPENSES = [
-  {id:1,nome:"Location",importo:8500,acconto:0,note:"Saldo da pagare · 190 persone"},
-  {id:2,nome:"Decorazioni",importo:2500,acconto:0,note:""},
-  {id:3,nome:"Fotografo",importo:1000,acconto:200,note:"Il cugino"},
-  {id:4,nome:"Abito Sposo",importo:1000,acconto:0,note:""},
-  {id:5,nome:"Fiori",importo:0,acconto:0,note:"Da definire"},
-  {id:6,nome:"Musica / DJ",importo:650,acconto:150,note:"Pagato da noi"},
-  {id:7,nome:"Partecipazioni",importo:96,acconto:0,note:""},
-  {id:8,nome:"Bomboniere",importo:438,acconto:138,note:"Pagato da noi"},
-  {id:9,nome:"Trucco e Parrucco",importo:200,acconto:50,note:""},
-  {id:10,nome:"Auto Sposi",importo:0,acconto:0,note:"Da definire"},
-  {id:11,nome:"Torta",importo:550,acconto:0,note:""},
-];
-
-// ── STATE ────────────────────────────────────────────────────────────────────
-function load() {
-  try {
-    const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (s && s.guests && s.expenses) return s;
-  } catch(e) {}
-  return { guests: DEFAULT_GUESTS.map(g=>({...g})), expenses: DEFAULT_EXPENSES.map(e=>({...e})), nextGid: 200, nextEid: 100 };
-}
-function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
-
-let state = load(); // state now includes tavoli and checklist
-let activeTab = 'home';
-let filterConf = 'tutti';
-
-// ── UTILS ────────────────────────────────────────────────────────────────────
-function initials(name) {
-  return name.split(/[\s\/eedhe&]+/i).filter(Boolean).slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '?';
-}
-function fmt(n) {
-  return '€' + Math.round(n||0).toLocaleString('it-IT');
-}
-function fmtDec(n) {
-  return '€' + (n||0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-function stats() {
-  const g = state.guests;
-  const si = g.filter(x=>x.conf==='Si'), att = g.filter(x=>x.conf==='In attesa'), no = g.filter(x=>x.conf==='No');
+function defState() {
   return {
-    siA: si.reduce((a,x)=>a+x.adulti,0), siB: si.reduce((a,x)=>a+x.bambini,0), siG: si.length,
-    attA: att.reduce((a,x)=>a+x.adulti,0), attB: att.reduce((a,x)=>a+x.bambini,0), attG: att.length,
-    noG: no.length, noA: no.reduce((a,x)=>a+x.adulti,0),
+    guests:[
+      {id:1,nome:'Marco Sonni e Giuditta Braccia',cat:'Lavoro',adulti:2,bambini:0,conf:'Si',hotel:'Kodra e Gjelber',notti:2,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:2,nome:'Gianfranco Zizzo e Valeria Marci',cat:'Lavoro',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:3,nome:'Giovanni Basile e Silvia Rinaldi',cat:'Lavoro',adulti:2,bambini:0,conf:'Si',hotel:'Yjet Resort',notti:2,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:4,nome:'Tiko e Kristina',cat:'Amici',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:5,nome:'Pedro e Roy',cat:'Amici',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:6,nome:'Lefterie dhe Altin',cat:'FISI BABIT',adulti:3,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:7,nome:'Elona dhe Xhaferr',cat:'FISI MAMIT',adulti:3,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:8,nome:'Leandro dhe Alex',cat:'Amici',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:9,nome:'Keni dhe Brikena',cat:'Amici',adulti:2,bambini:2,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:10,nome:'Antonio dhe Nusja',cat:'Amici',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:11,nome:'Ledi',cat:'Amici',adulti:1,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:12,nome:'Gezim Balla',cat:'FISI MAMIT',adulti:4,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:13,nome:'Geni Balla',cat:'FISI MAMIT',adulti:3,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:14,nome:'Rina dhe Madrit',cat:'FISI MAMIT',adulti:4,bambini:2,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:15,nome:'Francesco Lacava',cat:'Lavoro',adulti:1,bambini:0,conf:'No',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:16,nome:'Armando e Claudia',cat:'Lavoro',adulti:2,bambini:0,conf:'No',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:17,nome:'Antonio',cat:'Lavoro',adulti:1,bambini:0,conf:'No',hotel:'',notti:0,note:'Allergico a fave e piselli',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:18,nome:'Vincenzo e Giada',cat:'Amici',adulti:2,bambini:1,conf:'No',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:19,nome:'Mazia',cat:'Lavoro',adulti:1,bambini:0,conf:'No',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:20,nome:'Giulia',cat:'Lavoro',adulti:1,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:21,nome:'Arditi dhe Griselda',cat:'FISI BABIT',adulti:2,bambini:1,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:22,nome:'Fabi/Xhevahir',cat:'FISI BABIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:23,nome:'Brikel',cat:'Amici',adulti:1,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:24,nome:'Frisi/Halla',cat:'FISI BABIT',adulti:4,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:25,nome:'Gianni',cat:'Lavoro',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:26,nome:'Emiljani',cat:'FISI BABIT',adulti:1,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:27,nome:'Sandri',cat:'Amici',adulti:1,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:28,nome:'Feti',cat:'Amici',adulti:1,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:29,nome:'Gili',cat:'Amici',adulti:1,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:30,nome:'Duri',cat:'Amici',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:31,nome:'Engli/Kristina',cat:'FISI BABIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:32,nome:'Alma',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:33,nome:'Ada/Redi',cat:'FISI BABIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:34,nome:'Behar',cat:'FISI BABIT',adulti:2,bambini:1,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:35,nome:'Naci',cat:'FISI BABIT',adulti:4,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:36,nome:'Altin/Tezja',cat:'FISI MAMIT',adulti:3,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:37,nome:'Nardi',cat:'FISI BABIT',adulti:3,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:38,nome:'Marsela',cat:'FISI BABIT',adulti:4,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:39,nome:'Shyqa',cat:'FISI BABIT',adulti:4,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:40,nome:'Bardhul',cat:'FISI MAMIT',adulti:4,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:41,nome:'Mersin',cat:'FISI MAMIT',adulti:3,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:42,nome:'Tezja Lahe',cat:'FISI MAMIT',adulti:2,bambini:1,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:43,nome:'Lona',cat:'FISI BABIT',adulti:2,bambini:1,conf:'No',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:44,nome:'Olta',cat:'FISI BABIT',adulti:2,bambini:0,conf:'No',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:45,nome:'Deti',cat:'FISI BABIT',adulti:4,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:46,nome:'Astrit Ferhati',cat:'FISI BABIT',adulti:2,bambini:1,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:47,nome:'Era/Reni',cat:'FISI BABIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:48,nome:'Rita',cat:'FISI MAMIT',adulti:1,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:49,nome:'Petrit',cat:'FISI BABIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:50,nome:'Naim',cat:'FISI BABIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:51,nome:'Sabri',cat:'FISI BABIT',adulti:4,bambini:2,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:52,nome:'Avni',cat:'FISI BABIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:53,nome:'Ziku',cat:'FISI BABIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:54,nome:'Naim 2',cat:'FISI BABIT',adulti:4,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:55,nome:'Safet',cat:'FISI BABIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:56,nome:'Qemal',cat:'FISI BABIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:57,nome:'Maliq',cat:'FISI BABIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:58,nome:'Xhafa',cat:'FISI BABIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:59,nome:'Qamil',cat:'FISI BABIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:60,nome:'Niku',cat:'FISI BABIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:61,nome:'Zyber',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:62,nome:'Pellumb',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:63,nome:'Ruzhdi',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:64,nome:'Bujar',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:65,nome:'Met Balla',cat:'FISI MAMIT',adulti:1,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:66,nome:'Dik',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:67,nome:'Ramiz',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:68,nome:'Hajdar',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:69,nome:'Tomorr',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:70,nome:'Besnik',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:71,nome:'Zenel',cat:'FISI BABIT',adulti:3,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:72,nome:'Dervish',cat:'FISI BABIT',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:73,nome:'Gezim Dervishi',cat:'FISI BABIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:74,nome:'Bahush',cat:'Vicini',adulti:3,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:75,nome:'Ismet',cat:'Vicini',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:76,nome:'Rronja',cat:'Vicini',adulti:1,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:77,nome:'Fadil',cat:'Vicini',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:78,nome:'Lushi',cat:'Vicini',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:79,nome:'Tili',cat:'Vicini',adulti:2,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:80,nome:'Zabit',cat:'Vicini',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:81,nome:'Tefta',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:82,nome:'Besa',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:83,nome:'Irma',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:84,nome:'Keta',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:85,nome:'Martina',cat:'Famiglia',adulti:5,bambini:2,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:86,nome:'Zia Martina',cat:'Famiglia',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:87,nome:'Mauro/Giulia',cat:'Lavoro',adulti:2,bambini:2,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:88,nome:'Fabrizio/Jessica',cat:'Lavoro',adulti:2,bambini:1,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:89,nome:'Andrea',cat:'Lavoro',adulti:1,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:90,nome:'Gianluca',cat:'Lavoro',adulti:1,bambini:0,conf:'Si',hotel:'',notti:0,note:'Vegano',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:91,nome:'Patrizio',cat:'Lavoro',adulti:1,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:92,nome:'Arianna',cat:'Lavoro',adulti:1,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:93,nome:'Giorgia',cat:'FAMIGLIA MARTINA',adulti:1,bambini:0,conf:'Si',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:94,nome:'Loli',cat:'FISI MAMIT',adulti:2,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+      {id:95,nome:'Zoni',cat:'FISI MAMIT',adulti:1,bambini:0,conf:'In attesa',hotel:'',notti:0,note:'',hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''},
+    ],
+    expenses:[
+      {id:1,nome:'Location',importo:0,acconto:0,note:'Prezzo automatico — tocca per impostare'},
+      {id:2,nome:'Decorazioni',importo:2500,acconto:0,note:''},
+      {id:3,nome:'Fotografo',importo:1000,acconto:200,note:'Il cugino'},
+      {id:4,nome:'Abito Sposo',importo:1000,acconto:0,note:''},
+      {id:5,nome:'Fiori',importo:0,acconto:0,note:'Da definire'},
+      {id:6,nome:'Musica / DJ',importo:650,acconto:150,note:'Pagato da noi'},
+      {id:7,nome:'Partecipazioni',importo:96,acconto:0,note:''},
+      {id:8,nome:'Bomboniere',importo:438,acconto:138,note:'Pagato da noi'},
+      {id:9,nome:'Trucco e Parrucco',importo:200,acconto:50,note:''},
+      {id:10,nome:'Auto Sposi',importo:0,acconto:0,note:'Da definire'},
+      {id:11,nome:'Torta',importo:550,acconto:0,note:''},
+    ],
+    tavoli:[
+      {id:1,nome:'Tavolo degli Sposi',max:12,note:"Tavolo d'onore",ospiti:[]},
+      {id:2,nome:'Famiglia Martina',max:10,note:'',ospiti:[]},
+      {id:3,nome:'Famiglia Albania',max:10,note:'',ospiti:[]},
+      {id:4,nome:'Amici',max:10,note:'',ospiti:[]},
+      {id:5,nome:'Lavoro',max:10,note:'',ospiti:[]},
+    ],
+    checklist:[
+      {id:1,testo:'Confermare la location',cat:'venue',data:'',done:false},
+      {id:2,testo:'Firmare contratto fotografo',cat:'fornitori',data:'',done:false},
+      {id:3,testo:'Ordine abito sposa',cat:'abiti',data:'',done:false},
+      {id:4,testo:'Ordine abito sposo',cat:'abiti',data:'',done:false},
+      {id:5,testo:'Inviare partecipazioni',cat:'invitati',data:'',done:true},
+      {id:6,testo:'Pubblicazioni in comune',cat:'documenti',data:'',done:false},
+      {id:7,testo:'Prenotare auto sposi',cat:'fornitori',data:'',done:false},
+      {id:8,testo:'Confermare menù con caterer',cat:'venue',data:'',done:false},
+      {id:9,testo:'Scegliere lista brani DJ',cat:'fornitori',data:'',done:false},
+      {id:10,testo:'Prenotare hotels invitati',cat:'invitati',data:'',done:false},
+      {id:11,testo:'Preparare segnaposto tavoli',cat:'venue',data:'',done:false},
+      {id:12,testo:'Acquistare fedi',cat:'documenti',data:'',done:false},
+      {id:13,testo:'Bomboniere pronte',cat:'altro',data:'',done:false},
+      {id:14,testo:'Confermare con parrucchiera',cat:'abiti',data:'',done:false},
+      {id:15,testo:'Lista canzoni cerimonia',cat:'fornitori',data:'',done:false},
+    ],
+    plMoments:[
+      {id:1,nome:'Cerimonia',emoji:'💍',songs:[]},
+      {id:2,nome:'Cocktail',emoji:'🥂',songs:[]},
+      {id:3,nome:'Cena',emoji:'🍽',songs:[]},
+      {id:4,nome:'Festa',emoji:'🎉',songs:[]},
+    ],
+    scaletta:[
+      {id:1,ora:'14:00',dur:60,nome:'Cerimonia civile',luogo:'Comune',resp:'Officiante',note:'',tipo:'cerimonia'},
+      {id:2,ora:'15:30',dur:30,nome:'Sessione foto',luogo:'Parco',resp:'Fotografo',note:'',tipo:'foto'},
+      {id:3,ora:'16:00',dur:90,nome:'Cocktail',luogo:'Giardino',resp:'Catering',note:'',tipo:'cocktail'},
+      {id:4,ora:'17:30',dur:180,nome:'Cena',luogo:'Sala banchetti',resp:'Catering + DJ',note:'Taglio torta alle 20:00',tipo:'cena'},
+      {id:5,ora:'20:30',dur:180,nome:'Festa e balli',luogo:'Pista da ballo',resp:'DJ',note:'',tipo:'festa'},
+    ],
+    locA:0,locB:0,
+    nextGid:200,nextEid:100,nextTid:100,nextCkid:100,nextPlMid:100,nextScid:100,
+    plFilter:1
   };
 }
-function budget() {
-  const e = state.expenses;
-  const tot = e.reduce((a,x)=>a+(x.importo||0),0);
-  const pag = e.reduce((a,x)=>a+(x.acconto||0),0);
-  return { tot, pag, saldo: tot-pag };
-}
 
-// ── RENDER HOME ───────────────────────────────────────────────────────────────
-function renderHome() {
-  const s = stats(), b = budget();
-  const confTot = s.siA + s.siB;
-  const cpp = confTot > 0 ? Math.round(b.tot / confTot) : 0;
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SK));
+    if(s && s.guests && s.expenses) return s;
+  } catch(e) {}
+  return defState();
+}
+function save() { try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {} }
 
-  document.getElementById('home-inv').innerHTML = `
-    <div class="metric-card green"><div class="metric-label">Confermati</div><div class="metric-value">${s.siA+s.siB}</div></div>
-    <div class="metric-card orange"><div class="metric-label">In attesa</div><div class="metric-value">${s.attA+s.attB}</div></div>
-    <div class="metric-card"><div class="metric-label">Adulti conf.</div><div class="metric-value">${s.siA}</div></div>
-    <div class="metric-card"><div class="metric-label">Bambini conf.</div><div class="metric-value">${s.siB}</div></div>
-  `;
-  document.getElementById('home-budget').innerHTML = `
-    <div class="budget-row"><span class="budget-label">Budget totale</span><span class="budget-val blue">${fmt(b.tot)}</span></div>
-    <div class="budget-row"><span class="budget-label">Acconti pagati</span><span class="budget-val green">${fmt(b.pag)}</span></div>
-    <div class="budget-row"><span class="budget-label">Saldo restante</span><span class="budget-val orange total">${fmt(b.saldo)}</span></div>
-  `;
-  document.getElementById('home-extra').innerHTML = `
-    <div class="metric-card gold"><div class="metric-label">Costo/persona</div><div class="metric-value" style="font-size:20px">${fmt(cpp)}</div></div>
-    <div class="metric-card red"><div class="metric-label">Non vengono</div><div class="metric-value">${s.noG} gr.</div></div>
-  `;
-  const all = state.guests.filter(g=>g.note && g.conf!=='No');
-  document.getElementById('home-allergie').innerHTML = all.length
-    ? `<p class="sec">Allergie & note</p>` + all.map(g=>`
-      <div class="allergia-card" onclick="openDetail(${g.id})">
-        <div class="avatar" style="background:${(CAT_COLORS[g.cat]||{bg:'#eee'}).bg};color:${(CAT_COLORS[g.cat]||{fg:'#666'}).fg};width:36px;height:36px;font-size:12px">${initials(g.nome)}</div>
-        <div><div class="allergia-name">${g.nome}</div><div class="allergia-note">${g.note}</div></div>
-      </div>`).join('') : '';
-}
+let S = loadState();
+let activeTab = 'home';
+let gFilter = 'tutti';
+let assTab = null;
+let plSearchTimer = null;
 
-// ── RENDER GUESTS ─────────────────────────────────────────────────────────────
-function renderGuests() {
-  const q = (document.getElementById('search').value||'').toLowerCase();
-  const filters = ['tutti','✅ Sì','⏳ Attesa','❌ No'];
-  document.getElementById('filters').innerHTML = filters.map(f=>`
-    <button class="filter-btn ${filterConf===f?'active':''}" onclick="setFilter('${f}')">${f}</button>`).join('');
-
-  const filtered = state.guests.filter(g=>{
-    const ms = !q || g.nome.toLowerCase().includes(q) || g.cat.toLowerCase().includes(q);
-    const ml = filterConf==='tutti' ||
-      (filterConf==='✅ Sì' && g.conf==='Si') ||
-      (filterConf==='⏳ Attesa' && g.conf==='In attesa') ||
-      (filterConf==='❌ No' && g.conf==='No');
-    return ms && ml;
-  });
-
-  if(!filtered.length) { document.getElementById('glist').innerHTML='<div class="empty">Nessun invitato trovato</div>'; return; }
-  const cc = CAT_COLORS;
-  document.getElementById('glist').innerHTML = filtered.map(g=>{
-    const c = cc[g.cat]||{bg:'#eee',fg:'#666'};
-    const bc = g.conf==='Si'?'si':g.conf==='In attesa'?'attesa':'no';
-    const bl = g.conf==='Si'?'✅':g.conf==='In attesa'?'⏳':'❌';
-    const tot = g.adulti+g.bambini;
-    return `<div class="guest-card" onclick="openDetail(${g.id})">
-      <div class="avatar" style="background:${c.bg};color:${c.fg}">${initials(g.nome)}</div>
-      <div class="guest-info">
-        <div class="guest-name">${g.nome}</div>
-        <div class="guest-sub">${g.cat} · ${tot} pers.</div>
-      </div>
-      <div class="badge ${bc}">${bl}</div>
-    </div>`;
-  }).join('');
+// ── UTILS ──────────────────────────────────────────────────────────────────
+function ini(name) {
+  return name.split(/[\s\/edhe&]+/i).filter(Boolean).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';
 }
-function setFilter(f) { filterConf=f; renderGuests(); }
-
-// ── RENDER EXPENSES ────────────────────────────────────────────────────────────
-function renderExpenses() {
-  document.getElementById('elist').innerHTML = state.expenses.map(e=>{
-    const saldo = Math.max(0,(e.importo||0)-(e.acconto||0));
-    const pct = e.importo>0 ? Math.min(100,Math.round((e.acconto/e.importo)*100)) : 0;
-    const tbd = !e.importo;
-    const isLocation = e.nome==='Location';
-    return `<div class="exp-card" onclick="${isLocation?'openLocationModal()':'openExpenseEdit('+e.id+')'}"> 
-      <div class="exp-header">
-        <div><div class="exp-name">${e.nome}</div>${e.note?`<div class="exp-sub">${e.note}</div>`:''}</div>
-        <div class="exp-amount ${tbd?'tbd':''}">${tbd?'Da definire':fmt(e.importo)}</div>
-      </div>
-      ${!tbd?`
-      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-      <div class="exp-row"><span class="lbl">Acconto pagato</span><span class="val green">${fmt(e.acconto)}</span></div>
-      <div class="exp-row"><span class="lbl">Saldo restante</span><span class="val ${saldo>0?'orange':''}">${saldo>0?fmt(saldo):'Saldato ✓'}</span></div>
-      `:isLocation ? `<div class="exp-row"><span class="lbl" style="font-style:italic;color:var(--gold)">Tocca per impostare il prezzo per persona</span></div>` : `<div class="exp-row"><span class="lbl" style="font-style:italic">Tocca per aggiungere l'importo</span></div>`}
-    </div>`;
-  }).join('');
+function fmt(n) { return '€'+(Math.round(n)||0).toLocaleString('it-IT'); }
+function endTime(ora,dur) {
+  const [h,m]=ora.split(':').map(Number);
+  const t=h*60+m+(dur||0);
+  return String(Math.floor(t/60)%24).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
 }
-
-// ── GUEST DETAIL ──────────────────────────────────────────────────────────────
-function openDetail(id) {
-  const g = state.guests.find(x=>x.id===id); if(!g) return;
-  const c = CAT_COLORS[g.cat]||{bg:'#eee',fg:'#666'};
-  const csel = {Si:'sel-si','In attesa':'sel-attesa',No:'sel-no'};
-  document.getElementById('detail-content').innerHTML = `
-    <div class="handle"></div>
-    <div class="detail-header">
-      <div class="detail-avatar" style="background:${c.bg};color:${c.fg}">${initials(g.nome)}</div>
-      <div><div class="detail-name">${g.nome}</div><div class="detail-cat">${g.cat}</div></div>
-    </div>
-    <div class="detail-row"><span class="detail-key">Adulti</span><span class="detail-val">${g.adulti}</span></div>
-    <div class="detail-row"><span class="detail-key">Bambini</span><span class="detail-val">${g.bambini||'—'}</span></div>
-    ${g.hotel?`<div class="detail-row"><span class="detail-key">Hotel</span><span class="detail-val">${g.hotel}</span></div>`:''}
-    ${g.notti?`<div class="detail-row"><span class="detail-key">Notti</span><span class="detail-val">${g.notti}</span></div>`:''}
-    ${g.note?`<div class="detail-row"><span class="detail-key">Note</span><span class="detail-val">${g.note}</span></div>`:''}
-    <p style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 8px">Aggiorna conferma</p>
-    <div class="conf-buttons">
-      <button class="conf-btn ${g.conf==='Si'?csel['Si']:''}" onclick="setConf(${id},'Si')">✅ Sì</button>
-      <button class="conf-btn ${g.conf==='In attesa'?csel['In attesa']:''}" onclick="setConf(${id},'In attesa')">⏳ Attesa</button>
-      <button class="conf-btn ${g.conf==='No'?csel['No']:''}" onclick="setConf(${id},'No')">❌ No</button>
-    </div>
-    <button class="btn-ghost" onclick="openGuestEdit(${id});closeModal('modal-detail')" style="margin-top:12px">Modifica dettagli</button>
-    <button class="btn-ghost btn-danger" onclick="deleteGuest(${id})">Elimina</button>
-    <button class="btn-ghost" onclick="closeModal('modal-detail')">Chiudi</button>
-  `;
-  openModal('modal-detail');
-}
-function setConf(id, conf) {
-  const g = state.guests.find(x=>x.id===id); if(!g) return;
-  g.conf=conf; save(); closeModal('modal-detail'); renderAll();
-}
-function deleteGuest(id) {
-  if(!confirm('Eliminare questo invitato?')) return;
-  state.guests = state.guests.filter(x=>x.id!==id);
-  save(); closeModal('modal-detail'); renderAll();
-}
-
-// ── GUEST FORM ────────────────────────────────────────────────────────────────
-function fabClick() {
-  if(activeTab==='spese') { openExpenseAdd(); return; }
-  openGuestAdd();
-}
-function openGuestAdd() {
-  document.getElementById('guest-modal-title').textContent='Aggiungi invitato';
-  document.getElementById('f-nome').value='';
-  document.getElementById('f-cat').value='Amici';
-  document.getElementById('f-adulti').value=2;
-  document.getElementById('f-bambini').value=0;
-  document.getElementById('f-conf').value='In attesa';
-  document.getElementById('f-hotel').value='';
-  document.getElementById('f-notti').value=0;
-  document.getElementById('f-note').value='';
-  document.getElementById('f-id').value='';
-  openModal('modal-guest');
-}
-function openGuestEdit(id) {
-  const g = state.guests.find(x=>x.id===id); if(!g) return;
-  document.getElementById('guest-modal-title').textContent='Modifica invitato';
-  document.getElementById('f-nome').value=g.nome;
-  document.getElementById('f-cat').value=g.cat;
-  document.getElementById('f-adulti').value=g.adulti;
-  document.getElementById('f-bambini').value=g.bambini;
-  document.getElementById('f-conf').value=g.conf;
-  document.getElementById('f-hotel').value=g.hotel||'';
-  document.getElementById('f-notti').value=g.notti||0;
-  document.getElementById('f-note').value=g.note||'';
-  document.getElementById('f-id').value=id;
-  openModal('modal-guest');
-}
-function saveGuest() {
-  const nome = document.getElementById('f-nome').value.trim();
-  if(!nome) { alert('Inserisci un nome'); return; }
-  const data = {
-    nome, cat: document.getElementById('f-cat').value,
-    adulti: parseInt(document.getElementById('f-adulti').value)||0,
-    bambini: parseInt(document.getElementById('f-bambini').value)||0,
-    conf: document.getElementById('f-conf').value,
-    hotel: document.getElementById('f-hotel').value.trim(),
-    notti: parseInt(document.getElementById('f-notti').value)||0,
-    note: document.getElementById('f-note').value.trim(),
+function statsGuests() {
+  const si=S.guests.filter(g=>g.conf==='Si');
+  const att=S.guests.filter(g=>g.conf==='In attesa');
+  const no=S.guests.filter(g=>g.conf==='No');
+  return {
+    siA:si.reduce((a,g)=>a+g.adulti,0),siB:si.reduce((a,g)=>a+g.bambini,0),siG:si.length,
+    attA:att.reduce((a,g)=>a+g.adulti,0),attB:att.reduce((a,g)=>a+g.bambini,0),attG:att.length,
+    noG:no.length
   };
-  const eid = document.getElementById('f-id').value;
-  if(eid) {
-    const idx = state.guests.findIndex(x=>x.id===parseInt(eid));
-    if(idx>=0) state.guests[idx]={...state.guests[idx],...data};
-  } else {
-    state.guests.push({id: state.nextGid++, ...data});
-  }
-  save(); closeModal('modal-guest'); renderAll();
+}
+function statsBudget() {
+  const tot=S.expenses.reduce((a,e)=>a+(e.importo||0),0);
+  const pag=S.expenses.reduce((a,e)=>a+(e.acconto||0),0);
+  return {tot,pag,saldo:tot-pag};
 }
 
-// ── EXPENSE FORM ──────────────────────────────────────────────────────────────
-function openExpenseAdd() {
-  document.getElementById('exp-modal-title').textContent='Aggiungi spesa';
-  document.getElementById('e-nome').value='';
-  document.getElementById('e-importo').value='';
-  document.getElementById('e-acconto').value='0';
-  document.getElementById('e-note').value='';
-  document.getElementById('e-id').value='';
-  document.getElementById('e-delete-btn').style.display='none';
-  openModal('modal-expense');
-}
-function openExpenseEdit(id) {
-  const e = state.expenses.find(x=>x.id===id); if(!e) return;
-  document.getElementById('exp-modal-title').textContent='Modifica spesa';
-  document.getElementById('e-nome').value=e.nome;
-  document.getElementById('e-importo').value=e.importo||'';
-  document.getElementById('e-acconto').value=e.acconto||0;
-  document.getElementById('e-note').value=e.note||'';
-  document.getElementById('e-id').value=id;
-  document.getElementById('e-delete-btn').style.display='block';
-  openModal('modal-expense');
-}
-function saveExpense() {
-  const nome = document.getElementById('e-nome').value.trim();
-  if(!nome) { alert('Inserisci un nome'); return; }
-  const data = {
-    nome,
-    importo: parseFloat(document.getElementById('e-importo').value)||0,
-    acconto: parseFloat(document.getElementById('e-acconto').value)||0,
-    note: document.getElementById('e-note').value.trim(),
-  };
-  const eid = document.getElementById('e-id').value;
-  if(eid) {
-    const idx = state.expenses.findIndex(x=>x.id===parseInt(eid));
-    if(idx>=0) state.expenses[idx]={...state.expenses[idx],...data};
-  } else {
-    state.expenses.push({id: state.nextEid++, ...data});
-  }
-  save(); closeModal('modal-expense'); renderAll();
-}
-function deleteExpense() {
-  const eid = document.getElementById('e-id').value;
-  if(!eid || !confirm('Eliminare questa spesa?')) return;
-  state.expenses = state.expenses.filter(x=>x.id!==parseInt(eid));
-  save(); closeModal('modal-expense'); renderAll();
-}
-
-// ── MODAL ─────────────────────────────────────────────────────────────────────
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.overlay').forEach(el=>{
-  el.addEventListener('click', e=>{ if(e.target===el) el.classList.remove('open'); });
+// ── MODAL ──────────────────────────────────────────────────────────────────
+function openM(id) { document.getElementById(id).classList.add('open'); }
+function closeM(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.ov').forEach(el=>{
+  el.addEventListener('click',e=>{ if(e.target===el) el.classList.remove('open'); });
 });
 
-// ── TAB ───────────────────────────────────────────────────────────────────────
-function switchTab(tab) {
+// ── TABS ───────────────────────────────────────────────────────────────────
+function sw(tab) {
   activeTab=tab;
-  ['home','invitati','spese','hotel','tavoli','checklist','playlist','scaletta'].forEach(t=>{
-    document.getElementById('page-'+t).classList.toggle('active', t===tab);
-    document.getElementById('tb-'+t).classList.toggle('active', t===tab);
+  TABS.forEach(t=>{
+    const p=document.getElementById('page-'+t);
+    const b=document.getElementById('tb-'+t);
+    if(p) p.classList.toggle('active',t===tab);
+    if(b) b.classList.toggle('active',t===tab);
   });
   document.querySelectorAll('.tab').forEach((el,i)=>{
-    el.classList.toggle('active', ['home','invitati','spese','hotel','tavoli','checklist','playlist','scaletta'][i]===tab);
+    el.classList.toggle('active',TABS[i]===tab);
   });
   renderAll();
 }
 
-function renderAll() { renderHome(); renderGuests(); renderExpenses(); renderHotel(); renderTavoli(); renderChecklist(); renderPlaylist(); renderScaletta(); }
-
-// ── INIT ──────────────────────────────────────────────────────────────────────
-const today = new Date();
-document.getElementById('topbar-date').textContent = today.toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'});
-renderAll();
-</script>
-<!-- HOTEL EDIT MODAL -->
-<div class="overlay" id="modal-hotel">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="sheet-title" id="hotel-modal-title">Modifica hotel</div>
-    <div class="form-group"><label class="form-label">Nome / Gruppo</label><input class="form-input" id="h-guest" readonly style="opacity:0.6"></div>
-    <div class="form-group"><label class="form-label">Nome Hotel</label><input class="form-input" id="h-hotel" placeholder="Es. Grand Hotel Roma"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Check-in</label><input class="form-input" id="h-checkin" type="date"></div>
-      <div class="form-group"><label class="form-label">Check-out</label><input class="form-input" id="h-checkout" type="date"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Notti</label><input class="form-input" id="h-notti" type="number" min="0" inputmode="numeric"></div>
-      <div class="form-group"><label class="form-label">Camere</label><input class="form-input" id="h-camere" type="number" min="1" value="1" inputmode="numeric"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Stato prenotazione</label>
-      <select class="form-select" id="h-stato">
-        <option value="da_prenotare">Da prenotare</option>
-        <option value="prenotato">Prenotato</option>
-        <option value="confermato">Confermato</option>
-      </select>
-    </div>
-    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="h-note" placeholder="Numero camera, contatto..."></div>
-    <input type="hidden" id="h-guestid">
-    <button class="btn-primary" onclick="saveHotelEdit()">Salva</button>
-    <button class="btn-ghost" onclick="closeModal('modal-hotel')">Annulla</button>
-  </div>
-</div>
-
-<!-- TAVOLO MODAL -->
-<div class="overlay" id="modal-tavolo">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="sheet-title" id="tavolo-modal-title">Tavolo</div>
-    <div class="form-group"><label class="form-label">Nome del tavolo</label><input class="form-input" id="t-nome" placeholder="Es. Tavolo degli sposi, Tavolo 1..."></div>
-    <div class="form-group"><label class="form-label">Capienza massima</label><input class="form-input" id="t-max" type="number" min="1" value="10" inputmode="numeric"></div>
-    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="t-note" placeholder="Vicino alla pista, tavolo d'onore..."></div>
-    <input type="hidden" id="t-id">
-    <button class="btn-primary" onclick="saveTavolo()">Salva</button>
-    <button class="btn-ghost btn-danger" id="t-delete-btn" onclick="deleteTavolo()" style="display:none">Elimina tavolo</button>
-    <button class="btn-ghost" onclick="closeModal('modal-tavolo')">Annulla</button>
-  </div>
-</div>
-
-<!-- ASSEGNA POSTO MODAL -->
-<div class="overlay" id="modal-assegna">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="sheet-title" id="assegna-title">Aggiungi al tavolo</div>
-    <div class="form-group"><label class="form-label">Cerca invitato</label><input class="form-input" id="assegna-search" placeholder="Scrivi il nome..." oninput="renderAssegnaList()"></div>
-    <div id="assegna-list" style="max-height:300px;overflow-y:auto;margin-top:8px"></div>
-    <button class="btn-ghost" onclick="closeModal('modal-assegna')" style="margin-top:12px">Chiudi</button>
-  </div>
-</div>
-
-<!-- CHECKLIST MODAL -->
-<div class="overlay" id="modal-checklist">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="sheet-title" id="checklist-modal-title">Aggiungi attività</div>
-    <div class="form-group"><label class="form-label">Attività</label><input class="form-input" id="ck-testo" placeholder="Es. Confermare il fotografo"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Categoria</label>
-        <select class="form-select" id="ck-cat">
-          <option value="venue">Venue</option><option value="fornitori">Fornitori</option>
-          <option value="abiti">Abiti</option><option value="documenti">Documenti</option>
-          <option value="invitati">Invitati</option><option value="altro">Altro</option>
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">Scadenza</label><input class="form-input" id="ck-data" type="date"></div>
-    </div>
-    <input type="hidden" id="ck-id">
-    <button class="btn-primary" onclick="saveChecklist()">Salva</button>
-    <button class="btn-ghost btn-danger" id="ck-delete-btn" onclick="deleteChecklist()" style="display:none">Elimina</button>
-    <button class="btn-ghost" onclick="closeModal('modal-checklist')">Annulla</button>
-  </div>
-</div>
-
-<script>
-
-// ── DEFAULT DATA EXTENSIONS ────────────────────────────────────────────────
-const DEFAULT_TAVOLI = [
-  {id:1, nome:"Tavolo degli Sposi", max:12, note:"Tavolo d'onore", ospiti:[]},
-  {id:2, nome:"Famiglia Martina", max:10, note:"", ospiti:[]},
-  {id:3, nome:"Famiglia Albania", max:10, note:"", ospiti:[]},
-  {id:4, nome:"Amici", max:10, note:"", ospiti:[]},
-  {id:5, nome:"Lavoro", max:10, note:"", ospiti:[]},
-];
-
-const DEFAULT_CHECKLIST = [
-  {id:1,testo:"Confermare la location",cat:"venue",data:"",done:false},
-  {id:2,testo:"Firmare contratto fotografo",cat:"fornitori",data:"",done:false},
-  {id:3,testo:"Ordine abito sposa",cat:"abiti",data:"",done:false},
-  {id:4,testo:"Ordine abito sposo",cat:"abiti",data:"",done:false},
-  {id:5,testo:"Inviare partecipazioni",cat:"invitati",data:"",done:true},
-  {id:6,testo:"Pubblicazioni in comune",cat:"documenti",data:"",done:false},
-  {id:7,testo:"Prenotare auto sposi",cat:"fornitori",data:"",done:false},
-  {id:8,testo:"Confermare menù con caterer",cat:"venue",data:"",done:false},
-  {id:9,testo:"Scegliere lista brani DJ",cat:"fornitori",data:"",done:false},
-  {id:10,testo:"Prenotare hotels invitati",cat:"invitati",data:"",done:false},
-  {id:11,testo:"Preparare segnaposto tavoli",cat:"venue",data:"",done:false},
-  {id:12,testo:"Acquistare fedi",cat:"documenti",data:"",done:false},
-  {id:13,testo:"Bomboniere pronte",cat:"altro",data:"",done:false},
-  {id:14,testo:"Confermare con parrucchiera",cat:"abiti",data:"",done:false},
-  {id:15,testo:"Lista canzoni cerimonia",cat:"fornitori",data:"",done:false},
-];
-
-// Patch load() to include new data
-const _origLoad = load;
-function load() {
-  try {
-    const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (s && s.guests && s.expenses) {
-      if(!s.tavoli) s.tavoli = DEFAULT_TAVOLI.map(t=>({...t,ospiti:[...t.ospiti]}));
-      if(!s.checklist) s.checklist = DEFAULT_CHECKLIST.map(c=>({...c}));
-      if(!s.nextTid) s.nextTid = 100;
-      if(!s.nextCid) s.nextCid = 200;
-      return s;
-    }
-  } catch(e) {}
-  return {
-    guests: DEFAULT_GUESTS.map(g=>({...g})),
-    expenses: DEFAULT_EXPENSES.map(e=>({...e})),
-    tavoli: DEFAULT_TAVOLI.map(t=>({...t,ospiti:[...t.ospiti]})),
-    checklist: DEFAULT_CHECKLIST.map(c=>({...c})),
-    nextGid: 200, nextEid: 100, nextTid: 100, nextCid: 200
-  };
+function fabClick() {
+  if(activeTab==='invitati'||activeTab==='home') openGuestModal();
+  else if(activeTab==='spese') openExpenseModal();
+  else if(activeTab==='tavoli') openTavoloModal();
+  else if(activeTab==='checklist') openCkModal();
+  else if(activeTab==='playlist') openPlMomModal();
+  else if(activeTab==='scaletta') openScModal();
 }
 
-// ── HOTEL SECTION ───────────────────────────────────────────────────────────
-const HOTEL_STATUS = {
-  da_prenotare: {label:'Da prenotare', bg:'var(--orange-bg)', fg:'var(--orange-fg)'},
-  prenotato:    {label:'Prenotato',    bg:'var(--blue-bg)',   fg:'var(--blue-fg)'},
-  confermato:   {label:'Confermato',   bg:'var(--green-bg)',  fg:'var(--green-fg)'},
-};
-
-function renderHotel() {
-  const withHotel = state.guests.filter(g => g.hotel && g.conf !== 'No');
-  const noHotel   = state.guests.filter(g => g.conf === 'Si' && !g.hotel);
-  
-  const tot = withHotel.length;
-  const conf = withHotel.filter(g => (g.hotelStato||'da_prenotare') === 'confermato').length;
-  const pren = withHotel.filter(g => (g.hotelStato||'da_prenotare') === 'prenotato').length;
-  const daPren = withHotel.filter(g => (g.hotelStato||'da_prenotare') === 'da_prenotare').length;
-  const totNotti = withHotel.reduce((a,g)=>a+(g.notti||0),0);
-
-  document.getElementById('hotel-stats').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
-      <div class="metric-card"><div class="metric-label">Gruppi</div><div class="metric-value" style="font-size:22px">${tot}</div></div>
-      <div class="metric-card orange"><div class="metric-label">Da prenotare</div><div class="metric-value" style="font-size:22px">${daPren}</div></div>
-      <div class="metric-card green"><div class="metric-label">Confermati</div><div class="metric-value" style="font-size:22px">${conf}</div></div>
-    </div>
-    <div class="budget-box" style="margin-bottom:0">
-      <div class="budget-row"><span class="budget-label">Notti totali da gestire</span><span class="budget-val">${totNotti} notti</span></div>
-      <div class="budget-row"><span class="budget-label">Prenotati</span><span class="budget-val blue">${pren} gruppi</span></div>
-    </div>
-  `;
-
-  let html = '';
-  if(withHotel.length) {
-    html += withHotel.map(g => {
-      const st = HOTEL_STATUS[g.hotelStato||'da_prenotare'];
-      const camere = g.hotelCamere || 1;
-      return `<div class="exp-card" onclick="openHotelEdit(${g.id})" style="margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-          <div>
-            <div style="font-size:14px;font-weight:600;color:var(--text)">${g.nome}</div>
-            <div style="font-size:12px;color:var(--text2);margin-top:2px">${g.hotel}</div>
-          </div>
-          <span style="font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px;background:${st.bg};color:${st.fg};flex-shrink:0">${st.label}</span>
-        </div>
-        <div style="display:flex;gap:16px;font-size:12px;color:var(--text2)">
-          <span>${g.notti||0} notti</span>
-          <span>${camere} camera${camere>1?'e':''}</span>
-          ${g.hotelCheckin?`<span>Check-in: ${g.hotelCheckin}</span>`:''}
-        </div>
-        ${g.hotelNote?`<div style="font-size:12px;color:var(--text3);margin-top:6px;font-style:italic">${g.hotelNote}</div>`:''}
-      </div>`;
-    }).join('');
-  }
-  
-  if(noHotel.length) {
-    html += `<p class="sec" style="margin-top:16px">Confermati senza hotel (${noHotel.length})</p>`;
-    html += noHotel.map(g=>`
-      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border)">
-        <div style="font-size:13px;color:var(--text2)">${g.nome}</div>
-      </div>`).join('');
-  }
-  
-  document.getElementById('hotel-list').innerHTML = html || '<div class="empty">Nessun invitato con hotel</div>';
+// ── HOME ───────────────────────────────────────────────────────────────────
+function renderHome() {
+  const s=statsGuests(), b=statsBudget();
+  const tot=s.siA+s.siB;
+  const cpp=tot>0?Math.round(b.tot/tot):0;
+  document.getElementById('home-inv').innerHTML=`
+    <div class="mc green"><div class="ml">Confermati</div><div class="mv">${s.siA+s.siB}</div></div>
+    <div class="mc orange"><div class="ml">In attesa</div><div class="mv">${s.attA+s.attB}</div></div>
+    <div class="mc"><div class="ml">Adulti conf.</div><div class="mv">${s.siA}</div></div>
+    <div class="mc"><div class="ml">Bambini conf.</div><div class="mv">${s.siB}</div></div>`;
+  document.getElementById('home-budget').innerHTML=`
+    <div class="br-row"><span class="bl">Budget totale</span><span class="bv blue">${fmt(b.tot)}</span></div>
+    <div class="br-row"><span class="bl">Acconti pagati</span><span class="bv green">${fmt(b.pag)}</span></div>
+    <div class="br-row"><span class="bl">Saldo restante</span><span class="bv orange total">${fmt(b.saldo)}</span></div>`;
+  document.getElementById('home-extra').innerHTML=`
+    <div class="mc gold"><div class="ml">Costo/persona</div><div class="mv" style="font-size:20px">${fmt(cpp)}</div></div>
+    <div class="mc red"><div class="ml">Non vengono</div><div class="mv">${s.noG} gr.</div></div>`;
+  const all=S.guests.filter(g=>g.note&&g.conf!=='No');
+  document.getElementById('home-allergie').innerHTML=all.length
+    ?'<p class="sec">Allergie & note</p>'+all.map(g=>`<div class="card" onclick="openDetail(${g.id})" style="background:var(--rbg);border-color:var(--rfg);display:flex;align-items:center;gap:12px"><div class="av" style="background:${(CAT_C[g.cat]||{bg:'#eee'}).bg};color:${(CAT_C[g.cat]||{fg:'#666'}).fg};width:36px;height:36px;font-size:12px">${ini(g.nome)}</div><div><div style="font-size:14px;font-weight:600;color:var(--rfg)">${g.nome}</div><div style="font-size:12px;color:var(--rfg);opacity:.8">${g.note}</div></div></div>`).join(''):'';
 }
 
-function openHotelEdit(guestId) {
-  const g = state.guests.find(x=>x.id===guestId); if(!g) return;
-  document.getElementById('h-guest').value = g.nome;
-  document.getElementById('h-hotel').value = g.hotel||'';
-  document.getElementById('h-checkin').value = g.hotelCheckin||'';
-  document.getElementById('h-checkout').value = g.hotelCheckout||'';
-  document.getElementById('h-notti').value = g.notti||0;
-  document.getElementById('h-camere').value = g.hotelCamere||1;
-  document.getElementById('h-stato').value = g.hotelStato||'da_prenotare';
-  document.getElementById('h-note').value = g.hotelNote||'';
-  document.getElementById('h-guestid').value = guestId;
-  openModal('modal-hotel');
-}
-
-function saveHotelEdit() {
-  const gid = parseInt(document.getElementById('h-guestid').value);
-  const g = state.guests.find(x=>x.id===gid); if(!g) return;
-  g.hotel = document.getElementById('h-hotel').value.trim();
-  g.hotelCheckin = document.getElementById('h-checkin').value;
-  g.hotelCheckout = document.getElementById('h-checkout').value;
-  g.notti = parseInt(document.getElementById('h-notti').value)||0;
-  g.hotelCamere = parseInt(document.getElementById('h-camere').value)||1;
-  g.hotelStato = document.getElementById('h-stato').value;
-  g.hotelNote = document.getElementById('h-note').value.trim();
-  save(); closeModal('modal-hotel'); renderAll();
-}
-
-// ── TAVOLI SECTION ──────────────────────────────────────────────────────────
-let currentTavoloId = null;
-
-function renderTavoli() {
-  const allAssigned = new Set(state.tavoli.flatMap(t=>t.ospiti));
-  const confGuests = state.guests.filter(g=>g.conf==='Si');
-  const totSeats = state.tavoli.reduce((a,t)=>a+t.max,0);
-  const usedSeats = state.tavoli.reduce((a,t)=>{
-    return a + t.ospiti.reduce((b,gid)=>{
-      const g = state.guests.find(x=>x.id===gid);
-      return b + (g ? g.adulti+g.bambini : 0);
-    },0);
-  },0);
-  const unassigned = confGuests.filter(g=>!allAssigned.has(g.id));
-  
-  document.getElementById('tavoli-stats').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-      <div class="metric-card"><div class="metric-label">Tavoli</div><div class="metric-value" style="font-size:22px">${state.tavoli.length}</div></div>
-      <div class="metric-card green"><div class="metric-label">Posti usati</div><div class="metric-value" style="font-size:22px">${usedSeats}</div></div>
-      <div class="metric-card ${unassigned.length>0?'orange':''}" ><div class="metric-label">Da assegnare</div><div class="metric-value" style="font-size:22px">${unassigned.length}</div></div>
-    </div>
-  `;
-
-  document.getElementById('tavoli-list').innerHTML = state.tavoli.map(t => {
-    const guestCount = t.ospiti.reduce((a,gid)=>{
-      const g = state.guests.find(x=>x.id===gid); return a+(g?g.adulti+g.bambini:0);
-    },0);
-    const pct = t.max>0?Math.min(100,Math.round((guestCount/t.max)*100)):0;
-    const fillColor = pct>90?'var(--red-fg)':pct>70?'var(--orange-fg)':'var(--green-fg)';
-    const ospiti = t.ospiti.map(gid=>{
-      const g = state.guests.find(x=>x.id===gid); return g?g:null;
-    }).filter(Boolean);
-    
-    return `<div class="exp-card" style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div>
-          <div style="font-size:15px;font-weight:600;color:var(--text)">${t.nome}</div>
-          ${t.note?`<div style="font-size:12px;color:var(--text2);margin-top:2px">${t.note}</div>`:''}
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <span style="font-size:13px;color:var(--text2)">${guestCount}/${t.max}</span>
-          <button onclick="editTavolo(${t.id})" style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:4px">✏️</button>
-        </div>
-      </div>
-      <div class="progress-track" style="margin-bottom:10px"><div class="progress-fill" style="width:${pct}%;background:${fillColor}"></div></div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
-        ${ospiti.map(g=>`<span style="font-size:11px;padding:3px 8px;background:var(--bg2);border-radius:20px;color:var(--text2);display:flex;align-items:center;gap:4px">
-          ${g.nome.split(/\s+/)[0]}
-          <button onclick="removeFromTavolo(${t.id},${g.id})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:11px;padding:0;line-height:1">×</button>
-        </span>`).join('')}
-        ${ospiti.length===0?`<span style="font-size:12px;color:var(--text3);font-style:italic">Nessun ospite assegnato</span>`:''}
-      </div>
-      <button onclick="openAssegna(${t.id})" style="font-size:13px;font-weight:600;color:var(--gold);background:none;border:0.5px solid var(--gold);border-radius:10px;padding:7px 14px;cursor:pointer;width:100%">+ Aggiungi ospiti</button>
+// ── GUESTS ─────────────────────────────────────────────────────────────────
+function renderGuests() {
+  const q=(document.getElementById('g-search').value||'').toLowerCase();
+  const fOpts=['tutti','✅ Sì','⏳ Attesa','❌ No'];
+  document.getElementById('g-filters').innerHTML=fOpts.map(f=>`<button type="button" class="fb ${gFilter===f?'active':''}" onclick="gFilter='${f}';renderGuests()">${f}</button>`).join('');
+  const list=S.guests.filter(g=>{
+    const ms=!q||g.nome.toLowerCase().includes(q)||g.cat.toLowerCase().includes(q);
+    const ml=gFilter==='tutti'||(gFilter==='✅ Sì'&&g.conf==='Si')||(gFilter==='⏳ Attesa'&&g.conf==='In attesa')||(gFilter==='❌ No'&&g.conf==='No');
+    return ms&&ml;
+  });
+  if(!list.length){document.getElementById('glist').innerHTML='<div class="empty">Nessun risultato</div>';return;}
+  document.getElementById('glist').innerHTML=list.map(g=>{
+    const c=CAT_C[g.cat]||{bg:'#eee',fg:'#666'};
+    const bc=g.conf==='Si'?'si':g.conf==='In attesa'?'att':'no';
+    const bl=g.conf==='Si'?'✅':g.conf==='In attesa'?'⏳':'❌';
+    return `<div class="gc" onclick="openDetail(${g.id})">
+      <div class="av" style="background:${c.bg};color:${c.fg}">${ini(g.nome)}</div>
+      <div class="gi"><div class="gn">${g.nome}</div><div class="gs">${g.cat} · ${g.adulti+g.bambini}p</div></div>
+      <div class="badge ${bc}">${bl}</div>
     </div>`;
   }).join('');
 }
 
-function addTavolo() {
-  document.getElementById('tavolo-modal-title').textContent='Nuovo tavolo';
-  document.getElementById('t-nome').value='';
-  document.getElementById('t-max').value=10;
-  document.getElementById('t-note').value='';
-  document.getElementById('t-id').value='';
-  document.getElementById('t-delete-btn').style.display='none';
-  openModal('modal-tavolo');
+function openDetail(id) {
+  const g=S.guests.find(x=>x.id===id); if(!g) return;
+  const c=CAT_C[g.cat]||{bg:'#eee',fg:'#666'};
+  const cs={Si:'sel-si','In attesa':'sel-att',No:'sel-no'};
+  document.getElementById('m-detail-body').innerHTML=`
+    <div class="handle"></div>
+    <div class="dh"><div class="da" style="background:${c.bg};color:${c.fg}">${ini(g.nome)}</div>
+    <div><div class="dn">${g.nome}</div><div class="dc">${g.cat}</div></div></div>
+    <div class="dr"><span class="dk">Adulti</span><span class="dv">${g.adulti}</span></div>
+    <div class="dr"><span class="dk">Bambini</span><span class="dv">${g.bambini||'—'}</span></div>
+    ${g.hotel?`<div class="dr"><span class="dk">Hotel</span><span class="dv">${g.hotel}</span></div>`:''}
+    ${g.notti?`<div class="dr"><span class="dk">Notti</span><span class="dv">${g.notti}</span></div>`:''}
+    ${g.note?`<div class="dr"><span class="dk">Note</span><span class="dv" style="color:var(--rfg)">${g.note}</span></div>`:''}
+    <p style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 8px">Aggiorna conferma</p>
+    <div class="cbs">
+      <button type="button" class="cb ${g.conf==='Si'?cs['Si']:''}" onclick="setConf(${id},'Si')">✅ Sì</button>
+      <button type="button" class="cb ${g.conf==='In attesa'?cs['In attesa']:''}" onclick="setConf(${id},'In attesa')">⏳ Attesa</button>
+      <button type="button" class="cb ${g.conf==='No'?cs['No']:''}" onclick="setConf(${id},'No')">❌ No</button>
+    </div>
+    <button type="button" class="bg" onclick="openGuestModal(${id});closeM('m-detail')" style="margin-top:12px">Modifica dettagli</button>
+    <button type="button" class="bg bd" onclick="deleteGuestById(${id})">Elimina</button>
+    <button type="button" class="bg" onclick="closeM('m-detail')">Chiudi</button>`;
+  openM('m-detail');
 }
-function editTavolo(id) {
-  const t = state.tavoli.find(x=>x.id===id); if(!t) return;
-  document.getElementById('tavolo-modal-title').textContent='Modifica tavolo';
-  document.getElementById('t-nome').value=t.nome;
-  document.getElementById('t-max').value=t.max;
-  document.getElementById('t-note').value=t.note||'';
-  document.getElementById('t-id').value=id;
-  document.getElementById('t-delete-btn').style.display='block';
-  openModal('modal-tavolo');
+
+function setConf(id,conf) {
+  const g=S.guests.find(x=>x.id===id); if(!g) return;
+  g.conf=conf; save(); closeM('m-detail'); renderAll();
+}
+
+function openGuestModal(id) {
+  const g=id?S.guests.find(x=>x.id===id):null;
+  document.getElementById('m-guest-title').textContent=g?'Modifica invitato':'Aggiungi invitato';
+  document.getElementById('f-nome').value=g?g.nome:'';
+  document.getElementById('f-cat').value=g?g.cat:'Amici';
+  document.getElementById('f-adulti').value=g?g.adulti:2;
+  document.getElementById('f-bambini').value=g?g.bambini:0;
+  document.getElementById('f-conf').value=g?g.conf:'In attesa';
+  document.getElementById('f-hotel').value=g?g.hotel||'':'';
+  document.getElementById('f-notti').value=g?g.notti||0:0;
+  document.getElementById('f-note').value=g?g.note||'':'';
+  document.getElementById('f-id').value=g?g.id:'';
+  document.getElementById('f-del').style.display=g?'block':'none';
+  openM('m-guest');
+}
+
+function saveGuest() {
+  const nome=document.getElementById('f-nome').value.trim();
+  if(!nome){alert('Inserisci un nome');return;}
+  const data={
+    nome,cat:document.getElementById('f-cat').value,
+    adulti:parseInt(document.getElementById('f-adulti').value)||0,
+    bambini:parseInt(document.getElementById('f-bambini').value)||0,
+    conf:document.getElementById('f-conf').value,
+    hotel:document.getElementById('f-hotel').value.trim(),
+    notti:parseInt(document.getElementById('f-notti').value)||0,
+    note:document.getElementById('f-note').value.trim()
+  };
+  const eid=document.getElementById('f-id').value;
+  if(eid){
+    const idx=S.guests.findIndex(x=>x.id===parseInt(eid));
+    if(idx>=0) S.guests[idx]={...S.guests[idx],...data};
+  } else {
+    S.guests.push({id:S.nextGid++,...data,hotelStato:'da_prenotare',hotelCamere:1,hotelCheckin:'',hotelCheckout:'',hotelNote:''});
+  }
+  save(); closeM('m-guest'); renderAll();
+}
+
+function deleteGuest() {
+  const eid=document.getElementById('f-id').value;
+  if(!eid) return;
+  const btn=document.getElementById('f-del');
+  if(btn.dataset.confirm!=='1'){btn.dataset.confirm='1';btn.textContent='Tocca ancora per confermare';btn.style.background='var(--rfg)';btn.style.color='#fff';setTimeout(()=>{btn.dataset.confirm='';btn.textContent='Elimina invitato';btn.style.background='';btn.style.color='';},3000);return;}
+  S.guests=S.guests.filter(x=>x.id!==parseInt(eid));
+  S.tavoli.forEach(t=>{t.ospiti=t.ospiti.filter(x=>x!==parseInt(eid));});
+  save(); closeM('m-guest'); renderAll();
+}
+
+function deleteGuestById(id) {
+  const btn=event.target;
+  if(btn.dataset.confirm!=='1'){btn.dataset.confirm='1';btn.textContent='Tocca ancora per confermare';btn.style.background='var(--rfg)';btn.style.color='#fff';btn.style.border='none';setTimeout(()=>{btn.dataset.confirm='';btn.textContent='Elimina';btn.style.background='';btn.style.color='';btn.style.border='';},3000);return;}
+  S.guests=S.guests.filter(x=>x.id!==id);
+  S.tavoli.forEach(t=>{t.ospiti=t.ospiti.filter(x=>x!==id);});
+  save(); closeM('m-detail'); renderAll();
+}
+
+// ── EXPENSES ───────────────────────────────────────────────────────────────
+function renderExpenses() {
+  document.getElementById('elist').innerHTML=S.expenses.map(e=>{
+    const isLoc=e.nome==='Location';
+    const saldo=Math.max(0,(e.importo||0)-(e.acconto||0));
+    const pct=e.importo>0?Math.min(100,Math.round((e.acconto/e.importo)*100)):0;
+    const tbd=!e.importo&&!isLoc;
+    return `<div class="ec" onclick="${isLoc?'openLocModal()':'openExpenseModal('+e.id+')'}">
+      <div class="eh">
+        <div><div class="en">${e.nome}${isLoc?' <span style="font-size:10px;font-weight:700;color:var(--gold);background:var(--gold-l,#FFF8EC);padding:2px 7px;border-radius:10px">AUTO</span>':''}</div>${e.note?`<div class="es">${e.note}</div>`:''}</div>
+        <div style="text-align:right"><div class="ea ${e.importo?'':'tbd'}">${e.importo?fmt(e.importo):'Da definire'}</div></div>
+      </div>
+      ${e.importo?`<div class="pt"><div class="pf" style="width:${pct}%"></div></div>
+      <div class="er"><span class="l">Acconto</span><span class="v g">${fmt(e.acconto)}</span></div>
+      <div class="er"><span class="l">Saldo</span><span class="v ${saldo>0?'o':''}">${saldo>0?fmt(saldo):'Saldato ✓'}</span></div>`
+      :`<div class="er"><span class="l" style="font-style:italic">${isLoc?'Tocca per impostare il prezzo per persona':'Tocca per aggiungere importo'}</span></div>`}
+    </div>`;
+  }).join('');
+}
+
+function openExpenseModal(id) {
+  const e=id?S.expenses.find(x=>x.id===id):null;
+  document.getElementById('m-exp-title').textContent=e?'Modifica spesa':'Nuova spesa';
+  document.getElementById('e-nome').value=e?e.nome:'';
+  document.getElementById('e-importo').value=e?e.importo||'':'';
+  document.getElementById('e-acconto').value=e?e.acconto||0:0;
+  document.getElementById('e-note').value=e?e.note||'':'';
+  document.getElementById('e-id').value=e?e.id:'';
+  document.getElementById('e-del').style.display=e?'block':'none';
+  openM('m-expense');
+}
+
+function saveExpense() {
+  const nome=document.getElementById('e-nome').value.trim();
+  if(!nome){alert('Inserisci un nome');return;}
+  const data={nome,importo:parseFloat(document.getElementById('e-importo').value)||0,acconto:parseFloat(document.getElementById('e-acconto').value)||0,note:document.getElementById('e-note').value.trim()};
+  const eid=document.getElementById('e-id').value;
+  if(eid){
+    const idx=S.expenses.findIndex(x=>x.id===parseInt(eid));
+    if(idx>=0) S.expenses[idx]={...S.expenses[idx],...data};
+  } else {
+    S.expenses.push({id:S.nextEid++,...data});
+  }
+  save(); closeM('m-expense'); renderAll();
+}
+
+function deleteExpense() {
+  const eid=document.getElementById('e-id').value;
+  if(!eid) return;
+  const btn=document.getElementById('e-del');
+  if(btn.dataset.confirm!=='1'){btn.dataset.confirm='1';btn.textContent='Tocca ancora per confermare';btn.style.background='var(--rfg)';btn.style.color='#fff';setTimeout(()=>{btn.dataset.confirm='';btn.textContent='Elimina spesa';btn.style.background='';btn.style.color='';},3000);return;}
+  S.expenses=S.expenses.filter(x=>x.id!==parseInt(eid));
+  save(); closeM('m-expense'); renderAll();
+}
+
+// ── LOCATION AUTO ──────────────────────────────────────────────────────────
+function openLocModal() {
+  document.getElementById('loc-a').value=S.locA||'';
+  document.getElementById('loc-b').value=S.locB||'';
+  updateLocPrev(); openM('m-location');
+}
+function updateLocPrev() {
+  const pa=parseFloat(document.getElementById('loc-a').value)||0;
+  const pb=parseFloat(document.getElementById('loc-b').value)||0;
+  const s=statsGuests();
+  const tot=s.siA*pa+s.siB*pb;
+  document.getElementById('loc-prev').innerHTML=`
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--tx2);padding:4px 0"><span>Adulti (${s.siA}) × €${pa}</span><span style="font-weight:600;color:var(--bfg)">€${(s.siA*pa).toLocaleString('it-IT')}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--tx2);padding:4px 0;border-bottom:0.5px solid var(--br);margin-bottom:8px"><span>Bambini (${s.siB}) × €${pb}</span><span style="font-weight:600;color:var(--bfg)">€${(s.siB*pb).toLocaleString('it-IT')}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700"><span>Totale</span><span style="color:var(--gold)">€${tot.toLocaleString('it-IT')}</span></div>`;
+}
+function saveLocation() {
+  const pa=parseFloat(document.getElementById('loc-a').value)||0;
+  const pb=parseFloat(document.getElementById('loc-b').value)||0;
+  S.locA=pa; S.locB=pb;
+  const s=statsGuests();
+  const tot=s.siA*pa+s.siB*pb;
+  const loc=S.expenses.find(e=>e.nome==='Location');
+  if(loc){loc.importo=tot;loc.note=`€${pa}/adulto · €${pb}/bambino · ${s.siA}A + ${s.siB}B confermati`;}
+  save(); closeM('m-location'); renderAll();
+}
+
+// ── HOTEL ──────────────────────────────────────────────────────────────────
+function renderHotel() {
+  const wh=S.guests.filter(g=>g.hotel&&g.conf!=='No');
+  const dp=wh.filter(g=>(g.hotelStato||'da_prenotare')==='da_prenotare').length;
+  const pr=wh.filter(g=>g.hotelStato==='prenotato').length;
+  const cf=wh.filter(g=>g.hotelStato==='confermato').length;
+  const nt=wh.reduce((a,g)=>a+(g.notti||0),0);
+  document.getElementById('hotel-stats').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+      <div class="mc"><div class="ml">Gruppi</div><div class="mv" style="font-size:22px">${wh.length}</div></div>
+      <div class="mc orange"><div class="ml">Da prenotare</div><div class="mv" style="font-size:22px">${dp}</div></div>
+      <div class="mc green"><div class="ml">Confermati</div><div class="mv" style="font-size:22px">${cf}</div></div>
+    </div>
+    <div class="bb" style="margin-bottom:12px">
+      <div class="br-row"><span class="bl">Notti totali</span><span class="bv">${nt}</span></div>
+      <div class="br-row"><span class="bl">Prenotati</span><span class="bv blue">${pr} gruppi</span></div>
+    </div>`;
+  const HCOL={da_prenotare:{l:'Da prenotare',bg:'var(--obg)',fg:'var(--ofg)'},prenotato:{l:'Prenotato',bg:'var(--bbg)',fg:'var(--bfg)'},confermato:{l:'Confermato',bg:'var(--gbg)',fg:'var(--gfg)'}};
+  document.getElementById('hotel-list').innerHTML=wh.length
+    ?wh.map(g=>{const st=HCOL[g.hotelStato||'da_prenotare'];return`<div class="card" onclick="openHotelModal(${g.id})"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div><div style="font-size:14px;font-weight:600">${g.nome}</div><div style="font-size:12px;color:var(--tx2);margin-top:2px">${g.hotel}</div></div><span style="font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px;background:${st.bg};color:${st.fg};flex-shrink:0">${st.l}</span></div><div style="font-size:12px;color:var(--tx2);display:flex;gap:12px">${g.notti?`<span>${g.notti} notti</span>`:''}<span>${g.hotelCamere||1} camera</span>${g.hotelCheckin?`<span>Check-in: ${g.hotelCheckin}</span>`:''}</div>${g.hotelNote?`<div style="font-size:12px;color:var(--tx3);margin-top:6px;font-style:italic">${g.hotelNote}</div>`:''}</div>`;}).join('')
+    :'<div class="empty">Nessun invitato con hotel</div>';
+}
+
+function openHotelModal(gid) {
+  const g=S.guests.find(x=>x.id===gid); if(!g) return;
+  document.getElementById('h-ospite').value=g.nome;
+  document.getElementById('h-hotel').value=g.hotel||'';
+  document.getElementById('h-in').value=g.hotelCheckin||'';
+  document.getElementById('h-out').value=g.hotelCheckout||'';
+  document.getElementById('h-notti').value=g.notti||0;
+  document.getElementById('h-camere').value=g.hotelCamere||1;
+  document.getElementById('h-stato').value=g.hotelStato||'da_prenotare';
+  document.getElementById('h-note').value=g.hotelNote||'';
+  document.getElementById('h-id').value=gid;
+  openM('m-hotel');
+}
+function saveHotel() {
+  const gid=parseInt(document.getElementById('h-id').value);
+  const g=S.guests.find(x=>x.id===gid); if(!g) return;
+  g.hotel=document.getElementById('h-hotel').value.trim();
+  g.hotelCheckin=document.getElementById('h-in').value;
+  g.hotelCheckout=document.getElementById('h-out').value;
+  g.notti=parseInt(document.getElementById('h-notti').value)||0;
+  g.hotelCamere=parseInt(document.getElementById('h-camere').value)||1;
+  g.hotelStato=document.getElementById('h-stato').value;
+  g.hotelNote=document.getElementById('h-note').value.trim();
+  save(); closeM('m-hotel'); renderAll();
+}
+
+// ── TAVOLI ─────────────────────────────────────────────────────────────────
+function renderTavoli() {
+  const assigned=new Set(S.tavoli.flatMap(t=>t.ospiti));
+  const unass=S.guests.filter(g=>g.conf==='Si'&&!assigned.has(g.id));
+  const usedSeats=S.tavoli.reduce((a,t)=>a+t.ospiti.reduce((b,gid)=>{const g=S.guests.find(x=>x.id===gid);return b+(g?g.adulti+g.bambini:0);},0),0);
+  document.getElementById('tavoli-stats').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+    <div class="mc"><div class="ml">Tavoli</div><div class="mv" style="font-size:22px">${S.tavoli.length}</div></div>
+    <div class="mc green"><div class="ml">Assegnati</div><div class="mv" style="font-size:22px">${usedSeats}</div></div>
+    <div class="mc ${unass.length?'orange':''}"><div class="ml">Da assegnare</div><div class="mv" style="font-size:22px">${unass.length}</div></div>
+  </div>`;
+  document.getElementById('tavoli-list').innerHTML=S.tavoli.map(t=>{
+    const gc=t.ospiti.reduce((a,gid)=>{const g=S.guests.find(x=>x.id===gid);return a+(g?g.adulti+g.bambini:0);},0);
+    const pct=t.max>0?Math.min(100,Math.round(gc/t.max*100)):0;
+    const fc=pct>90?'var(--rfg)':pct>70?'var(--ofg)':'var(--gfg)';
+    const osp=t.ospiti.map(gid=>S.guests.find(x=>x.id===gid)).filter(Boolean);
+    return `<div class="card" style="cursor:default">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div><div style="font-size:15px;font-weight:700">${t.nome}</div>${t.note?`<div style="font-size:12px;color:var(--tx2);margin-top:2px">${t.note}</div>`:''}</div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;color:var(--tx2)">${gc}/${t.max}</span><button type="button" onclick="openTavoloModal(${t.id})" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--tx3)">✏️</button></div>
+      </div>
+      <div class="pt" style="margin-bottom:10px"><div class="pf" style="width:${pct}%;background:${fc}"></div></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+        ${osp.map(g=>`<span style="font-size:11px;padding:3px 8px;background:var(--bg2);border-radius:20px;display:flex;align-items:center;gap:4px">${g.nome.split(/\s+/)[0]}<button type="button" onclick="removeOspite(${t.id},${g.id})" style="background:none;border:none;cursor:pointer;color:var(--tx3);font-size:12px;line-height:1">×</button></span>`).join('')}
+        ${!osp.length?'<span style="font-size:12px;color:var(--tx3);font-style:italic">Nessun ospite</span>':''}
+      </div>
+      <button type="button" onclick="openAssegna(${t.id})" style="width:100%;padding:9px;border:0.5px solid var(--gold);border-radius:10px;background:none;color:var(--gold);font-size:13px;font-weight:600;cursor:pointer">+ Aggiungi ospiti</button>
+    </div>`;
+  }).join('');
+}
+
+function openTavoloModal(id) {
+  const t=id?S.tavoli.find(x=>x.id===id):null;
+  document.getElementById('m-tav-title').textContent=t?'Modifica tavolo':'Nuovo tavolo';
+  document.getElementById('t-nome').value=t?t.nome:'';
+  document.getElementById('t-max').value=t?t.max:10;
+  document.getElementById('t-note').value=t?t.note||'':'';
+  document.getElementById('t-id').value=t?t.id:'';
+  document.getElementById('t-del').style.display=t?'block':'none';
+  openM('m-tavolo');
 }
 function saveTavolo() {
-  const nome = document.getElementById('t-nome').value.trim();
-  if(!nome) { alert('Inserisci un nome'); return; }
-  const data = { nome, max: parseInt(document.getElementById('t-max').value)||10, note: document.getElementById('t-note').value.trim() };
-  const tid = document.getElementById('t-id').value;
-  if(tid) {
-    const idx = state.tavoli.findIndex(x=>x.id===parseInt(tid));
-    if(idx>=0) state.tavoli[idx]={...state.tavoli[idx],...data};
-  } else {
-    state.tavoli.push({id:state.nextTid++,...data,ospiti:[]});
-  }
-  save(); closeModal('modal-tavolo'); renderTavoli();
+  const nome=document.getElementById('t-nome').value.trim();
+  if(!nome){alert('Inserisci un nome');return;}
+  const data={nome,max:parseInt(document.getElementById('t-max').value)||10,note:document.getElementById('t-note').value.trim()};
+  const tid=document.getElementById('t-id').value;
+  if(tid){const idx=S.tavoli.findIndex(x=>x.id===parseInt(tid));if(idx>=0)S.tavoli[idx]={...S.tavoli[idx],...data};}
+  else S.tavoli.push({id:S.nextTid++,...data,ospiti:[]});
+  save(); closeM('m-tavolo'); renderTavoli();
 }
 function deleteTavolo() {
-  const tid = document.getElementById('t-id').value;
-  if(!tid||!confirm('Eliminare questo tavolo?')) return;
-  state.tavoli = state.tavoli.filter(x=>x.id!==parseInt(tid));
-  save(); closeModal('modal-tavolo'); renderTavoli();
+  const tid=document.getElementById('t-id').value;
+  if(!tid) return;
+  const btn=document.getElementById('t-del');
+  if(btn.dataset.confirm!=='1'){btn.dataset.confirm='1';btn.textContent='Tocca ancora per confermare';btn.style.background='var(--rfg)';btn.style.color='#fff';setTimeout(()=>{btn.dataset.confirm='';btn.textContent='Elimina tavolo';btn.style.background='';btn.style.color='';},3000);return;}
+  S.tavoli=S.tavoli.filter(x=>x.id!==parseInt(tid));
+  save(); closeM('m-tavolo'); renderTavoli();
 }
-function openAssegna(tavoloId) {
-  currentTavoloId = tavoloId;
-  const t = state.tavoli.find(x=>x.id===tavoloId);
-  document.getElementById('assegna-title').textContent = 'Aggiungi a: ' + (t?t.nome:'');
-  document.getElementById('assegna-search').value='';
-  renderAssegnaList();
-  openModal('modal-assegna');
+function openAssegna(tid) {
+  assTab=tid;
+  const t=S.tavoli.find(x=>x.id===tid);
+  document.getElementById('m-ass-title').textContent='Aggiungi a: '+(t?t.nome:'');
+  document.getElementById('ass-search').value='';
+  renderAssegna(); openM('m-assegna');
 }
-function renderAssegnaList() {
-  const q = (document.getElementById('assegna-search').value||'').toLowerCase();
-  const t = state.tavoli.find(x=>x.id===currentTavoloId); if(!t) return;
-  const allAssigned = new Set(state.tavoli.flatMap(x=>x.ospiti));
-  const avail = state.guests.filter(g => g.conf==='Si' && !allAssigned.has(g.id) && (!q||g.nome.toLowerCase().includes(q)));
-  const inTable = t.ospiti.map(gid=>state.guests.find(x=>x.id===gid)).filter(Boolean);
-  let html = '';
-  if(inTable.length) {
-    html += `<p style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px">Al tavolo</p>`;
-    html += inTable.map(g=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--border)">
-      <span style="font-size:14px;font-weight:500">${g.nome} <span style="color:var(--text3);font-size:12px">(${g.adulti+g.bambini}p)</span></span>
-      <button onclick="removeFromTavolo(${currentTavoloId},${g.id});renderAssegnaList()" style="font-size:12px;color:var(--red-fg);background:none;border:none;cursor:pointer">Rimuovi</button>
-    </div>`).join('');
-  }
-  if(avail.length) {
-    html += `<p style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:${inTable.length?'16px':0} 0 8px">Disponibili</p>`;
-    html += avail.map(g=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--border)">
-      <span style="font-size:14px;font-weight:500">${g.nome} <span style="color:var(--text3);font-size:12px">(${g.adulti+g.bambini}p)</span></span>
-      <button onclick="assignToTavolo(${currentTavoloId},${g.id})" style="font-size:12px;color:var(--green-fg);background:none;border:0.5px solid var(--green-fg);border-radius:8px;padding:5px 10px;cursor:pointer">Aggiungi</button>
-    </div>`).join('');
-  }
-  if(!inTable.length && !avail.length) html='<div class="empty">Tutti gli invitati confermati sono già assegnati</div>';
-  document.getElementById('assegna-list').innerHTML = html;
+function renderAssegna() {
+  const q=(document.getElementById('ass-search').value||'').toLowerCase();
+  const t=S.tavoli.find(x=>x.id===assTab); if(!t) return;
+  const allAss=new Set(S.tavoli.flatMap(x=>x.ospiti));
+  const avail=S.guests.filter(g=>g.conf==='Si'&&!allAss.has(g.id)&&(!q||g.nome.toLowerCase().includes(q)));
+  const inT=t.ospiti.map(gid=>S.guests.find(x=>x.id===gid)).filter(Boolean);
+  let h='';
+  if(inT.length){h+='<p style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px">Al tavolo</p>';h+=inT.map(g=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--br)"><span style="font-size:14px;font-weight:500">${g.nome} <span style="color:var(--tx3);font-size:12px">(${g.adulti+g.bambini}p)</span></span><button type="button" onclick="removeOspite(${assTab},${g.id});renderAssegna()" style="font-size:12px;color:var(--rfg);background:none;border:none;cursor:pointer">Rimuovi</button></div>`).join('');}
+  if(avail.length){h+=`<p style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin:${inT.length?'16px':0} 0 8px">Disponibili</p>`;h+=avail.map(g=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--br)"><span style="font-size:14px;font-weight:500">${g.nome} <span style="color:var(--tx3);font-size:12px">(${g.adulti+g.bambini}p)</span></span><button type="button" onclick="assegna(${assTab},${g.id})" style="font-size:12px;color:var(--gfg);border:0.5px solid var(--gfg);border-radius:8px;padding:5px 10px;background:none;cursor:pointer">Aggiungi</button></div>`).join('');}
+  if(!inT.length&&!avail.length) h='<div class="empty">Tutti i confermati sono già assegnati</div>';
+  document.getElementById('ass-list').innerHTML=h;
 }
-function assignToTavolo(tavoloId, guestId) {
-  state.tavoli.forEach(t=>{ t.ospiti=t.ospiti.filter(x=>x!==guestId); });
-  const t = state.tavoli.find(x=>x.id===tavoloId); if(t) t.ospiti.push(guestId);
-  save(); renderAssegnaList(); renderTavoli();
+function assegna(tid,gid) {
+  S.tavoli.forEach(t=>{t.ospiti=t.ospiti.filter(x=>x!==gid);});
+  const t=S.tavoli.find(x=>x.id===tid); if(t) t.ospiti.push(gid);
+  save(); renderAssegna(); renderTavoli();
 }
-function removeFromTavolo(tavoloId, guestId) {
-  const t = state.tavoli.find(x=>x.id===tavoloId); if(!t) return;
-  t.ospiti = t.ospiti.filter(x=>x!==guestId);
+function removeOspite(tid,gid) {
+  const t=S.tavoli.find(x=>x.id===tid); if(!t) return;
+  t.ospiti=t.ospiti.filter(x=>x!==gid);
   save(); renderTavoli();
 }
 
-// ── CHECKLIST SECTION ───────────────────────────────────────────────────────
-const CK_CATS = {
-  venue:'Venue', fornitori:'Fornitori', abiti:'Abiti',
-  documenti:'Documenti', invitati:'Invitati', altro:'Altro'
-};
-const CK_COLORS = {
-  venue:{bg:'var(--blue-bg)',fg:'var(--blue-fg)'},
-  fornitori:{bg:'var(--orange-bg)',fg:'var(--orange-fg)'},
-  abiti:{bg:'#FFF0F6',fg:'#9B2458'},
-  documenti:{bg:'var(--green-bg)',fg:'var(--green-fg)'},
-  invitati:{bg:'#F0F4FF',fg:'#2B4CB8'},
-  altro:{bg:'var(--bg2)',fg:'var(--text2)'},
-};
+// ── CHECKLIST ──────────────────────────────────────────────────────────────
+const CK_CATS={venue:'Venue',fornitori:'Fornitori',abiti:'Abiti',documenti:'Documenti',invitati:'Invitati',altro:'Altro'};
+const CK_COL={venue:{bg:'var(--bbg)',fg:'var(--bfg)'},fornitori:{bg:'var(--obg)',fg:'var(--ofg)'},abiti:{bg:'#FFF0F6',fg:'#9B2458'},documenti:{bg:'var(--gbg)',fg:'var(--gfg)'},invitati:{bg:'#F0F4FF',fg:'#2B4CB8'},altro:{bg:'var(--bg2)',fg:'var(--tx2)'}};
 
 function renderChecklist() {
-  const done = state.checklist.filter(c=>c.done).length;
-  const tot = state.checklist.length;
-  const pct = tot>0?Math.round((done/tot)*100):0;
-  const fillColor = pct===100?'var(--green-fg)':pct>50?'var(--gold)':'var(--orange-fg)';
-  
-  document.getElementById('checklist-progress').innerHTML = `
-    <div class="budget-box" style="margin-bottom:0">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
-        <span style="font-size:15px;font-weight:700;color:var(--text)">${done}/${tot} completate</span>
-        <span style="font-size:20px;font-weight:700;color:${fillColor}">${pct}%</span>
-      </div>
-      <div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:${fillColor}"></div></div>
-    </div>
-  `;
-
-  const grouped = {};
-  state.checklist.forEach(c=>{ if(!grouped[c.cat]) grouped[c.cat]=[]; grouped[c.cat].push(c); });
-  
-  let html = '';
-  Object.entries(grouped).forEach(([cat, items])=>{
-    const cc = CK_COLORS[cat]||CK_COLORS.altro;
-    const catDone = items.filter(i=>i.done).length;
-    html += `<div style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:${cc.bg};color:${cc.fg}">${CK_CATS[cat]||cat}</span>
-        <span style="font-size:11px;color:var(--text3)">${catDone}/${items.length}</span>
-      </div>`;
-    items.forEach(c=>{
-      const today = new Date().toISOString().slice(0,10);
-      const overdue = c.data && c.data<today && !c.done;
-      html += `<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:6px;cursor:pointer;${c.done?'opacity:0.5':''}" onclick="toggleChecklist(${c.id})">
-        <div style="width:22px;height:22px;border-radius:50%;border:1.5px solid ${c.done?'var(--green-fg)':'var(--border2)'};background:${c.done?'var(--green-fg)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-size:13px">${c.done?'✓':''}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:14px;font-weight:500;color:var(--text);${c.done?'text-decoration:line-through':''}">${c.testo}</div>
-          ${c.data?`<div style="font-size:11px;color:${overdue?'var(--red-fg)':'var(--text3)'};margin-top:2px">${overdue?'⚠ Scaduta: ':'Entro: '}${c.data}</div>`:''}
-        </div>
-        <button onclick="event.stopPropagation();editChecklist(${c.id})" style="font-size:14px;color:var(--text3);background:none;border:none;cursor:pointer;padding:4px">✏️</button>
-      </div>`;
-    });
-    html += '</div>';
-  });
-  
-  document.getElementById('checklist-list').innerHTML = html || '<div class="empty">Nessuna attività</div>';
+  const done=S.checklist.filter(c=>c.done).length;
+  const tot=S.checklist.length;
+  const pct=tot>0?Math.round(done/tot*100):0;
+  const fc=pct===100?'var(--gfg)':pct>50?'var(--gold)':'var(--ofg)';
+  document.getElementById('ck-progress').innerHTML=`<div class="bb" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><span style="font-size:15px;font-weight:700">${done}/${tot} completate</span><span style="font-size:20px;font-weight:700;color:${fc}">${pct}%</span></div><div class="pt"><div class="pf" style="width:${pct}%;background:${fc}"></div></div></div>`;
+  const grp={};
+  S.checklist.forEach(c=>{if(!grp[c.cat])grp[c.cat]=[];grp[c.cat].push(c);});
+  const today=new Date().toISOString().slice(0,10);
+  document.getElementById('ck-list').innerHTML=Object.entries(grp).map(([cat,items])=>{
+    const cc=CK_COL[cat]||CK_COL.altro;
+    const cd=items.filter(i=>i.done).length;
+    return `<div style="margin-bottom:16px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:${cc.bg};color:${cc.fg}">${CK_CATS[cat]||cat}</span><span style="font-size:11px;color:var(--tx3)">${cd}/${items.length}</span></div>`+
+      items.map(c=>{const ov=c.data&&c.data<today&&!c.done;return`<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg);border:0.5px solid var(--br);border-radius:var(--r);margin-bottom:6px;${c.done?'opacity:.5':''}cursor:pointer" onclick="toggleCk(${c.id})"><div style="width:22px;height:22px;border-radius:50%;border:1.5px solid ${c.done?'var(--gfg)':'var(--br2)'};background:${c.done?'var(--gfg)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:13px">${c.done?'✓':''}</div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;${c.done?'text-decoration:line-through':''}">${c.testo}</div>${c.data?`<div style="font-size:11px;color:${ov?'var(--rfg)':'var(--tx3)'};margin-top:2px">${ov?'⚠ Scaduta: ':'Entro: '}${c.data}</div>`:''}</div><button type="button" onclick="event.stopPropagation();openCkModal(${c.id})" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--tx3);padding:4px">✏️</button></div>`;}).join('')+'</div>';
+  }).join('')||'<div class="empty">Nessuna attività</div>';
 }
 
-function toggleChecklist(id) {
-  const c = state.checklist.find(x=>x.id===id); if(!c) return;
+function toggleCk(id) {
+  const c=S.checklist.find(x=>x.id===id); if(!c) return;
   c.done=!c.done; save(); renderChecklist();
 }
-function addChecklist() {
-  document.getElementById('checklist-modal-title').textContent='Aggiungi attività';
-  document.getElementById('ck-testo').value='';
-  document.getElementById('ck-cat').value='altro';
-  document.getElementById('ck-data').value='';
-  document.getElementById('ck-id').value='';
-  document.getElementById('ck-delete-btn').style.display='none';
-  openModal('modal-checklist');
+function openCkModal(id) {
+  const c=id?S.checklist.find(x=>x.id===id):null;
+  document.getElementById('m-ck-title').textContent=c?'Modifica attività':'Nuova attività';
+  document.getElementById('ck-testo').value=c?c.testo:'';
+  document.getElementById('ck-cat').value=c?c.cat:'altro';
+  document.getElementById('ck-data').value=c?c.data||'':'';
+  document.getElementById('ck-id').value=c?c.id:'';
+  document.getElementById('ck-del').style.display=c?'block':'none';
+  openM('m-ck');
 }
-function editChecklist(id) {
-  const c = state.checklist.find(x=>x.id===id); if(!c) return;
-  document.getElementById('checklist-modal-title').textContent='Modifica attività';
-  document.getElementById('ck-testo').value=c.testo;
-  document.getElementById('ck-cat').value=c.cat;
-  document.getElementById('ck-data').value=c.data||'';
-  document.getElementById('ck-id').value=id;
-  document.getElementById('ck-delete-btn').style.display='block';
-  openModal('modal-checklist');
+function saveCk() {
+  const testo=document.getElementById('ck-testo').value.trim();
+  if(!testo){alert('Inserisci il testo');return;}
+  const data={testo,cat:document.getElementById('ck-cat').value,data:document.getElementById('ck-data').value};
+  const cid=document.getElementById('ck-id').value;
+  if(cid){const idx=S.checklist.findIndex(x=>x.id===parseInt(cid));if(idx>=0)S.checklist[idx]={...S.checklist[idx],...data};}
+  else S.checklist.push({id:S.nextCkid++,...data,done:false});
+  save(); closeM('m-ck'); renderChecklist();
 }
-function saveChecklist() {
-  const testo = document.getElementById('ck-testo').value.trim();
-  if(!testo) { alert('Inserisci il testo'); return; }
-  const data = { testo, cat: document.getElementById('ck-cat').value, data: document.getElementById('ck-data').value };
-  const cid = document.getElementById('ck-id').value;
-  if(cid) {
-    const idx = state.checklist.findIndex(x=>x.id===parseInt(cid));
-    if(idx>=0) state.checklist[idx]={...state.checklist[idx],...data};
-  } else {
-    state.checklist.push({id:state.nextCid++,...data,done:false});
-  }
-  save(); closeModal('modal-checklist'); renderChecklist();
-}
-function deleteChecklist() {
-  const cid = document.getElementById('ck-id').value;
-  if(!cid||!confirm('Eliminare?')) return;
-  state.checklist = state.checklist.filter(x=>x.id!==parseInt(cid));
-  save(); closeModal('modal-checklist'); renderChecklist();
+function deleteCk() {
+  const cid=document.getElementById('ck-id').value;
+  if(!cid) return;
+  const btn=document.getElementById('ck-del');
+  if(btn.dataset.confirm!=='1'){btn.dataset.confirm='1';btn.textContent='Tocca ancora per confermare';btn.style.background='var(--rfg)';btn.style.color='#fff';setTimeout(()=>{btn.dataset.confirm='';btn.textContent='Elimina';btn.style.background='';btn.style.color='';},3000);return;}
+  S.checklist=S.checklist.filter(x=>x.id!==parseInt(cid));
+  save(); closeM('m-ck'); renderChecklist();
 }
 
-// ── PATCH FAB ────────────────────────────────────────────────────────────────
-const _origFabClick = fabClick;
-function fabClick() {
-  if(activeTab==='tavoli') { addTavolo(); return; }
-  if(activeTab==='checklist') { addChecklist(); return; }
-  if(activeTab==='hotel') return;
-  if(activeTab==='playlist') { addPlaylistMoment(); return; }
-  if(activeTab==='scaletta') { addScaletta(); return; }
-  _origFabClick();
+// ── PLAYLIST ───────────────────────────────────────────────────────────────
+function renderPlaylist() {
+  const active=S.plFilter||S.plMoments[0]?.id;
+  document.getElementById('pl-filters').innerHTML=[
+    ...S.plMoments.map(m=>`<button type="button" class="fb ${active===m.id?'active':''}" onclick="S.plFilter=${m.id};save();renderPlaylist()">${m.emoji} ${m.nome} (${m.songs.length})</button>`),
+    `<button type="button" class="fb" onclick="openPlMomModal()">+ Momento</button>`
+  ].join('');
+  const m=S.plMoments.find(x=>x.id===active);
+  if(!m){document.getElementById('pl-list').innerHTML='';return;}
+  const mins=Math.round(m.songs.length*3.5);
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div><div style="font-size:16px;font-weight:700">${m.emoji} ${m.nome}</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">${m.songs.length} brani · ~${mins} min</div></div>
+    <div style="display:flex;gap:8px">
+      ${m.songs.length?`<a href="https://open.spotify.com/search/${encodeURIComponent(m.nome+' matrimonio')}" target="_blank" style="font-size:12px;font-weight:600;color:#1DB954;text-decoration:none;border:1px solid #1DB954;padding:6px 10px;border-radius:10px">Spotify ↗</a>`:''}
+      <button type="button" onclick="openPlMomModal(${m.id})" style="font-size:12px;color:var(--tx3);background:none;border:0.5px solid var(--br2);padding:6px 10px;border-radius:10px;cursor:pointer">✏️</button>
+    </div></div>`;
+  if(!m.songs.length){h+=`<div style="text-align:center;padding:40px;color:var(--tx3)"><div style="font-size:40px;margin-bottom:12px">${m.emoji}</div><div>Cerca un brano sopra e aggiungilo</div></div>`;}
+  else{h+=m.songs.map((s,i)=>`<div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg);border:0.5px solid var(--br);border-radius:var(--r);margin-bottom:6px">
+    <div style="font-size:13px;font-weight:600;color:var(--tx3);width:20px;text-align:center;flex-shrink:0">${i+1}</div>
+    <div style="width:40px;height:40px;border-radius:6px;background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px">🎵</div>
+    <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.title}</div><div style="font-size:11px;color:var(--tx2)">${s.artist}</div></div>
+    <a href="https://open.spotify.com/search/${encodeURIComponent(s.title+' '+s.artist)}" target="_blank" style="color:#1DB954;font-size:20px;text-decoration:none;flex-shrink:0">▶</a>
+    <button type="button" onclick="removeSong(${m.id},'${s.trackId}')" style="font-size:18px;color:var(--tx3);background:none;border:none;cursor:pointer;padding:4px;flex-shrink:0">×</button>
+  </div>`).join('');}
+  document.getElementById('pl-list').innerHTML=h;
 }
 
-</script>
-
-<!-- PLAYLIST MOMENT MODAL -->
-<div class="overlay" id="modal-pl-moment">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="sheet-title">Nuovo momento musicale</div>
-    <div class="form-group"><label class="form-label">Nome momento</label><input class="form-input" id="plm-nome" placeholder="Es. Cerimonia, Cocktail..."></div>
-    <div class="form-group"><label class="form-label">Emoji</label><input class="form-input" id="plm-emoji" placeholder="💍" maxlength="2"></div>
-    <input type="hidden" id="plm-id">
-    <button class="btn-primary" onclick="savePlMoment()">Salva</button>
-    <button class="btn-ghost btn-danger" id="plm-delete" onclick="deletePlMoment()" style="display:none">Elimina momento</button>
-    <button class="btn-ghost" onclick="closeModal('modal-pl-moment')">Annulla</button>
-  </div>
-</div>
-
-<!-- SONG DETAIL MODAL -->
-<div class="overlay" id="modal-song">
-  <div class="sheet" id="modal-song-content"></div>
-</div>
-
-<!-- SCALETTA MODAL -->
-<div class="overlay" id="modal-scaletta">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="sheet-title" id="sc-modal-title">Aggiungi momento</div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Orario</label><input class="form-input" id="sc-ora" type="time"></div>
-      <div class="form-group"><label class="form-label">Durata (min)</label><input class="form-input" id="sc-durata" type="number" min="0" value="30" inputmode="numeric"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Momento</label><input class="form-input" id="sc-nome" placeholder="Es. Cerimonia civile"></div>
-    <div class="form-group"><label class="form-label">Luogo</label><input class="form-input" id="sc-luogo" placeholder="Es. Sala del comune"></div>
-    <div class="form-group"><label class="form-label">Responsabile</label><input class="form-input" id="sc-resp" placeholder="Es. Fotografo, DJ, Catering..."></div>
-    <div class="form-group"><label class="form-label">Note</label><input class="form-input" id="sc-note" placeholder="Dettagli importanti..."></div>
-    <div class="form-group"><label class="form-label">Tipo</label>
-      <select class="form-select" id="sc-tipo">
-        <option value="cerimonia">💍 Cerimonia</option>
-        <option value="cocktail">🥂 Cocktail</option>
-        <option value="cena">🍽 Cena</option>
-        <option value="festa">🎉 Festa</option>
-        <option value="foto">📸 Foto</option>
-        <option value="altro">📌 Altro</option>
-      </select>
-    </div>
-    <input type="hidden" id="sc-id">
-    <button class="btn-primary" onclick="saveScaletta()">Salva</button>
-    <button class="btn-ghost btn-danger" id="sc-delete" onclick="deleteScaletta()" style="display:none">Elimina</button>
-    <button class="btn-ghost" onclick="closeModal('modal-scaletta')">Annulla</button>
-  </div>
-</div>
-<script>
-
-// ── DEFAULT PLAYLIST & SCALETTA ──────────────────────────────────────────────
-const DEFAULT_PL_MOMENTS = [
-  {id:1, nome:'Cerimonia', emoji:'💍', songs:[]},
-  {id:2, nome:'Cocktail',  emoji:'🥂', songs:[]},
-  {id:3, nome:'Cena',      emoji:'🍽', songs:[]},
-  {id:4, nome:'Festa',     emoji:'🎉', songs:[]},
-];
-const DEFAULT_SCALETTA = [
-  {id:1,ora:'14:00',durata:60,nome:'Cerimonia civile',luogo:'Comune',resp:'Officiante',note:'',tipo:'cerimonia'},
-  {id:2,ora:'15:30',durata:30,nome:'Sessione foto',luogo:'Parco',resp:'Fotografo',note:'',tipo:'foto'},
-  {id:3,ora:'16:00',durata:90,nome:'Cocktail',luogo:'Giardino location',resp:'Catering',note:'',tipo:'cocktail'},
-  {id:4,ora:'17:30',durata:180,nome:'Cena',luogo:'Sala banchetti',resp:'Catering + DJ',note:'Taglio torta previsto alle 20:00',tipo:'cena'},
-  {id:5,ora:'20:30',durata:180,nome:'Festa & balli',luogo:'Pista da ballo',resp:'DJ',note:'',tipo:'festa'},
-];
-
-// Patch load to add new data
-const _prevLoad = load;
-function load() {
-  const s = _prevLoad();
-  if(!s.plMoments) s.plMoments = DEFAULT_PL_MOMENTS.map(m=>({...m,songs:[...m.songs]}));
-  if(!s.scaletta)  s.scaletta  = DEFAULT_SCALETTA.map(x=>({...x}));
-  if(!s.nextPlMid) s.nextPlMid = 100;
-  if(!s.nextScId)  s.nextScId  = 100;
-  return s;
-}
-
-// Re-init state with patched load
-state = load();
-
-// ── SPOTIFY SEARCH ───────────────────────────────────────────────────────────
-let plFilterMoment = null;
-let searchTimer = null;
-
-// Ricerca MusicBrainz (aperta, no API key) + link Spotify diretto
-async function spotifySearch() {
-  const q = document.getElementById('pl-search').value.trim();
-  clearTimeout(searchTimer);
-  document.getElementById('pl-search-results').innerHTML = '';
-  if(q.length < 2) return;
-  searchTimer = setTimeout(async () => {
-    document.getElementById('pl-search-spinner').style.display = 'block';
+function plSearch() {
+  const q=document.getElementById('pl-search').value.trim();
+  clearTimeout(plSearchTimer);
+  document.getElementById('pl-results').innerHTML='';
+  if(q.length<2) return;
+  plSearchTimer=setTimeout(async()=>{
+    document.getElementById('pl-spin').style.display='block';
     try {
-      const url = `https://musicbrainz.org/ws/2/recording/?query=${encodeURIComponent(q)}&limit=12&fmt=json`;
-      const res = await fetch(url, {headers:{'User-Agent':'MatrimonioApp/1.0 (wedding-planner)'}});
-      const data = await res.json();
-      const recordings = (data.recordings||[]).filter(r=>r.title && r['artist-credit']&&r['artist-credit'][0]);
-      renderSearchResults(recordings);
+      const url=`https://musicbrainz.org/ws/2/recording/?query=${encodeURIComponent(q)}&limit=10&fmt=json`;
+      const res=await fetch(url,{headers:{'User-Agent':'MatrimonioApp/1.0'}});
+      const data=await res.json();
+      const recs=(data.recordings||[]).filter(r=>r.title&&r['artist-credit']&&r['artist-credit'][0]);
+      if(!recs.length){document.getElementById('pl-results').innerHTML='<div style="text-align:center;font-size:13px;color:var(--tx3);padding:16px">Nessun risultato</div>';return;}
+      document.getElementById('pl-results').innerHTML=`<p class="sec" style="margin-top:4px">Risultati — tocca per aggiungere</p>`+
+        recs.map(r=>{
+          const artist=r['artist-credit'].map(a=>a.artist?.name||'').filter(Boolean).join(', ');
+          const release=r.releases?.[0]?.title||'';
+          const song={trackId:r.id||(Math.random().toString(36).slice(2)),title:r.title,artist,album:release};
+          const b64=btoa(unescape(encodeURIComponent(JSON.stringify(song))));
+          return `<div style="display:flex;align-items:center;gap:12px;padding:11px 12px;background:var(--bg);border:0.5px solid var(--br);border-radius:var(--r);margin-bottom:6px;cursor:pointer" onclick="openSongModal('${b64}')">
+            <div style="width:40px;height:40px;border-radius:8px;background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px">🎵</div>
+            <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.title}</div><div style="font-size:12px;color:var(--tx2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${artist}${release?' · '+release:''}</div></div>
+            <div style="font-size:24px;color:var(--gold);flex-shrink:0">+</div>
+          </div>`;
+        }).join('')+'<div style="margin-bottom:16px"></div>';
     } catch(e) {
-      document.getElementById('pl-search-results').innerHTML = '<div style="font-size:13px;color:var(--text3);padding:12px 0;text-align:center">Errore di rete — controlla la connessione</div>';
+      document.getElementById('pl-results').innerHTML='<div style="text-align:center;font-size:13px;color:var(--tx3);padding:16px">Errore di rete — controlla la connessione</div>';
     }
-    document.getElementById('pl-search-spinner').style.display = 'none';
-  }, 500);
-}
-
-function renderSearchResults(results) {
-  if(!results.length) {
-    document.getElementById('pl-search-results').innerHTML = '<div style="font-size:13px;color:var(--text3);padding:12px 0;text-align:center">Nessun risultato. Prova con un altro termine.</div>';
-    return;
-  }
-  document.getElementById('pl-search-results').innerHTML = `
-    <p class="sec" style="margin-top:4px">Risultati — tocca per aggiungere</p>
-    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
-    ${results.map(r => {
-      const artist = r['artist-credit'].map(a=>a.artist?.name||a.name||'').filter(Boolean).join(', ');
-      const release = (r.releases&&r.releases[0]?.title)||'';
-      const mbid = r.id||'';
-      const song = { trackId: mbid||('mb_'+Math.random().toString(36).slice(2)), title: r.title, artist, album: release, artwork:'', mbid };
-      const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(song))));
-      return `<div style="display:flex;align-items:center;gap:12px;padding:11px 12px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);cursor:pointer;active:background:var(--bg2)" onclick="openSongModal('${b64}')">
-        <div style="width:40px;height:40px;border-radius:8px;background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px">🎵</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.title}</div>
-          <div style="font-size:12px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${artist}${release?' · '+release:''}</div>
-        </div>
-        <div style="font-size:22px;color:var(--gold);flex-shrink:0;line-height:1">+</div>
-      </div>`;
-    }).join('')}
-    </div>`;
+    document.getElementById('pl-spin').style.display='none';
+  },500);
 }
 
 function openSongModal(b64) {
-  let song;
-  try { song = JSON.parse(decodeURIComponent(escape(atob(b64)))); } catch(e) { return; }
-  const moments = state.plMoments;
-  const spotifyQ = encodeURIComponent(song.title + ' ' + song.artist);
-  document.getElementById('modal-song-content').innerHTML = `
+  let song; try{song=JSON.parse(decodeURIComponent(escape(atob(b64))));}catch(e){return;}
+  const sq=encodeURIComponent(song.title+' '+song.artist);
+  document.getElementById('m-song-body').innerHTML=`
     <div class="handle"></div>
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
-      <div style="width:56px;height:56px;border-radius:12px;background:var(--bg2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px">🎵</div>
-      <div style="min-width:0">
-        <div style="font-size:16px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${song.title}</div>
-        <div style="font-size:13px;color:var(--text2);margin-top:3px">${song.artist}</div>
-        ${song.album?`<div style="font-size:12px;color:var(--text3);margin-top:1px">${song.album}</div>`:''}
-      </div>
+      <div style="width:56px;height:56px;border-radius:12px;background:var(--bg2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px">🎵</div>
+      <div style="min-width:0"><div style="font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${song.title}</div><div style="font-size:13px;color:var(--tx2);margin-top:3px">${song.artist}</div>${song.album?`<div style="font-size:12px;color:var(--tx3)">${song.album}</div>`:''}</div>
     </div>
-    <a href="https://open.spotify.com/search/${spotifyQ}" target="_blank"
-       style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:#1DB954;color:white;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;margin-bottom:6px">
+    <a href="https://open.spotify.com/search/${sq}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:#1DB954;color:#fff;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;margin-bottom:8px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-      Cerca su Spotify
+      Apri Spotify
     </a>
-    <a href="https://www.youtube.com/results?search_query=${spotifyQ}" target="_blank"
-       style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:#FF0000;color:white;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;margin-bottom:14px">
+    <a href="https://www.youtube.com/results?search_query=${sq}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:#FF0000;color:#fff;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;margin-bottom:14px">
       <svg width="20" height="14" viewBox="0 0 24 17" fill="white"><path d="M23.5 2.5S23.2.9 22.5.2C21.6-.7 20.6-.7 20.1-.7 16.8-.9 12-.9 12-.9s-4.8 0-8.1.2C3.4-.7 2.4-.7 1.5.2.8.9.5 2.5.5 2.5S.2 4.4.2 6.3v1.8c0 1.9.3 3.8.3 3.8s.3 1.6 1 2.3c.9.9 2.1.9 2.7 1C5.9 15.4 12 15.4 12 15.4s4.8 0 8.1-.2c.5-.1 1.5-.1 2.4-1 .7-.7 1-2.3 1-2.3s.3-1.9.3-3.8V6.3c0-1.9-.3-3.8-.3-3.8zM9.7 10.7V4.7l6.6 3-6.6 3z"/></svg>
       Cerca su YouTube
     </a>
-    <p style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Aggiungi alla playlist</p>
+    <p style="font-size:12px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Aggiungi al momento</p>
     <div style="display:flex;flex-direction:column;gap:8px">
-    ${moments.map(m=>{
-      const inM = m.songs.some(s=>s.trackId===song.trackId);
-      return `<button onclick="toggleSongInMoment(${m.id},'${b64}')" style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;background:${inM?'var(--gold-light,#FFF8EC)':'var(--bg2)'};border:${inM?'1.5px solid var(--gold)':'0.5px solid var(--border2)'};border-radius:12px;cursor:pointer;color:var(--text);font-size:14px;font-weight:${inM?'600':'400'}">
-        <span>${m.emoji} ${m.nome}</span>
-        <span style="color:${inM?'var(--gold)':'var(--text3)'};">${inM?'✓ Aggiunto':'+'}</span>
+    ${S.plMoments.map(m=>{
+      const inM=m.songs.some(s=>s.trackId===song.trackId);
+      return `<button type="button" onclick="toggleSong(${m.id},'${b64}')" style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;background:${inM?'var(--gold-l,#FFF8EC)':'var(--bg2)'};border:${inM?'1.5px solid var(--gold)':'0.5px solid var(--br2)'};border-radius:12px;cursor:pointer;font-size:14px;font-weight:${inM?'600':'400'}">
+        <span>${m.emoji} ${m.nome}</span><span style="color:${inM?'var(--gold)':'var(--tx3)'}">${inM?'✓ Aggiunto':'+'}</span>
       </button>`;
     }).join('')}
     </div>
-    <button class="btn-ghost" onclick="closeModal('modal-song');document.getElementById('pl-search').value='';document.getElementById('pl-search-results').innerHTML=''" style="margin-top:12px">Fatto</button>
-  `;
-  openModal('modal-song');
+    <button type="button" class="bg" onclick="closeM('m-song');document.getElementById('pl-search').value='';document.getElementById('pl-results').innerHTML=''" style="margin-top:12px">Fatto</button>`;
+  openM('m-song');
 }
 
-function toggleSongInMoment(momentId, b64) {
-  let song;
-  try { song = JSON.parse(decodeURIComponent(escape(atob(b64)))); } catch(e) { return; }
-  const m = state.plMoments.find(x=>x.id===momentId); if(!m) return;
-  const idx = m.songs.findIndex(s=>s.trackId===song.trackId);
+function toggleSong(mid,b64) {
+  let song; try{song=JSON.parse(decodeURIComponent(escape(atob(b64))));}catch(e){return;}
+  const m=S.plMoments.find(x=>x.id===mid); if(!m) return;
+  const idx=m.songs.findIndex(s=>s.trackId===song.trackId);
   if(idx>=0) m.songs.splice(idx,1); else m.songs.push(song);
-  save();
-  openSongModal(b64);
-  renderPlaylist();
+  save(); openSongModal(b64); renderPlaylist();
 }
 
-// ── RENDER PLAYLIST ───────────────────────────────────────────────────────────
-function renderPlaylist() {
-  const moments = state.plMoments;
-  const active = plFilterMoment || (moments[0]?.id);
-  
-  document.getElementById('pl-moment-filters').innerHTML = [
-    ...moments.map(m=>`<button class="filter-btn ${active===m.id?'active':''}" onclick="plFilterMoment=${m.id};renderPlaylist()">${m.emoji} ${m.nome} (${m.songs.length})</button>`),
-    `<button class="filter-btn" onclick="addPlaylistMoment()">+ Momento</button>`
-  ].join('');
-
-  const m = moments.find(x=>x.id===active);
-  if(!m) { document.getElementById('pl-list').innerHTML=''; return; }
-
-  const totMin = m.songs.length * 3.5;
-  let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <div>
-      <div style="font-size:16px;font-weight:700;color:var(--text)">${m.emoji} ${m.nome}</div>
-      <div style="font-size:12px;color:var(--text3);margin-top:2px">${m.songs.length} brani · circa ${Math.round(totMin)} min</div>
-    </div>
-    <div style="display:flex;gap:8px">
-      ${m.songs.length?`<a href="https://open.spotify.com/search/${encodeURIComponent(m.nome+' matrimonio')}" target="_blank" style="font-size:12px;font-weight:600;color:#1DB954;text-decoration:none;border:1px solid #1DB954;padding:6px 10px;border-radius:10px">Spotify ↗</a>`:''}
-      <button onclick="editPlMoment(${m.id})" style="font-size:12px;color:var(--text3);background:none;border:0.5px solid var(--border2);padding:6px 10px;border-radius:10px;cursor:pointer">✏️</button>
-    </div>
-  </div>`;
-
-  if(!m.songs.length) {
-    html += `<div style="text-align:center;padding:40px 16px;color:var(--text3)">
-      <div style="font-size:40px;margin-bottom:12px">${m.emoji}</div>
-      <div style="font-size:14px">Cerca un brano sopra e aggiungilo qui</div>
-    </div>`;
-  } else {
-    html += m.songs.map((s,i)=>`
-      <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:6px">
-        <div style="font-size:13px;font-weight:600;color:var(--text3);width:20px;text-align:center;flex-shrink:0">${i+1}</div>
-        ${s.artwork?`<img src="${s.artwork}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0">`:'<div style="width:40px;height:40px;border-radius:6px;background:var(--bg2);flex-shrink:0"></div>'}
-        <div style="flex:1;min-width:0">
-          <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.title}</div>
-          <div style="font-size:11px;color:var(--text2)">${s.artist}</div>
-        </div>
-        <a href="https://open.spotify.com/search/${s.spotifySearch}" target="_blank" style="color:#1DB954;font-size:18px;text-decoration:none;flex-shrink:0">▶</a>
-        <button onclick="removeSongFromMoment(${m.id},${s.trackId})" style="font-size:16px;color:var(--text3);background:none;border:none;cursor:pointer;padding:4px;flex-shrink:0">×</button>
-      </div>`).join('');
-  }
-
-  document.getElementById('pl-list').innerHTML = html;
-}
-
-function removeSongFromMoment(momentId, trackId) {
-  const m = state.plMoments.find(x=>x.id===momentId); if(!m) return;
-  m.songs = m.songs.filter(s=>s.trackId!==trackId);
+function removeSong(mid,tid) {
+  const m=S.plMoments.find(x=>x.id===mid); if(!m) return;
+  m.songs=m.songs.filter(s=>s.trackId!==tid);
   save(); renderPlaylist();
 }
 
-function addPlaylistMoment() {
-  document.getElementById('plm-nome').value='';
-  document.getElementById('plm-emoji').value='🎵';
-  document.getElementById('plm-id').value='';
-  document.getElementById('plm-delete').style.display='none';
-  openModal('modal-pl-moment');
+function openPlMomModal(id) {
+  const m=id?S.plMoments.find(x=>x.id===id):null;
+  document.getElementById('plm-nome').value=m?m.nome:'';
+  document.getElementById('plm-emoji').value=m?m.emoji:'🎵';
+  document.getElementById('plm-id').value=m?m.id:'';
+  document.getElementById('plm-del').style.display=m?'block':'none';
+  openM('m-plmom');
 }
-function editPlMoment(id) {
-  const m = state.plMoments.find(x=>x.id===id); if(!m) return;
-  document.getElementById('plm-nome').value=m.nome;
-  document.getElementById('plm-emoji').value=m.emoji;
-  document.getElementById('plm-id').value=id;
-  document.getElementById('plm-delete').style.display='block';
-  openModal('modal-pl-moment');
+function savePlMom() {
+  const nome=document.getElementById('plm-nome').value.trim();
+  if(!nome){alert('Inserisci un nome');return;}
+  const data={nome,emoji:document.getElementById('plm-emoji').value.trim()||'🎵'};
+  const mid=document.getElementById('plm-id').value;
+  if(mid){const idx=S.plMoments.findIndex(x=>x.id===parseInt(mid));if(idx>=0)S.plMoments[idx]={...S.plMoments[idx],...data};}
+  else{S.plMoments.push({id:S.nextPlMid++,...data,songs:[]});S.plFilter=S.nextPlMid-1;}
+  save(); closeM('m-plmom'); renderPlaylist();
 }
-function savePlMoment() {
-  const nome = document.getElementById('plm-nome').value.trim();
-  if(!nome) { alert('Inserisci un nome'); return; }
-  const data = { nome, emoji: document.getElementById('plm-emoji').value.trim()||'🎵' };
-  const mid = document.getElementById('plm-id').value;
-  if(mid) {
-    const idx = state.plMoments.findIndex(x=>x.id===parseInt(mid));
-    if(idx>=0) state.plMoments[idx]={...state.plMoments[idx],...data};
-  } else {
-    state.plMoments.push({id:state.nextPlMid++,...data,songs:[]});
-    plFilterMoment = state.nextPlMid-1;
-  }
-  save(); closeModal('modal-pl-moment'); renderPlaylist();
-}
-function deletePlMoment() {
-  const mid = document.getElementById('plm-id').value;
-  if(!mid||!confirm('Eliminare questo momento musicale?')) return;
-  state.plMoments = state.plMoments.filter(x=>x.id!==parseInt(mid));
-  plFilterMoment = null; save(); closeModal('modal-pl-moment'); renderPlaylist();
+function deletePlMom() {
+  const mid=document.getElementById('plm-id').value;
+  if(!mid) return;
+  const btn=document.getElementById('plm-del');
+  if(btn.dataset.confirm!=='1'){btn.dataset.confirm='1';btn.textContent='Tocca ancora per confermare';btn.style.background='var(--rfg)';btn.style.color='#fff';setTimeout(()=>{btn.dataset.confirm='';btn.textContent='Elimina';btn.style.background='';btn.style.color='';},3000);return;}
+  S.plMoments=S.plMoments.filter(x=>x.id!==parseInt(mid));
+  S.plFilter=S.plMoments[0]?.id||null;
+  save(); closeM('m-plmom'); renderPlaylist();
 }
 
-// ── SCALETTA ─────────────────────────────────────────────────────────────────
-const SC_TIPOS = {
-  cerimonia:{emoji:'💍',color:'var(--blue-fg)',bg:'var(--blue-bg)'},
-  cocktail: {emoji:'🥂',color:'#C8873A',bg:'#FFF4E6'},
-  cena:     {emoji:'🍽',color:'var(--text2)',bg:'var(--bg2)'},
-  festa:    {emoji:'🎉',color:'var(--gold)',bg:'var(--gold-light,#FFF8EC)'},
-  foto:     {emoji:'📸',color:'#7B3FC4',bg:'#F5EDFF'},
-  altro:    {emoji:'📌',color:'var(--text3)',bg:'var(--bg2)'},
-};
+// ── SCALETTA ───────────────────────────────────────────────────────────────
+const SC_T={cerimonia:{e:'💍',c:'var(--bfg)',bg:'var(--bbg)'},cocktail:{e:'🥂',c:'#C8873A',bg:'#FFF4E6'},cena:{e:'🍽',c:'var(--tx2)',bg:'var(--bg2)'},festa:{e:'🎉',c:'var(--gold)',bg:'var(--gold-l,#FFF8EC)'},foto:{e:'📸',c:'#7B3FC4',bg:'#F5EDFF'},altro:{e:'📌',c:'var(--tx3)',bg:'var(--bg2)'}};
 
 function renderScaletta() {
-  const items = [...state.scaletta].sort((a,b)=>a.ora.localeCompare(b.ora));
-  if(!items.length) { document.getElementById('scaletta-list').innerHTML='<div class="empty">Nessun momento aggiunto</div>'; return; }
-  
-  let html = '';
-  items.forEach((sc,i) => {
-    const tipo = SC_TIPOS[sc.tipo]||SC_TIPOS.altro;
-    const endH = calcEndTime(sc.ora, sc.durata);
-    html += `
-    <div style="display:flex;gap:14px;margin-bottom:4px">
-      <div style="display:flex;flex-direction:column;align-items:center;width:40px;flex-shrink:0">
-        <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap">${sc.ora}</div>
-        <div style="flex:1;width:2px;background:${tipo.color};opacity:0.3;margin:4px 0;min-height:20px"></div>
+  const items=[...S.scaletta].sort((a,b)=>a.ora.localeCompare(b.ora));
+  if(!items.length){document.getElementById('sc-list').innerHTML='<div class="empty">Nessun momento</div>';return;}
+  document.getElementById('sc-list').innerHTML=items.map(sc=>{
+    const t=SC_T[sc.tipo]||SC_T.altro;
+    return `<div style="display:flex;gap:14px;margin-bottom:4px">
+      <div style="display:flex;flex-direction:column;align-items:center;width:44px;flex-shrink:0">
+        <div style="font-size:12px;font-weight:700;white-space:nowrap">${sc.ora}</div>
+        <div style="flex:1;width:2px;background:${t.c};opacity:.3;margin:4px 0;min-height:24px"></div>
       </div>
-      <div style="flex:1;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;cursor:pointer" onclick="editScaletta(${sc.id})">
+      <div style="flex:1;background:var(--bg);border:0.5px solid var(--br);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;cursor:pointer" onclick="openScModal(${sc.id})">
         <div style="display:flex;justify-content:space-between;align-items:flex-start">
           <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:18px">${tipo.emoji}</span>
-            <div>
-              <div style="font-size:14px;font-weight:700;color:var(--text)">${sc.nome}</div>
-              ${sc.luogo?`<div style="font-size:12px;color:var(--text2);margin-top:2px">📍 ${sc.luogo}</div>`:''}
-            </div>
+            <span style="font-size:20px">${t.e}</span>
+            <div><div style="font-size:14px;font-weight:700">${sc.nome}</div>${sc.luogo?`<div style="font-size:12px;color:var(--tx2);margin-top:2px">📍 ${sc.luogo}</div>`:''}</div>
           </div>
-          <span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;background:${tipo.bg};color:${tipo.color};flex-shrink:0;margin-left:8px">${sc.durata}min</span>
+          <span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;background:${t.bg};color:${t.c};flex-shrink:0;margin-left:8px">${sc.dur}min</span>
         </div>
-        ${sc.resp?`<div style="font-size:12px;color:var(--text3);margin-top:8px">👤 ${sc.resp}</div>`:''}
-        ${sc.note?`<div style="font-size:12px;color:var(--text2);margin-top:6px;padding:8px;background:var(--bg2);border-radius:8px;border-left:2px solid ${tipo.color}">${sc.note}</div>`:''}
-        <div style="font-size:11px;color:var(--text3);margin-top:8px">Termina alle ${endH}</div>
+        ${sc.resp?`<div style="font-size:12px;color:var(--tx3);margin-top:8px">👤 ${sc.resp}</div>`:''}
+        ${sc.note?`<div style="font-size:12px;color:var(--tx2);margin-top:6px;padding:8px;background:var(--bg2);border-radius:8px;border-left:2px solid ${t.c}">${sc.note}</div>`:''}
+        <div style="font-size:11px;color:var(--tx3);margin-top:8px">Termina alle ${endTime(sc.ora,sc.dur)}</div>
       </div>
     </div>`;
-  });
-  document.getElementById('scaletta-list').innerHTML = html;
+  }).join('');
 }
 
-function calcEndTime(ora, durata) {
-  const [h,m] = ora.split(':').map(Number);
-  const tot = h*60+m+(durata||0);
-  return String(Math.floor(tot/60)%24).padStart(2,'0')+':'+String(tot%60).padStart(2,'0');
+function openScModal(id) {
+  const sc=id?S.scaletta.find(x=>x.id===id):null;
+  document.getElementById('m-sc-title').textContent=sc?'Modifica momento':'Nuovo momento';
+  document.getElementById('sc-ora').value=sc?sc.ora:'';
+  document.getElementById('sc-dur').value=sc?sc.dur:60;
+  document.getElementById('sc-nome').value=sc?sc.nome:'';
+  document.getElementById('sc-luogo').value=sc?sc.luogo||'':'';
+  document.getElementById('sc-resp').value=sc?sc.resp||'':'';
+  document.getElementById('sc-tipo').value=sc?sc.tipo||'altro':'altro';
+  document.getElementById('sc-note').value=sc?sc.note||'':'';
+  document.getElementById('sc-id').value=sc?sc.id:'';
+  document.getElementById('sc-del').style.display=sc?'block':'none';
+  openM('m-sc');
+}
+function saveSc() {
+  const nome=document.getElementById('sc-nome').value.trim();
+  const ora=document.getElementById('sc-ora').value;
+  if(!nome||!ora){alert('Inserisci orario e nome');return;}
+  const data={ora,dur:parseInt(document.getElementById('sc-dur').value)||60,nome,luogo:document.getElementById('sc-luogo').value.trim(),resp:document.getElementById('sc-resp').value.trim(),tipo:document.getElementById('sc-tipo').value,note:document.getElementById('sc-note').value.trim()};
+  const sid=document.getElementById('sc-id').value;
+  if(sid){const idx=S.scaletta.findIndex(x=>x.id===parseInt(sid));if(idx>=0)S.scaletta[idx]={...S.scaletta[idx],...data};}
+  else S.scaletta.push({id:S.nextScid++,...data});
+  save(); closeM('m-sc'); renderScaletta();
+}
+function deleteSc() {
+  const sid=document.getElementById('sc-id').value;
+  if(!sid) return;
+  const btn=document.getElementById('sc-del');
+  if(btn.dataset.confirm!=='1'){btn.dataset.confirm='1';btn.textContent='Tocca ancora per confermare';btn.style.background='var(--rfg)';btn.style.color='#fff';setTimeout(()=>{btn.dataset.confirm='';btn.textContent='Elimina';btn.style.background='';btn.style.color='';},3000);return;}
+  S.scaletta=S.scaletta.filter(x=>x.id!==parseInt(sid));
+  save(); closeM('m-sc'); renderScaletta();
 }
 
-function addScaletta() {
-  document.getElementById('sc-modal-title').textContent='Aggiungi momento';
-  document.getElementById('sc-ora').value='';
-  document.getElementById('sc-durata').value=30;
-  document.getElementById('sc-nome').value='';
-  document.getElementById('sc-luogo').value='';
-  document.getElementById('sc-resp').value='';
-  document.getElementById('sc-note').value='';
-  document.getElementById('sc-tipo').value='altro';
-  document.getElementById('sc-id').value='';
-  document.getElementById('sc-delete').style.display='none';
-  openModal('modal-scaletta');
-}
-function editScaletta(id) {
-  const sc = state.scaletta.find(x=>x.id===id); if(!sc) return;
-  document.getElementById('sc-modal-title').textContent='Modifica momento';
-  document.getElementById('sc-ora').value=sc.ora;
-  document.getElementById('sc-durata').value=sc.durata;
-  document.getElementById('sc-nome').value=sc.nome;
-  document.getElementById('sc-luogo').value=sc.luogo||'';
-  document.getElementById('sc-resp').value=sc.resp||'';
-  document.getElementById('sc-note').value=sc.note||'';
-  document.getElementById('sc-tipo').value=sc.tipo||'altro';
-  document.getElementById('sc-id').value=id;
-  document.getElementById('sc-delete').style.display='block';
-  openModal('modal-scaletta');
-}
-function saveScaletta() {
-  const nome = document.getElementById('sc-nome').value.trim();
-  const ora  = document.getElementById('sc-ora').value;
-  if(!nome||!ora) { alert('Inserisci almeno orario e nome'); return; }
-  const data = { ora, durata:parseInt(document.getElementById('sc-durata').value)||30, nome, luogo:document.getElementById('sc-luogo').value.trim(), resp:document.getElementById('sc-resp').value.trim(), note:document.getElementById('sc-note').value.trim(), tipo:document.getElementById('sc-tipo').value };
-  const sid = document.getElementById('sc-id').value;
-  if(sid) {
-    const idx = state.scaletta.findIndex(x=>x.id===parseInt(sid));
-    if(idx>=0) state.scaletta[idx]={...state.scaletta[idx],...data};
-  } else {
-    state.scaletta.push({id:state.nextScId++,...data});
-  }
-  save(); closeModal('modal-scaletta'); renderScaletta();
-}
-function deleteScaletta() {
-  const sid = document.getElementById('sc-id').value;
-  if(!sid||!confirm('Eliminare?')) return;
-  state.scaletta = state.scaletta.filter(x=>x.id!==parseInt(sid));
-  save(); closeModal('modal-scaletta'); renderScaletta();
+// ── INIT ───────────────────────────────────────────────────────────────────
+function renderAll() {
+  renderHome(); renderGuests(); renderExpenses(); renderHotel(); renderTavoli(); renderChecklist(); renderPlaylist(); renderScaletta();
 }
 
-</script>
-
-<!-- LOCATION PRICE MODAL -->
-<div class="overlay" id="modal-location">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="sheet-title">📍 Prezzo Location</div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Il totale si calcola automaticamente in base ai confermati.</p>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Prezzo adulto (€)</label>
-        <input class="form-input" id="loc-adulto" type="number" min="0" step="1" inputmode="decimal" placeholder="0" oninput="updateLocPreview()">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Prezzo bambino (€)</label>
-        <input class="form-input" id="loc-bambino" type="number" min="0" step="1" inputmode="decimal" placeholder="0" oninput="updateLocPreview()">
-      </div>
-    </div>
-    <div id="loc-preview" style="background:var(--bg2);border-radius:var(--radius);padding:14px;margin-top:4px;margin-bottom:14px"></div>
-    <button class="btn-primary" onclick="saveLocationPrice()">Salva e aggiorna totale</button>
-    <button class="btn-ghost" onclick="closeModal('modal-location')">Annulla</button>
-  </div>
-</div>
-
-<script>
-// ── LOCATION DINAMICA ──────────────────────────────────────────────────────
-function openLocationModal() {
-  document.getElementById('loc-adulto').value = state.locPrezzoAdulto || '';
-  document.getElementById('loc-bambino').value = state.locPrezzoBambino || '';
-  updateLocPreview();
-  openModal('modal-location');
-}
-
-function updateLocPreview() {
-  const pa = parseFloat(document.getElementById('loc-adulto').value) || 0;
-  const pb = parseFloat(document.getElementById('loc-bambino').value) || 0;
-  const s = stats();
-  const tot = s.siA * pa + s.siB * pb;
-  document.getElementById('loc-preview').innerHTML = `
-    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);padding:4px 0">
-      <span>Adulti confermati (${s.siA})</span><span style="font-weight:600">${s.siA} × €${pa} = <span style="color:var(--blue-fg)">€${(s.siA*pa).toLocaleString('it-IT')}</span></span>
-    </div>
-    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);padding:4px 0;border-bottom:0.5px solid var(--border);margin-bottom:8px">
-      <span>Bambini confermati (${s.siB})</span><span style="font-weight:600">${s.siB} × €${pb} = <span style="color:var(--blue-fg)">€${(s.siB*pb).toLocaleString('it-IT')}</span></span>
-    </div>
-    <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:var(--text)">
-      <span>Totale location</span><span style="color:var(--gold)">€${tot.toLocaleString('it-IT')}</span>
-    </div>
-  `;
-}
-
-function saveLocationPrice() {
-  const pa = parseFloat(document.getElementById('loc-adulto').value) || 0;
-  const pb = parseFloat(document.getElementById('loc-bambino').value) || 0;
-  state.locPrezzoAdulto = pa;
-  state.locPrezzoBambino = pb;
-  // update location expense
-  const s = stats();
-  const tot = s.siA * pa + s.siB * pb;
-  const loc = state.expenses.find(e => e.nome === 'Location');
-  if(loc) { loc.importo = tot; loc.note = `€${pa}/adulto · €${pb}/bambino · ${s.siA} adulti + ${s.siB} bambini`; }
-  save(); closeModal('modal-location'); renderAll();
-}
+document.getElementById('topbar-date').textContent=new Date().toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'});
+renderAll();
 </script>
 </body>
 </html>
