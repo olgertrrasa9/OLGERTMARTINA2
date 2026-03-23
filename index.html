@@ -30,10 +30,10 @@
 }}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--tx);overscroll-behavior:none}
-.app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:500px;margin:0 auto}
-.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:500px;margin:0 auto;overflow:hidden;width:100%}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;min-width:0}
 .page{display:none;padding:0 16px 100px}
-.page.active{display:block}
+.page.active{display:block;min-width:0;overflow-x:hidden}
 .topbar{background:var(--bg);border-bottom:0.5px solid var(--br);padding:14px 16px 0;padding-top:calc(14px + env(safe-area-inset-top,0px));position:sticky;top:0;z-index:20}
 .topbar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .topbar-title{font-size:20px;font-weight:700;letter-spacing:-.5px}
@@ -60,14 +60,14 @@ html,body{height:100%;font-family:-apple-system,'Helvetica Neue',sans-serif;back
 .fr::-webkit-scrollbar{display:none}
 .fb{flex-shrink:0;font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px;border:0.5px solid var(--br2);background:var(--bg);color:var(--tx2);cursor:pointer;white-space:nowrap;-webkit-appearance:none}
 .fb.active{background:var(--gold);color:#fff;border-color:var(--gold)}
-.gl{display:flex;flex-direction:column;gap:8px;padding-bottom:8px}
-.gc{display:flex;align-items:center;gap:12px;background:var(--bg);border:0.5px solid var(--br);border-radius:var(--r);padding:13px;cursor:pointer}
+.gl{display:flex;flex-direction:column;gap:8px;padding-bottom:8px;min-width:0}
+.gc{display:flex;align-items:center;gap:12px;background:var(--bg);border:0.5px solid var(--br);border-radius:var(--r);padding:13px;cursor:pointer;overflow:hidden;min-width:0;box-sizing:border-box}
 .gc:active{background:var(--bg2)}
 .av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
-.gi{flex:1;min-width:0}
-.gn{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gi{flex:1;min-width:0;overflow:hidden}
+.gn{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:100%}
 .gs{font-size:12px;color:var(--tx2);margin-top:2px}
-.badge{font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px;flex-shrink:0}
+.badge{font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px;flex-shrink:0;white-space:nowrap;z-index:1;position:relative}
 .badge.si{background:var(--gbg);color:var(--gfg)}.badge.att{background:var(--obg);color:var(--ofg)}.badge.no{background:var(--rbg);color:var(--rfg)}
 .el{display:flex;flex-direction:column;gap:10px}
 .ec{background:var(--bg);border:0.5px solid var(--br);border-radius:var(--r);padding:14px 16px;cursor:pointer}
@@ -621,10 +621,13 @@ function renderGuests() {
     const c=CAT_C[g.cat]||{bg:'#eee',fg:'#666'};
     const bc=g.conf==='Si'?'si':g.conf==='In attesa'?'att':'no';
     const bl=g.conf==='Si'?'✅':g.conf==='In attesa'?'⏳':'❌';
-    return `<div class="gc" onclick="openDetail(${g.id})">
-      <div class="av" style="background:${c.bg};color:${c.fg}">${ini(g.nome)}</div>
-      <div class="gi"><div class="gn">${g.nome}</div><div class="gs">${g.cat} · ${g.adulti+g.bambini}p</div></div>
-      <div class="badge ${bc}">${bl}</div>
+    return `<div class="gc" onclick="openDetail(${g.id})" style="display:flex;align-items:center;gap:12px;overflow:hidden">
+      <div class="av" style="background:${c.bg};color:${c.fg};flex-shrink:0">${ini(g.nome)}</div>
+      <div style="flex:1;min-width:0;overflow:hidden">
+        <div style="font-size:14px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome}</div>
+        <div style="font-size:12px;color:var(--tx2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.cat} · ${g.adulti+g.bambini}p</div>
+      </div>
+      <div class="badge ${bc}" style="flex-shrink:0;margin-left:auto">${bl}</div>
     </div>`;
   }).join('');
 }
