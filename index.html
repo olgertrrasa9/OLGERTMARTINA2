@@ -347,8 +347,6 @@ html,body{height:100%;font-family:-apple-system,'Helvetica Neue',sans-serif;back
   <button type="button" class="bg" onclick="closeM('m-sc')">Annulla</button>
 </div></div>
 
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script>
 const SK = 'mat_v3';
 
@@ -538,11 +536,21 @@ function loadState() {
 }
 function save() {
   try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
-  if(window.fbReady) {
+  fbSave();
+}
+
+async function fbSave() {
+  try {
     showSyncBanner('Salvataggio...', '#9C6A00');
-    window.fbRef.set(S)
-      .then(()=>showSyncBanner('Sincronizzato ✓', '#1A6B42'))
-      .catch(e=>{console.warn('Firebase save error:',e);showSyncBanner('Errore sync', '#C0392B');});
+    const res = await fetch(FB_URL, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(S)
+    });
+    if(res.ok) showSyncBanner('Sincronizzato ✓', '#1A6B42');
+    else showSyncBanner('Errore sync', '#C0392B');
+  } catch(e) {
+    showSyncBanner('Offline — dati locali', '#C0392B');
   }
 }
 
@@ -1214,48 +1222,56 @@ function renderAll() {
 
 document.getElementById('topbar-date').textContent=new Date().toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'});
 
-// ── FIREBASE INIT ──────────────────────────────────────────────────────────
-const firebaseConfig = {
-  apiKey: "AIzaSyD9MAeLh9Lk_vQBoBGHz3Jkz_vUSfcz21c",
-  authDomain: "test-e28b1.firebaseapp.com",
-  databaseURL: "https://test-e28b1-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "test-e28b1",
-  storageBucket: "test-e28b1.firebasestorage.app",
-  messagingSenderId: "409782943272",
-  appId: "1:409782943272:web:e9a7b3dd44c56030e9bf1d"
-};
+// ── FIREBASE REST INIT ─────────────────────────────────────────────────────
+const FB_BASE = 'https://test-e28b1-default-rtdb.europe-west1.firebasedatabase.app';
+const FB_URL  = FB_BASE + '/matrimonio.json';
+let fbPollTimer = null;
+let lastFbHash = null;
 
-try {
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  window.fbRef = db.ref('matrimonio');
-  window.fbReady = false;
-
-  showSyncBanner('Connessione in corso...', '#9C6A00');
-
-  // Listen for real-time changes
-  window.fbRef.on('value', (snapshot) => {
-    const data = snapshot.val();
+async function fbLoad() {
+  try {
+    showSyncBanner('Connessione in corso...', '#9C6A00');
+    const res = await fetch(FB_URL);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
     if(data && data.guests && data.expenses) {
       S = data;
       try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
-    } else if(!window.fbReady) {
-      // First time — push local state to Firebase
-      window.fbRef.set(S);
+      lastFbHash = JSON.stringify(S).length;
+    } else {
+      // First time — push local state
+      await fbSave();
     }
-    window.fbReady = true;
-    renderAll();
     showSyncBanner('Sincronizzato ✓', '#1A6B42');
-  }, (error) => {
-    console.warn('Firebase error:', error);
+    renderAll();
+  } catch(e) {
+    console.warn('Firebase load error:', e);
     showSyncBanner('Offline — dati locali', '#C0392B');
     renderAll();
-  });
-
-} catch(e) {
-  console.warn('Firebase init failed:', e);
-  renderAll();
+  }
 }
+
+async function fbPoll() {
+  try {
+    const res = await fetch(FB_URL);
+    if(!res.ok) return;
+    const data = await res.json();
+    if(data && data.guests) {
+      const h = JSON.stringify(data).length;
+      if(h !== lastFbHash) {
+        lastFbHash = h;
+        S = data;
+        try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
+        renderAll();
+        showSyncBanner('Aggiornato ✓', '#1A6B42');
+      }
+    }
+  } catch(e) {}
+}
+
+// Load from Firebase then poll every 10 seconds for changes
+fbLoad();
+fbPollTimer = setInterval(fbPoll, 10000);
 </script>
 </body>
 </html>
