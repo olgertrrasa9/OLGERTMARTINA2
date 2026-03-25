@@ -594,7 +594,19 @@ function loadState() {
   } catch(e) {}
   return defState();
 }
+function recalcLocation() {
+  if(!S.locA && !S.locB) return;
+  const s=statsGuests();
+  const tot=s.siA*(S.locA||0)+s.siB*(S.locB||0);
+  const loc=S.expenses.find(e=>e.nome==='Location');
+  if(loc && loc.importo !== tot) {
+    loc.importo=tot;
+    loc.note=`€${S.locA}/adulto · €${S.locB}/bambino · ${s.siA}A + ${s.siB}B confermati`;
+  }
+}
+
 function save() {
+  recalcLocation();
   try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
   fbSave();
 }
